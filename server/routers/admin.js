@@ -4,19 +4,21 @@ const sharp = require("sharp");
 const Admin = require("../models/admin");
 const auth = require("../middleware/auth");
 const router = new express.Router();
+const bcrypt = require("bcrypt");
 
 // POST /admin
 
 router.post("/api/admin/create", async(req, res) => {
     const admin = new Admin(req.body);
     try {
+        const token = await admin.generateAuthToken();
         await admin.save();
         res.status(200).send({ admin });
     } catch (error) {
         if (error?.code === 11000) {
             res.status(400).send({
                 status: "error",
-                message: "Email already exists",
+                message: "Username already exists",
             });
         } else if (error?.name === "ValidationError") {
             if (error?.errors?.password?.kind === "minlength") {
@@ -38,7 +40,7 @@ router.post("/api/admin/create", async(req, res) => {
 
 router.post("/api/admin/login", async(req, res) => {
     try {
-        const admin = await Admin.findByCredentials(req.body.email, req.body.password);
+        const admin = await Admin.findByCredentials(req.body.username, req.body.password);
         const token = await admin.generateAuthToken();
         res.status(200).send({ status: "Success", data: admin, token });
     } catch (e) {
@@ -121,7 +123,7 @@ router.get('/api/admin/me', auth, async (req, res) => {
 
 router.patch("/api/admin/me", auth, async(req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["name", "email", "password"];
+    const allowedUpdates = ["name"];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
     if (!isValidOperation) {
         return res.status(400).send({ error: "Invalid operation" });
@@ -161,4 +163,25 @@ router.delete("/api/admin/me/avatar", auth, async(req, res) => {
     }
 });
 
+router.patch("/api/admin/changepassword", auth, async(req, res) => {
+
+    try {
+        const isMatch = await bcrypt.compare(req.body.password, req.admin.password);
+
+        if(!isMatch){
+            return res.status(400).send({ error: "Incorrect Password" });
+        }
+
+        const isSameasOldPassword = await bcrypt.compare(req.body.new_password, req.admin.password);
+
+        if(isSameasOldPassword){
+            return res.status(400).send({ error: "New password can not be same as new" });
+        }
+        req.admin.password = req.body.new_password;
+        await req.admin.save();
+        res.send(req.admin);
+    } catch (err) {
+        res.status(400).send({ error: "Error occurred", err });
+    }
+});
 module.exports = router;

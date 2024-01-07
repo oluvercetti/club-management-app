@@ -1,9 +1,10 @@
 
 const adminRouter = require("./admin");
-const tripRouter = require("./trip");
-const locationRouter = require("./location");
-const ticketRouter = require("./ticket");
+const feesRouter = require("./fees");
+const rolesRouter = require("./roles");
+const servicesRouter = require("./services");
+const transactionsRouter = require("./transactions");
 
-const allRouters = [adminRouter, tripRouter, locationRouter, ticketRouter];
+const allRouters = [adminRouter, feesRouter, rolesRouter, servicesRouter, transactionsRouter];
 
 module.exports = allRouters;

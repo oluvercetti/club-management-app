@@ -41,10 +41,6 @@ const adminSchema = new mongoose.Schema({
         required: true,
     },
     
-/*
-    avatar: {
-        type: Buffer
-    } */
 }, {
     timestamps: true,
 });
@@ -66,7 +62,7 @@ adminSchema.methods.generateAuthToken = async function() {
     const admin = this;
     const token = jwt.sign({ _id: admin._id.toString() }, process.env.TOKEN_SECRET_KEY, { expiresIn });
 
-    admin.tokens = admin.tokens.concat({ token });
+    admin.token = token;
     await admin.save();
     return token;
 };
@@ -76,14 +72,13 @@ adminSchema.methods.toJSON = function() {
     const adminObject = admin.toObject();
 
     delete adminObject.password;
-    delete adminObject.tokens;
+    delete adminObject.token;
     delete adminObject.__v;
-    delete adminObject.avatar;
     return adminObject;
 };
 
-adminSchema.statics.findByCredentials = async(email, password) => {
-    const admin = await Admin.findOne({ email });
+adminSchema.statics.findByCredentials = async(username, password) => {
+    const admin = await Admin.findOne({ username });
 
     if (!admin) {
         throw new Error("Incorrect username or password");
