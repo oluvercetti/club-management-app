@@ -40,6 +40,11 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+
+    status: {
+        type: Boolean,
+        default: true,
+    }
     
 }, {
     timestamps: true,
@@ -88,6 +93,10 @@ adminSchema.statics.findByCredentials = async(username, password) => {
 
     if (!isMatch) {
         throw new Error("Incorrect username or password");
+    }
+
+    if (!admin.status) {
+        throw new Error("This user is inactive, Kindly contact admin");
     }
 
     return admin;

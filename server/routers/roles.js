@@ -24,7 +24,19 @@ router.post("/api/role/create", auth, async(req, res) => {
     }
 });
 
-//
+// Get Roles
+router.get("api/roles", auth, async (req, res) => {
+    
+    try {
+        const roles = await Roles.find();
+        res.status(200).send({ status: "Success", data: roles });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+})
 
 
 

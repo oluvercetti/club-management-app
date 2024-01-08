@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const sharp = require("sharp");
 const Admin = require("../models/admin");
+const Roles = require("../models/roles");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");
@@ -11,7 +12,11 @@ const bcrypt = require("bcrypt");
 router.post("/api/admin/create", async(req, res) => {
     const admin = new Admin(req.body);
     try {
-        const token = await admin.generateAuthToken();
+        const role = await Roles.findOne({ role_id: req.body.role});
+        if(!role){
+            return res.status(400).send({ status: "error", message: "Role does not exist" });
+        }
+        await admin.generateAuthToken();
         await admin.save();
         res.status(200).send({ admin });
     } catch (error) {
@@ -179,6 +184,21 @@ router.patch("/api/admin/changepassword", auth, async(req, res) => {
         }
         req.admin.password = req.body.new_password;
         await req.admin.save();
+        res.send(req.admin);
+    } catch (err) {
+        res.status(400).send({ error: "Error occurred", err });
+    }
+});
+
+router.post("/api/admin/updateuser", auth, async(req, res) => {
+
+    try {
+        if(req.admin.role !== 1){
+            return res.status(400).send({ error: "You do not have permission" });
+        }
+        const user = await Admin.findOne({ _id: req.body.user_id});
+        user.status = !user.status;
+        await user.save();
         res.send(req.admin);
     } catch (err) {
         res.status(400).send({ error: "Error occurred", err });
