@@ -1,7 +1,7 @@
 <template>
-    <b-navbar toggleable="lg" :type="navLinkColor">
+    <b-navbar toggleable="lg" type="light">
         <b-navbar-brand to="/">
-            NMBBS
+            SF
         </b-navbar-brand>
         <b-navbar-toggle target="nav-collapse" />
         <b-collapse id="nav-collapse" is-nav>
@@ -29,10 +29,6 @@ export default {
     computed: {
         isAuthenticated() {
             return this.$store.getters.getIsAuthenticated;
-        },
-
-        navLinkColor() {
-            return this.$route.path.startsWith("/admin") || this.$route.path.startsWith("/contact") ? "light" : "dark";
         },
     },
     methods: {
