@@ -221,4 +221,40 @@ router.get("/api/admin/users/:id", auth, async (req, res) => {
         } || "Error occurred");
     }
 })
+
+//To be deleted when going live
+router.post("/api/admin/over15", async(req, res) => {
+    const admin = new Admin(req.body);
+    try {
+        
+        const role = await Roles.findOne({ role_id: req.body.role});
+        if(!role){
+            return res.status(400).send({ status: "error", message: "Role does not exist" });
+        }
+        await admin.generateAuthToken();
+        await admin.save();
+        res.status(200).send({ admin });
+    } catch (error) {
+        if (error?.code === 11000) {
+            res.status(400).send({
+                status: "error",
+                message: "Username already exists",
+            });
+        } else if (error?.name === "ValidationError") {
+            if (error?.errors?.password?.kind === "minlength") {
+                res.status(400).send({
+                    status: "error",
+                    message: "Password should be minimum 7 characters long",
+                });
+            } else {
+                res.status(400).send({ message: error?.message });
+            }
+        } else {
+            res.status(400).send({
+                status: "error",
+                message: error?.message,
+            } || "Error occurred");
+        }
+    }
+});
 module.exports = router;

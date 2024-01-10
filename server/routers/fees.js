@@ -26,7 +26,7 @@ router.post("/api/fees", auth, async(req, res) => {
         } else {
             res.status(400).send({
                 status: "error",
-                message: error,
+                message: error.message,
             } || "Error occurred");
         }
     }
@@ -50,7 +50,7 @@ router.get("/api/fees", auth, async (req, res) => {
 router.get("/api/fees/:id", auth, async (req, res) => {
     
     try {
-        const fee = await Fees.findOne({_id: req.body.id});
+        const fee = await Fees.findOne({_id: req.params.id});
         res.status(200).send({ status: "Success", data: fee });
     } catch (error) {
         res.status(400).send({
@@ -63,6 +63,8 @@ router.get("/api/fees/:id", auth, async (req, res) => {
 // Update single Fee
 router.patch("/api/fees/:id", auth, async(req, res) => {
 
+    try {
+
     await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin);
 
     const updates = Object.keys(req.body);
@@ -73,11 +75,10 @@ router.patch("/api/fees/:id", auth, async(req, res) => {
     }
 
     const isFeeTypeValid = utils.fee_types.includes(req.body.fee_type);
-    if (!isFeeTypeValid) {
+    if (!isFeeTypeValid && req.body.fee_type) {
         throw new Error("Fee type can only be flat or percentage");
     }
     const _id = req.params.id;
-    try {
         const fee = await Fees.findOne({ _id });
         if (!fee) {
             return res.status(404).send({ error: "fee not found" });

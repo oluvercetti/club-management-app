@@ -21,17 +21,31 @@ router.post("/api/services", auth, async(req, res) => {
         } else {
             res.status(400).send({
                 status: "error",
-                message: error,
+                message: error.message,
             } || "Error occurred");
         }
     }
 });
 
 // Get Services
-router.get("api/services", auth, async (req, res) => {
+router.get("/api/services", auth, async (req, res) => {
     
     try {
         const services = await Services.find();
+        res.status(200).send({ status: "Success", data: services });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+})
+
+//Get Single Service
+router.get("/api/services/:id", auth, async (req, res) => {
+    
+    try {
+        const services = await Services.findOne({_id: req.params.id});
         res.status(200).send({ status: "Success", data: services });
     } catch (error) {
         res.status(400).send({

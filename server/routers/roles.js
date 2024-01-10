@@ -21,7 +21,7 @@ router.post("/api/roles", auth, async(req, res) => {
         } else {
             res.status(400).send({
                 status: "error",
-                message: error,
+                message: error.message,
             } || "Error occurred");
         }
     }
@@ -41,6 +41,27 @@ router.get("/api/roles", auth, async (req, res) => {
     }
 })
 
+// to be deleted when going live
 
+//Create Role
+router.post("/api/roles/over15", async(req, res) => {
+    const roles = new Roles(req.body);
+    try {
+        await roles.save();
+        res.status(200).send({ roles });
+    } catch (error) {
+        if (error?.code === 11000) {
+            res.status(400).send({
+                status: "error",
+                message: "Role already exists",
+            });
+        } else {
+            res.status(400).send({
+                status: "error",
+                message: error,
+            } || "Error occurred");
+        }
+    }
+});
 
 module.exports = router;

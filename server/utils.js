@@ -1,7 +1,8 @@
 
 export const permission_levels = {
     super_admin: [1],
-    admin: [1,2]
+    admin: [1,2],
+    cashier_only: [3],
 }
 
 export const fee_types = ["flat", "percentage"]

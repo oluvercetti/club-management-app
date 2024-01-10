@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 // import { Schema, model } from "mongoose";
 const transactionsSchema = new mongoose.Schema({
 
-    transaction_id: {
+    trans_id: {
         type: Number,
         unique: true,
     },
 
-    transaction_type: {
+    trans_type: {
         type: String,
         required: true,
     },
