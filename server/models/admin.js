@@ -102,6 +102,16 @@ adminSchema.statics.findByCredentials = async(username, password) => {
     return admin;
 };
 
+adminSchema.statics.checkUserPermission = async(role_id, allowed_roles) => {
+    
+    const isAllowed = allowed_roles.includes(role_id);
+    if (!isAllowed) {
+        throw new Error("User can not perform this action");
+    }
+
+    return true;
+};
+
 adminSchema.pre("save", async function(next) {
     const admin = this;
 

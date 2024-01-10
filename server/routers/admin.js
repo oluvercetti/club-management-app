@@ -6,12 +6,16 @@ const Roles = require("../models/roles");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");
+const permissions = require("../utils").permission_levels;
 
 // POST /admin
 
-router.post("/api/admin/create", async(req, res) => {
+router.post("/api/admin", auth, async(req, res) => {
     const admin = new Admin(req.body);
     try {
+
+        await Admin.checkUserPermission(req.admin.role, permissions.super_admin);
+        
         const role = await Roles.findOne({ role_id: req.body.role});
         if(!role){
             return res.status(400).send({ status: "error", message: "Role does not exist" });
@@ -37,7 +41,7 @@ router.post("/api/admin/create", async(req, res) => {
         } else {
             res.status(400).send({
                 status: "error",
-                message: error,
+                message: error?.message,
             } || "Error occurred");
         }
     }
@@ -190,18 +194,31 @@ router.patch("/api/admin/changepassword", auth, async(req, res) => {
     }
 });
 
-router.post("/api/admin/updateuser", auth, async(req, res) => {
-
+router.get("/api/admin/users", auth, async (req, res) => {
+    
     try {
-        if(req.admin.role !== 1){
-            return res.status(400).send({ error: "You do not have permission" });
-        }
-        const user = await Admin.findOne({ _id: req.body.user_id});
-        user.status = !user.status;
-        await user.save();
-        res.send(req.admin);
-    } catch (err) {
-        res.status(400).send({ error: "Error occurred", err });
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        const users = await Admin.find();
+        res.status(200).send({ status: "Success", data: users });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
     }
-});
+})
+
+router.get("/api/admin/users/:id", auth, async (req, res) => {
+    
+    try {
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        const user = await Admin.findOne({_id: req.params.id});
+        res.status(200).send({ status: "Success", data: user });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+})
 module.exports = router;

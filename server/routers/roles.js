@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const Roles = require("../models/roles");
+const Admin = require("../models/admin");
+const permissions = require("../utils").permission_levels;
 
-//Create Roles
-router.post("/api/role/create", auth, async(req, res) => {
+//Create Role
+router.post("/api/roles", auth, async(req, res) => {
     const roles = new Roles(req.body);
     try {
+        await Admin.checkUserPermission(req.admin.role, permissions.super_admin);
         await roles.save();
         res.status(200).send({ roles });
     } catch (error) {
@@ -25,7 +28,7 @@ router.post("/api/role/create", auth, async(req, res) => {
 });
 
 // Get Roles
-router.get("api/roles", auth, async (req, res) => {
+router.get("/api/roles", auth, async (req, res) => {
     
     try {
         const roles = await Roles.find();

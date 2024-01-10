@@ -28,6 +28,12 @@ const feesSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+feesSchema.methods.toJSON = function() {
+    const fees = this;
+    const feesObject = fees.toObject();
+    delete feesObject.__v;
+    return feesObject;
+};
 
 const Fees = mongoose.model("Fees", feesSchema);
 module.exports = Fees;
