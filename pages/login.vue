@@ -2,11 +2,14 @@
     <b-container fluid>
         <b-row class="justify-content-md-center text-center my-4">
             <b-col md="12">
+                <AppLogo width="150" height="150"/>
+            </b-col>
+            <b-col md="12">
                 <h2><b-icon icon="key" aria-hidden="true" /> User Login</h2>
             </b-col>
         </b-row>
         <b-row class="justify-content-md-center">
-            <b-col md="3">
+            <b-col md="4">
                 <b-form @submit.prevent="login">
                     <b-form-group label="Username:" label-for="username">
                         <b-form-input id="username" v-model="form.username" type="text" required placeholder="Enter username" />
@@ -88,9 +91,13 @@ export default {
             };
             this.isLoading = true;
 
-            return this.$store.dispatch("loginAdminUser", payload).then(() => {
+            return this.$store.dispatch("loginAdminUser", payload).then((response) => {
                 this.$store.commit("setIsAuthenticated", true);
-                this.$router.push("/admin");
+                if(response.role <= 2) {
+                    this.$router.push("/dashboard/admin");
+                }else {
+                    this.$router.push("/dashboard/user");
+                }
             }).catch((err) => {
                 this.$bvToast.toast(err.response.data.message, {
                     title: "Error",
