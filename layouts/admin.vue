@@ -1,23 +1,32 @@
 <template>
     <div>
         <ErrorBoundary>
-            <div class="admin-container">
-                <AppHeader />
-                <Nuxt />
+            <div>
+                <b-row>
+                    <b-col md="2" sm="2">
+                        <AppSidebar />
+                    </b-col>
+                    <b-col md="10" sm="10">
+                        <div class="main-container">
+                            <Nuxt />
+                        </div>
+                    </b-col>
+                </b-row>
             </div>
         </ErrorBoundary>
     </div>
 </template>
 
 <script>
-export default {
 
+export default {
+    middleware: "authenticate"
 };
 </script>
-
 <style scoped>
-.admin-container {
-  height: 100vh;
-  padding: 0 40px;
+.main-container {
+    min-width: 100%;
+    color: #444;
+    min-height: 80vh;
 }
 </style>

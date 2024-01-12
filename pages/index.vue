@@ -6,7 +6,7 @@ export default {
 
     head() {
         return {
-            title: "Admin Dashboard -  NMBBS",
+            title: "Admin Dashboard -  SF",
         };
     },
 };

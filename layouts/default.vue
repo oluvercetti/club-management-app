@@ -1,12 +1,10 @@
 <template>
-    <div>
+    <div class="main-container">
         <ErrorBoundary>
-            <div class="default-container">
-                <div class="main-container">
+                <div class="page-container">
                     <Nuxt />
                 </div>
                 <AppFooter />
-            </div>
         </ErrorBoundary>
     </div>
 </template>
@@ -16,20 +14,16 @@ export default {
 
 };
 </script>
-<style>
-.default-container {
-
-    /* Apply padding on screens that are larger than 840px */
-  @media screen and (min-width: 840px) {
-    padding: 0 40px;
-  }
-}
+<style scoped>
 
 .main-container {
     display: flex;
     min-width: 100%;
-    align-items: center;
     color: #444;
-    min-height: 80vh;
+    flex-flow: column;
+}
+
+.page-container {
+  flex: 1 0 auto;
 }
 </style>

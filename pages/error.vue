@@ -19,7 +19,7 @@ export default {
 
     head() {
         return {
-            title: "Error -  NMBBS",
+            title: "Error -  Dashbaord",
         };
     },
 
