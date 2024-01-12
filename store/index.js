@@ -4,7 +4,6 @@ export const state = () => ({
     authToken: null,
     locationList: null,
     loginInfo: {},
-    adminProfile: {},
     isAuthenticated: false,
 });
 
@@ -34,16 +33,13 @@ export const mutations = ({
         state.locationList = value;
     },
 
-    setAdminProfile(state, value) {
-        state.adminProfile = value;
-    },
-
     setIsAuthenticated(state, value) {
         state.isAuthenticated = value;
     },
 
     setAuthCookies(state, value) {
-        this.$cookies.set("nmbbs", value, { secure: true, sameSite: "none" });
+        console.log("🚀 | setAuthCookies | value:", value);
+        this.$cookies.set("sftoken", value, { path:"/dashboard"});
     },
 });
 
@@ -52,7 +48,9 @@ export const actions = ({
     loginAdminUser({ commit }, payload) {
         return this.$axios.post("/api/admin/login", payload).then(async(response) => {
             await commit("setAuthToken", response.data.token);
-            commit("setAuthCookies", JSON.stringify(response.data.token));
+            await commit("setUserInfo", response.data.data);
+            await commit("setAuthCookies", JSON.stringify(response.data.token));
+            return response.data.data;
         });
     },
 
@@ -67,6 +65,7 @@ export const actions = ({
 
     getAdminUserProfile({ commit }) {
         return this.$axios.get("/api/admin/me").then((response) => {
+            console.log("🚀 | returnthis.$axios.get | response:", response);
             commit("setIsAuthenticated", true);
             return response.data;
         });
@@ -143,12 +142,12 @@ export const actions = ({
         });
     },
 
-    nuxtServerInit({ commit, dispatch }, { req, redirect, route }) {
+    async nuxtServerInit({ commit, dispatch }, { req, redirect, route }) {
         const path = route.path;
 
         // Path init functions
-        const adminServerInit = async() => {
-            const authTokenCookie = this.$cookies.get("nmbbs");
+    
+            const authTokenCookie = this.$cookies.get("sftoken");
             if (!authTokenCookie) {
                 return;
             }
@@ -157,22 +156,8 @@ export const actions = ({
             await dispatch("getAdminUserProfile").catch(() => {
                 redirect("/login");
             });
-        };
+        
 
-        // Map the server init function to the appropriate path.
-        const initMap = {
-            "/admin": adminServerInit,
-        };
-
-        // Match the current path we're on to the path specified in the path map.
-        // If a match is found, run it.
-        // If no match is found, just check if there are auth cookies and set it.
-        const paths = Object.keys(initMap);
-        const matchedPath = paths.find(p => path.startsWith(p));
-        const serverInit = initMap[matchedPath];
-        if (serverInit) {
-            return serverInit();
-        }
     },
 
 });

@@ -1,7 +1,7 @@
 <script>
 export default {
     asyncData({ redirect }) {
-        redirect("/admin/list/location");
+        redirect("/dashboard/admin/settings");
     },
 
     head() {
