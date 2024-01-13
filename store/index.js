@@ -2,8 +2,6 @@
 export const state = () => ({
     userInfo: {},
     authToken: null,
-    locationList: null,
-    loginInfo: {},
     isAuthenticated: false,
 });
 
@@ -11,10 +9,6 @@ export const getters = ({
     getUserInfo: state => state.userInfo,
 
     getAuthToken: state => state.authToken,
-
-    getLocationList: state => state.locationList,
-
-    getLoginInfo: state => state.loginInfo,
 
     getIsAuthenticated: state => state.isAuthenticated,
 
@@ -29,27 +23,21 @@ export const mutations = ({
         state.authToken = value;
     },
 
-    setLocationList(state, value) {
-        state.locationList = value;
-    },
-
     setIsAuthenticated(state, value) {
         state.isAuthenticated = value;
     },
 
-    setAuthCookies(state, value) {
-        console.log("🚀 | setAuthCookies | value:", value);
-        this.$cookies.set("sftoken", value, { path:"/dashboard"});
-    },
 });
 
 export const actions = ({
     // Admin actions
     loginAdminUser({ commit }, payload) {
-        return this.$axios.post("/api/admin/login", payload).then(async(response) => {
-            await commit("setAuthToken", response.data.token);
-            await commit("setUserInfo", response.data.data);
-            await commit("setAuthCookies", JSON.stringify(response.data.token));
+         return this.$axios.post("/api/admin/login", payload).then((response) => {
+            this.$cookies.set("sftoken", JSON.stringify(response.data.token), {
+                path: "/"
+            });
+            commit("setAuthToken", response.data.token);
+            commit("setUserInfo", response.data.data);
             return response.data.data;
         });
     },
@@ -65,28 +53,34 @@ export const actions = ({
 
     getAdminUserProfile({ commit }) {
         return this.$axios.get("/api/admin/me").then((response) => {
-            console.log("🚀 | returnthis.$axios.get | response:", response);
+            commit("setUserInfo", response.data.data);
             commit("setIsAuthenticated", true);
             return response.data;
         });
     },
 
     // Location actions
-    createNewLocation(_, payload) {
-        return this.$axios.post("/api/admin/locations", payload).then((response) => {
+    createNewUser(_, payload) {
+        return this.$axios.post("/api/admin", payload).then((response) => {
             return response.data;
         });
     },
 
-    updateLocation(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/locations/${id}`, payload).then((response) => {
+    updateUser(_, { id, payload }) {
+        return this.$axios.patch(`/api/updateuser/${id}`, payload).then((response) => {
             return response.data;
         });
     },
 
-    getLocationList({ commit }) {
-        return this.$axios.get("/api/admin/locations").then((response) => {
-            commit("setLocationList", response.data.data);
+
+    changePassword(_, { payload }) {
+        return this.$axios.patch(`/api/admin/changepassword`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getFees() {
+        return this.$axios.get("/api/fees").then((response) => {
             return response.data;
         });
     },
@@ -142,19 +136,16 @@ export const actions = ({
         });
     },
 
-    async nuxtServerInit({ commit, dispatch }, { req, redirect, route }) {
-        const path = route.path;
-
-        // Path init functions
+    async nuxtServerInit({ commit, dispatch }) {
     
             const authTokenCookie = this.$cookies.get("sftoken");
             if (!authTokenCookie) {
                 return;
             }
 
-            await commit("setAuthToken", authTokenCookie);
-            await dispatch("getAdminUserProfile").catch(() => {
-                redirect("/login");
+            commit("setAuthToken", authTokenCookie);
+            await dispatch("getAdminUserProfile").catch((err) => {
+                this.$router.push("/login");
             });
         
 

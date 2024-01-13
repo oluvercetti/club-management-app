@@ -127,7 +127,15 @@ router.get("/api/admin/me/avatar", auth, (req, res) => {
 
 //GET /admin/
 router.get('/api/admin/me', auth, async (req, res) => {
-    res.status(200).send({status: "Success"})
+    try {
+        const admin = await Admin.findOne({username: req.admin.username})
+        res.status(200).send({status: "Success", data: admin})
+    } catch (e) {
+        res.status(400).send({
+            status: "error",
+            message: e.message,
+        } || "Error occurred");
+    }
 })
 
 router.patch("/api/admin/me", auth, async(req, res) => {
