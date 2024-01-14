@@ -1,13 +1,25 @@
 <template>
-    <div>
-        Admin Settings
-    </div>
+    <b-container fluid class="mt-3" w-75>
+        <h2><b-icon icon="gear-fill" aria-hidden="true" /> Admin Settings</h2>
+        <b-nav tabs justified>
+            <b-nav-item to="/dashboard/admin/settings/transactions" exact exact-active-class="active">
+                Transactions
+            </b-nav-item>
+            <b-nav-item to="/dashboard/admin/settings/users" exact exact-active-class="active">
+                Users
+            </b-nav-item>
+            <b-nav-item to="/dashboard/admin/settings/balances" exact exact-active-class="active">
+                Balances
+            </b-nav-item>
+        </b-nav>
+        <NuxtChild />
+    </b-container>
 </template>
 
 <script>
 export default {
-layout: "admin"
-}
+    layout: "admin",
+};
 </script>
 
 <style lang="scss" scoped></style>

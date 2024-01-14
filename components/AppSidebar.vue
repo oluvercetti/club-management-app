@@ -6,14 +6,14 @@
         <div class="sidebar-container__menu">
             <b-nav vertical>
 
-                <b-nav-item to="/" exact exact-active-class="active">
-                    Cash Logdement
+                <b-nav-item to="/dashboard/admin/lodgement" exact exact-active-class="active">
+                    <b-icon icon="cash" aria-hidden="true" class="mr-3"></b-icon> Cash Logdement
                 </b-nav-item>
-                <b-nav-item to="/admin" active-class="active">
-                    Cash Purchase
+                <b-nav-item to="/dashboard/admin/purchase" active-class="active">
+                    <b-icon icon="cash" aria-hidden="true" class="mr-3"></b-icon> Cash Purchase
                 </b-nav-item>
-                <b-nav-item to="/admin" active-class="active">
-                    Settings
+                <b-nav-item to="/dashboard/admin/settings" active-class="active">
+                    <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
             </b-nav>
 
