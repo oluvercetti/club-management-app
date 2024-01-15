@@ -12,7 +12,12 @@ const transactionsSchema = new mongoose.Schema({
         required: true,
     },
 
-    dancer: {
+    mode_of_payment: {
+        type: String,
+        required: true,
+    },
+
+    username: {
         type: String,
         required: true,
     },

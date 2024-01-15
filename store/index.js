@@ -59,9 +59,16 @@ export const actions = ({
         });
     },
 
-    // Location actions
+    // User actions
     createNewUser(_, payload) {
         return this.$axios.post("/api/admin", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+
+    getAllUsers(_, payload) {
+        return this.$axios.get("/api/admin/users", payload).then((response) => {
             return response.data;
         });
     },
@@ -79,6 +86,8 @@ export const actions = ({
         });
     },
 
+    //Fees actions
+
     getFees() {
         return this.$axios.get("/api/fees").then((response) => {
             return response.data;
@@ -91,7 +100,7 @@ export const actions = ({
         });
     },
 
-    // Trip Actions
+    // Route Actions
     createRoute(_, payload) {
         return this.$axios.post("/api/admin/trips/create", payload).then((response) => {
             return response.data;
@@ -132,6 +141,13 @@ export const actions = ({
 
     fetchTicketList() {
         return this.$axios.get("/api/admin/tickets/getAlltickets").then((response) => {
+            return response.data;
+        });
+    },
+
+    //Roles actions
+    fetchRouteList() {
+        return this.$axios.get("/api/roles").then((response) => {
             return response.data;
         });
     },

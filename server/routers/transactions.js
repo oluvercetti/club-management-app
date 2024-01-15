@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const Transactions = require("../models/transactions");
+const Admin = require("../models/admin");
+const utils = require("../utils");
 
 //Create transaction
 router.post("/api/admin/transactions", auth, async (req, res) => {
@@ -11,8 +13,13 @@ router.post("/api/admin/transactions", auth, async (req, res) => {
     });
 
     try {
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.cashier_only);
+        const isTransTypeValid = utils.trans_types.includes(req.body.trans_type);
+        if (!isTransTypeValid) {
+            throw new Error("Transaction type can only be lodgement or purchase");
+        }
         await transaction.save();
-        res.status(200).send({ transaction, message: "transaction saved successfully" });
+        res.status(200).send({ transaction, message: "Transaction saved successfully" });
 
     } catch (error) {
         res.status(400).send({
