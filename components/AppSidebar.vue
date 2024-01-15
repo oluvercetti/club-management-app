@@ -15,9 +15,13 @@
                 <b-nav-item to="/dashboard/admin/settings" active-class="active">
                     <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
+                <b-nav-item to="/dashboard/admin/audit" active-class="active">
+                    <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Audit Log
+                </b-nav-item>
             </b-nav>
-
-            <b-button v-if="isAuthenticated" @click="handleAdminLogout()">
+        </div>
+        <div class="sidebar-container__logout">
+            <b-button variant="danger" size="lg" block v-if="isAuthenticated" @click="handleAdminLogout()">
                 Logout
             </b-button>
         </div>
@@ -58,8 +62,15 @@ export default {
     flex-flow: column;
     align-items: center;
 
-
     &__menu {
+        margin-bottom: 1rem;
+
+        & > ul > li > a {
+            color: #FFF;
+        }
+    }
+
+    &__logout {
         flex: 1 0 auto
     }
 
