@@ -16,7 +16,7 @@
                     <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
                 <b-nav-item to="/dashboard/admin/audit" active-class="active">
-                    <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Audit Log
+                    <b-icon icon="book" aria-hidden="true" class="mr-3"></b-icon> Audit Log
                 </b-nav-item>
             </b-nav>
         </div>
@@ -37,6 +37,22 @@ export default {
     computed: {
         isAuthenticated() {
             return this.$store.getters.getIsAuthenticated;
+        },
+
+        canSeeCashLodgement() {
+            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 3;
+        },
+
+        canSeeCashPurchase() {
+            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 2;
+        },
+
+        canSeeSettings() {
+            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 2;
+        },
+
+        canSeeCashAuditLog() {
+            return this.$store.getters.getUserInfo.role === 1;
         },
     },
     methods: {
