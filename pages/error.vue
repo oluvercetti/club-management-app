@@ -5,7 +5,7 @@
             <template #dismiss-title>
             </template>
         </b-alert>
-        <b-button size="sm" variant="outline-secondary" to="/user">
+        <b-button size="sm" variant="outline-secondary" to="/dashboard/admin">
             Go Home
         </b-button>
     </div>
