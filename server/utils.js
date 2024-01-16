@@ -8,3 +8,5 @@ export const permission_levels = {
 export const fee_types = ["flat", "percentage"]
 
 export const trans_types = ["lodgement", "purchase"]
+
+export const wallet_types = ["user", "admin"]
