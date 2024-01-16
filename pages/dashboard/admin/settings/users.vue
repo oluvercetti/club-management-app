@@ -1,7 +1,7 @@
 <template>
     <div class="mt-3">
         <b-container>
-            <b-button variant="primary" @click="showNewUserModal = !showNewUserModal">
+            <b-button variant="primary" class="mr-3" @click="showNewUserModal = !showNewUserModal">
                 Create New User
             </b-button>
             <b-button variant="primary" @click="showNewUserModal = !showNewUserModal">
@@ -43,7 +43,7 @@
         </b-table>
 
         <b-modal v-model="showNewUserModal" hide-footer title="New User">
-            <b-form @submit.prevent="handleCreateNewUser()">
+            <b-form autocomplete="false" @submit.prevent="handleCreateNewUser()">
                 <b-form-group label="Role" label-for="role">
                     <b-form-select v-model="newUser.role" :options="computedRoleList" required></b-form-select>
                 </b-form-group>
@@ -51,10 +51,10 @@
                     <b-form-input id="name" type="text" v-model="newUser.name" required />
                 </b-form-group>
                 <b-form-group label="Username" label-for="newUsername">
-                    <b-form-input id="newUsername" type="text" v-model="newUser.username" autocomplete="off" required />
+                    <b-form-input id="newUsername" type="text" v-model="newUser.username" required />
                 </b-form-group>
                 <b-form-group label="Password" label-for="newPassword" v-if="newUser.role < 4">
-                    <b-form-input id="newPassword" type="password" v-model="newUser.password" autocomplete="off" required />
+                    <b-form-input id="newPassword" type="password" v-model="newUser.password" required />
                 </b-form-group>
                 <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
                     <span class="mr-2">Please wait...</span>
@@ -208,6 +208,8 @@ export default {
             this.selectedUser.username = data.username;
             this.selectedUser.role = data.role;
             this.selectedUser.id = data.id;
+            this.selectedUser.name = data.name;
+            this.selectedUser.status = data.status;
             this.showExistingUserModal = true;
         },
 
