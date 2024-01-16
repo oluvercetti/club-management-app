@@ -1,7 +1,8 @@
 <template>
     <div class="mt-3">
+        <h2 class="mb-3"><b-icon icon="cash" class="mr-3" aria-hidden="true" /> Cash Lodgement</h2>
         <b-button variant="primary" @click="showNewLodgementModal = !showNewLodgementModal">
-            Process New Lodgement
+            New Cash Lodgement
         </b-button>
         <b-table ref="transactions" :items="transactionList" :fields="fields" :busy="isLoading" class="mt-4 small-font"
             striped hover outlined sort-icon-left>
@@ -32,6 +33,18 @@
                                 -- Please select a user --
                             </b-form-select-option>
                         </template>
+                    </b-form-select>
+                </b-form-group>
+                <b-form-group label="Transaction Type" label-for="transtype">
+                    <b-form-select v-model="newLodgement.trans_type" required>
+                        <template #first>
+                            <b-form-select-option value="" disabled>
+                                -- Please select --
+                            </b-form-select-option>
+                        </template>
+                        <b-form-select-option value="pos">POS</b-form-select-option>
+                        <b-form-select-option value="cash">Cash</b-form-select-option>
+                        <b-form-select-option value="transfer">Transfer</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
                 <b-form-group label="Service Type" label-for="service_type">
@@ -93,7 +106,7 @@
 
 <script>
 export default {
-
+    layout: "admin",
     data() {
         return {
             transactionList: [],
@@ -112,6 +125,7 @@ export default {
                 amount: null,
                 coordinator: null,
                 service_type: null,
+                trans_type: null,
             },
             selectedLocation: {
                 id: null,
