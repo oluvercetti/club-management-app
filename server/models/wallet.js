@@ -20,7 +20,7 @@ const walletSchema = new mongoose.Schema({
         required: true,
     },
 
-    value: {
+    balance: {
         type: Number,
         required: true,
     }

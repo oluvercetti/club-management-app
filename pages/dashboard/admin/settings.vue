@@ -8,8 +8,8 @@
             <b-nav-item to="/dashboard/admin/settings/users" exact exact-active-class="active">
                 Users
             </b-nav-item>
-            <b-nav-item to="/dashboard/admin/settings/balances" exact exact-active-class="active">
-                Balances
+            <b-nav-item to="/dashboard/admin/settings/services" exact exact-active-class="active">
+                Fees and Services
             </b-nav-item>
         </b-nav>
         <NuxtChild />

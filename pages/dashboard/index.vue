@@ -1,5 +1,15 @@
+<template>
+    <div>
+        No mans land
+    </div>
+</template>
+
 <script>
-export default {
-    middleware: "auth"
-};
+    export default {
+        layout: "dashboard",
+    }
 </script>
+
+<style lang="scss" scoped>
+
+</style>

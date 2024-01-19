@@ -99,9 +99,9 @@
                         <b-button variant="primary" @click="handleSelectedTransaction(row.item)">
                             <b-icon icon="pencil"></b-icon>
                         </b-button>
-                        <b-button variant="danger" @click="printTransactionReceipt(row.item)">
+                        <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
                             <b-icon icon="printer"></b-icon>
-                        </b-button>
+                        </b-button> -->
                     </div>
                 </template>
                 <template #table-busy>
@@ -114,19 +114,19 @@
         </b-container>
 
         <b-modal v-model="showViewExistingTransaction" hide-footer title="View Lodgement">
-            <b-form @submit.prevent="updateLocation(selectedLocation)">
+            <b-form @submit.prevent="printTransactionReceipt(selectedPurchase)">
                 <b-form-group label="Name" label-for="edit-name">
-                    <b-form-input id="edit-name" v-model="selectedLocation.location" required />
+                    <b-form-input id="edit-name" v-model="selectedPurchase.location" required />
                 </b-form-group>
                 <b-form-group label="Shortcode" label-for="edit-shortcode">
-                    <b-form-input id="edit-shortcode" v-model="selectedLocation.shortcode" minlength="3" required />
+                    <b-form-input id="edit-shortcode" v-model="selectedPurchase.shortcode" minlength="3" required />
                 </b-form-group>
                 <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
                     <span class="mr-2">Saving...</span>
                     <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                 </b-button>
                 <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save Location
+                    Reprint receipt
                 </b-button>
                 <b-button type="button" @click="showViewExistingTransaction = !showViewExistingTransaction">
                     Cancel
@@ -164,7 +164,7 @@ export default {
                 { key: "quantity", label: "Bundles", sortable: true },
                 { key: "amount", label: "Amount", sortable: true },
             ],
-            selectedLocation: {
+            selectedPurchase: {
                 id: null,
                 name: null,
                 amount: null,
@@ -281,36 +281,13 @@ export default {
         },
 
         handleSelectedTransaction(data) {
-            this.selectedLocation.location = data.location;
-            this.selectedLocation.shortcode = data.shortcode;
-            this.selectedLocation.id = data.id;
+            this.selectedPurchase.id = data.id;
+            this.selectedPurchase.name = data.name;
+            this.selectedPurchase.amount = data.amount;
+            this.selectedPurchase.trans_type = data.trans_type;
+            this.selectedPurchase.coordinator = data.coordinator;
+            this.selectedPurchase.service_type = data.service_type;
             this.showViewExistingTransaction = true;
-        },
-
-        updateLocation(data) {
-            const id = data.id;
-            const payload = {
-                location: data.location,
-                shortcode: data.shortcode?.toUpperCase(),
-            };
-            this.isLoading = true;
-            return this.$store.dispatch("updateLocation", { id, payload }).then((response) => {
-                this.$bvToast.toast("Location updated successfully", {
-                    title: "Success",
-                    variant: "success",
-                    delay: 300,
-                });
-                this.showViewExistingTransaction = false;
-                this.isLoading = false;
-                this.handleGetAllTransactions();
-            }).catch((error) => {
-                this.$bvToast.toast(error?.response?.data?.message, {
-                    title: "Error",
-                    variant: "danger",
-                    delay: 300,
-                });
-                this.isLoading = false;
-            });
         },
 
         printTransactionReceipt(data) {

@@ -51,6 +51,19 @@ const transactionsSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+transactionsSchema.pre("save", function (next) {
+    // Access the document being saved
+    const transaction = this;
+    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    // Create a unique identifier based on amount, denomination, trans_id, and username
+    const uniqueIdentifier = `${currentDate}${transaction.denomination}${transaction.amount}${transaction.trans_id}`.padEnd(30, '0');
+
+    // Set the trans_id to the unique identifier
+    transaction.trans_id = uniqueIdentifier;
+
+    // Continue with the save operation
+    next();
+});
 
 const Transactions = mongoose.model("Transactions", transactionsSchema);
 module.exports = Transactions;
