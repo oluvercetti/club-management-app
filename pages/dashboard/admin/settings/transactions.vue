@@ -34,7 +34,7 @@
                     <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                 </b-button>
                 <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save Location
+                    Print
                 </b-button>
                 <b-button type="button" @click="showViewExistingTransaction = !showViewExistingTransaction">
                     Cancel

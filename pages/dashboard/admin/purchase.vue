@@ -47,9 +47,6 @@
                         <b-button v-else type="submit" variant="primary" class="mr-3">
                             Add Purchase
                         </b-button>
-                        <b-button type="button" @click="showNewLodgementModal = !showNewLodgementModal">
-                            Cancel
-                        </b-button>
                     </b-form>
                 </b-col>
             </b-form-row>
@@ -80,23 +77,23 @@
                     <b-card-text>{{ calculateTotalAmount() | format_amount }}</b-card-text>
                 </b-card>
                 <b-container class="mt-3" fluid>
-                <b-button type="button" variant="danger" @click="clearGrid()">
-                    Clear
-                </b-button>
+                    <b-button type="button" variant="danger" @click="clearGrid()">
+                        Clear
+                    </b-button>
 
-                <b-button class="ml-4" type="button" variant="success" @click="clearGrid()">
-                    Complete Purchase
-                </b-button>
+                    <b-button class="ml-4" type="button" variant="success" @click="clearGrid()">
+                        Complete Purchase
+                    </b-button>
                 </b-container>
             </b-container>
         </div>
-        <b-container v-if="transactionList.length > 0">
+        <b-container v-if="purchaseList.length > 0">
             <h3 class="mb-3">Previous Purchases</h3>
-            <b-table ref="transactions" :items="transactionList" :fields="fields" :busy="isLoading" class="mt-4 small-font"
+            <b-table ref="transactions" :items="purchaseList" :fields="fields" :busy="isLoading" class="mt-4 small-font"
                 striped hover outlined sort-icon-left>
                 <template #cell(actions)="row">
                     <div class="d-flex justify-content-around">
-                        <b-button variant="primary" @click="handleSelectedTransaction(row.item)">
+                        <b-button variant="primary" @click="handleSelectedPurchase(row.item)">
                             <b-icon icon="pencil"></b-icon>
                         </b-button>
                         <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
@@ -118,8 +115,20 @@
                 <b-form-group label="Name" label-for="edit-name">
                     <b-form-input id="edit-name" v-model="selectedPurchase.location" required />
                 </b-form-group>
-                <b-form-group label="Shortcode" label-for="edit-shortcode">
-                    <b-form-input id="edit-shortcode" v-model="selectedPurchase.shortcode" minlength="3" required />
+                <b-form-group label="Denomination" label-for="denomination">
+                    <b-form-select v-model="selectedPurchase.denomination" disabled>
+                        <b-form-select-option value="100">N100</b-form-select-option>
+                        <b-form-select-option value="200">N200</b-form-select-option>
+                        <b-form-select-option value="500">N500</b-form-select-option>
+                        <b-form-select-option value="1000">N1000</b-form-select-option>
+                    </b-form-select>
+                </b-form-group>
+                <b-form-group label="Transaction Type" label-for="transtype">
+                    <b-form-select v-model="selectedPurchase.trans_type" disabled>
+                        <b-form-select-option value="pos">POS</b-form-select-option>
+                        <b-form-select-option value="cash">Cash</b-form-select-option>
+                        <b-form-select-option value="transfer">Transfer</b-form-select-option>
+                    </b-form-select>
                 </b-form-group>
                 <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
                     <span class="mr-2">Saving...</span>
@@ -141,14 +150,12 @@ export default {
     layout: "admin",
     data() {
         return {
-            transactionList: [],
+            purchaseList: [],
             fields: [
                 { key: "createdAt", label: "Date", sortable: true },
                 { key: "trans_id", label: "ID" },
                 { key: "mode_of_payment", label: "Mode", sortable: true },
-                { key: "username", label: "User", sortable: true },
                 { key: "amount", label: "Amount", sortable: true },
-                { key: "service_type", label: "Service", sortable: true },
                 { key: "coordinator", label: "Coordinator", sortable: true },
                 "Actions",
             ],
@@ -166,37 +173,34 @@ export default {
             ],
             selectedPurchase: {
                 id: null,
-                name: null,
+                denomination: null,
                 amount: null,
                 trans_type: null,
                 coordinator: null,
                 service_type: null,
             },
-            usersList: [],
-            serviceTypeList: [],
-            showNewPurchaseModal: false,
             showViewExistingTransaction: false,
             isLoading: false,
-            adminBalance: null,
             imageSource: [
                 { key: "100", value: "/img/100naira.webp" },
                 { key: "200", value: "/img/200naira.jpeg" },
                 { key: "500", value: "/img/500naira.webp" },
                 { key: "1000", value: "/img/1000naira.webp" },
-            ]
+            ],
+            trans_tag: random_alpha_numeric(4),
         };
     },
 
     fetch() {
-        // this.handleGetAllTransactions();
-        // this.handleGetAllUsers();
+        this.handleGetAllPurchases();
+        this.handleGetAllUsers();
     },
 
     fetchOnServer: false,
 
     computed: {
-        computedTransactionList() {
-            return this.transactionList.map((data) => {
+        computedPurchaseList() {
+            return this.purchaseList.map((data) => {
                 return {
                     trans_id: data.trans_id,
                     mode_of_payment: data.mode_of_payment,
@@ -209,29 +213,6 @@ export default {
             });
         },
 
-        dancersList() {
-            return this.usersList.map((data) => {
-                if (data.role === 4) {
-                    return data;
-                }
-            });
-        },
-
-        coordinatorsList() {
-            return this.usersList.map((data) => {
-                if (data.role === 2) {
-                    return data;
-                }
-            });
-        },
-
-        computedServiceTypeList() {
-            return this.serviceTypeList.map((data) => {
-                return { value: data.name, text: data.name.toUpperCase() };
-            }
-            )
-        },
-
         computedAmount() {
             const quantity = this.form?.quantity * 100;
             return quantity * this.form?.denomination;
@@ -239,11 +220,11 @@ export default {
     },
 
     methods: {
-        handleGetAllTransactions() {
+        handleGetAllPurchases() {
             this.isLoading = true;
             return this.$store.dispatch("gettransactionList").then((response) => {
                 this.isLoading = false;
-                this.transactionList = response.data;
+                this.purchaseList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data, {
@@ -254,22 +235,25 @@ export default {
             });
         },
 
-        handleCreateNewLodgement() {
-            const payload = {
-                location: this.newLodgement.location,
-                shortcode: this.newLodgement.shortcode?.toUpperCase(),
-            };
+        handleCreateNewPurchase() {
+            const payload = this.gridItems.map(item => {
+                return {
+                    trans_id: this.trans_tag,
+                    mode_of_payment: item.mode_of_payment,
+                    amount: item.amount,
+                    denomination: item.denomination,
+                }
+            })
             this.isLoading = true;
-            return this.$store.dispatch("createNewTransaction", payload).then(() => {
-                this.$bvToast.toast("Transaction completed", {
+            return this.$store.dispatch("createNewPurchase", payload).then(() => {
+                this.$bvToast.toast("Purchase completed", {
                     title: "Success",
                     variant: "success",
                     delay: 300,
                 });
-                this.showNewPurchaseModal = false;
                 this.resetLocationValues();
                 this.isLoading = false;
-                this.handleGetAllTransactions();
+                this.handleGetAllPurchases();
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
@@ -280,13 +264,11 @@ export default {
             });
         },
 
-        handleSelectedTransaction(data) {
-            this.selectedPurchase.id = data.id;
-            this.selectedPurchase.name = data.name;
+        handleSelectedPurchase(data) {
+            this.selectedPurchase.trans_id = data.trans_id;
+            this.selectedPurchase.mode_of_payment = data.mode_of_payment;
             this.selectedPurchase.amount = data.amount;
-            this.selectedPurchase.trans_type = data.trans_type;
             this.selectedPurchase.coordinator = data.coordinator;
-            this.selectedPurchase.service_type = data.service_type;
             this.showViewExistingTransaction = true;
         },
 
@@ -309,7 +291,7 @@ export default {
                             variant: "success",
                             delay: 300,
                         });
-                        this.handleGetAllTransactions();
+                        this.handleGetAllPurchases();
                     });
                 }
             }).catch((err) => {
@@ -331,6 +313,15 @@ export default {
         calculateTotalAmount() {
             // Calculate the total amount by summing the amount of each item
             return this.gridItems.reduce((total, item) => total + item.amount, 0);
+        },
+
+
+        resetFeeValues() {
+            this.newFee = {
+                fee_name: null,
+                fee_type: null,
+                fee_value: null,
+            }
         },
 
         clearGrid() {

@@ -11,7 +11,7 @@
         </b-container>
         <b-row>
             <b-col md="12" sm="12" v-if="viewTable === 'fee'">
-                <b-button variant="primary" class="mr-3" @click="showNewUserModal = !showNewUserModal">
+                <b-button variant="primary" class="mr-3" @click="showNewFeeModal = !showNewFeeModal">
                     Create New Fee
                 </b-button>
                 <b-table ref="fees" :items="feesList" :fields="feeFields" :busy="isLoading" class="mt-4 small-font" striped
@@ -32,7 +32,7 @@
                 </b-table>
             </b-col>
             <b-col md="8" sm="12" v-if="viewTable === 'service'">
-                <b-button variant="primary" class="mr-3" @click="showNewUserModal = !showNewUserModal">
+                <b-button variant="primary" class="mr-3" @click="showNewServiceModal = !showNewServiceModal">
                     Create New Service
                 </b-button>
                 <b-table ref="services" :items="servicesList" :fields="serviceFields" :busy="isLoading"
@@ -87,8 +87,8 @@
             </b-form>
         </b-modal>
 
-        <b-modal v-model="showEditFeeModal" hide-footer title="Edit User">
-            <b-form @submit.prevent="handleUpdateFee(selectedUser)">
+        <b-modal v-model="showEditFeeModal" hide-footer title="Edit Fee">
+            <b-form @submit.prevent="handleUpdateFee(selectedFee)">
                 <b-form-group label="Fee name" label-for="feeName">
                     <b-form-input id="feeName" type="text" v-model="selectedFee.fee_name" required />
                 </b-form-group>
@@ -118,7 +118,7 @@
                     <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                 </b-button>
                 <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save User
+                    Save
                 </b-button>
                 <b-button type="button" @click="showEditFeeModal = !showEditFeeModal">
                     Cancel
@@ -144,7 +144,7 @@
         </b-modal>
 
         <b-modal v-model="showEditServiceModal" hide-footer title="Edit Service">
-            <b-form @submit.prevent="updatedUser(selectedUser)">
+            <b-form @submit.prevent="handleUpdateService(selectedService)">
                 <b-form-group label="Service Name" label-for="serviceName">
                     <b-form-input id="serviceName" type="text" v-model="selectedService.service_name" required />
                 </b-form-group>
@@ -318,16 +318,15 @@ export default {
             this.selectedFee.fee_name = data.fee_name;
             this.selectedFee.fee_type = data.fee_type;
             this.selectedFee.status = data.status;
-            this.showViewExistingTransaction = true;
+            this.showEditFeeModal = true;
         },
 
 
         handleSelectedService(data) {
             this.selectedService.id = data.id;
-            this.selectedService.fee_name = data.fee_name;
-            this.selectedFee.fee_type = data.fee_type;
+            this.selectedService.service_name = data.service_name;
             this.selectedFee.status = data.status;
-            this.showViewExistingTransaction = true;
+            this.showEditServiceModal = true;
         },
 
         handleUpdateFee(data) {
@@ -346,6 +345,32 @@ export default {
                     delay: 300,
                 });
                 this.showEditFeeModal = false;
+                this.isLoading = false;
+                this.handleGetAllFees();
+            }).catch((error) => {
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                this.isLoading = false;
+            });
+        },
+
+        handleUpdateService(data) {
+            const id = data.id;
+            const payload = {
+                service_name: this.selectedService.service_name,
+                status: this.selectedService.status,
+            };
+            this.isLoading = true;
+            return this.$store.dispatch("updateFee", { id, payload }).then((response) => {
+                this.$bvToast.toast("Service updated successfully", {
+                    title: "Success",
+                    variant: "success",
+                    delay: 300,
+                });
+                this.showEditServiceModal = false;
                 this.isLoading = false;
                 this.handleGetAllFees();
             }).catch((error) => {

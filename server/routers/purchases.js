@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
-const Lodgements = require("../models/lodgements");
+const Purchases = require("../models/purchases");
 const Admin = require("../models/admin");
 const utils = require("../utils");
 
-//Create lodgement
-router.post("/api/admin/lodgements", auth, async (req, res) => {
-    const lodgement = new Lodgements({
+//Create purchase
+router.post("/api/admin/purchases", auth, async (req, res) => {
+    const purchase = new Purchases({
         ...req.body,
         owner: req.admin._id,
     });
@@ -16,10 +16,10 @@ router.post("/api/admin/lodgements", auth, async (req, res) => {
         await Admin.checkUserPermission(req.admin.role, utils.permission_levels.cashier_only);
         const isTransTypeValid = utils.trans_types.includes(req.body.trans_type);
         if (!isTransTypeValid) {
-            throw new Error("Transaction type can only be lodgement or purchase");
+            throw new Error("Transaction type can only be purchase or purchase");
         }
-        await lodgement.save();
-        res.status(200).send({ lodgement, message: "Transaction saved successfully" });
+        await purchase.save();
+        res.status(200).send({ purchase, message: "Transaction saved successfully" });
 
     } catch (error) {
         res.status(400).send({
@@ -29,8 +29,8 @@ router.post("/api/admin/lodgements", auth, async (req, res) => {
     }
 });
 
-//Get all lodgements
-router.get("/api/admin/lodgements", auth, async(req, res) => {
+//Get all purchases
+router.get("/api/admin/purchases", auth, async(req, res) => {
     const match = {};
     // const limit = parseInt(req.query.limit) || 3;
     // const page = req.query.page > 1 ? (parseInt(req.query.page) - 1) * limit : 0; // this is my implementation
@@ -45,9 +45,9 @@ router.get("/api/admin/lodgements", auth, async(req, res) => {
         sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
     }
     try {
-        const lodgements = await Lodgements.find(match);
+        const purchases = await Purchases.find(match);
 
-        res.status(200).send({ status: "Success", data: lodgements });
+        res.status(200).send({ status: "Success", data: purchases });
     } catch (error) {
         return res.status(400).send({
             status: "error occurred",
@@ -56,13 +56,13 @@ router.get("/api/admin/lodgements", auth, async(req, res) => {
     }
 });
 
-//Get single lodgement
-router.get("/api/admin/lodgements/:id", auth, async(req, res) => {
+//Get single purchase
+router.get("/api/admin/purchases/:id", auth, async(req, res) => {
     
     try {
-        const lodgement = await Lodgements.findOne({trans_id: req.body.trans_id});
+        const purchase = await Purchases.findOne({trans_id: req.body.trans_id});
 
-        res.status(200).send({ status: "Success", data: lodgement });
+        res.status(200).send({ status: "Success", data: purchase });
     } catch (error) {
         return res.status(400).send({
             status: "error occurred",

@@ -140,6 +140,7 @@ export default {
             showNewLodgementModal: false,
             showViewExistingTransaction: false,
             isLoading: false,
+            trans_tag: random_alpha_numeric(4),
         };
     },
 
@@ -232,7 +233,7 @@ export default {
         },
 
         handleSelectedTransaction(data) {
-            this.selectedLodgement.id = data.id;
+            this.selectedLodgement.trans_id = data.trans_id;
             this.selectedLodgement.name = data.name;
             this.selectedLodgement.amount = data.amount;
             this.selectedLodgement.trans_type = data.trans_type;
