@@ -69,9 +69,9 @@ export default {
     },
 
     /** Define server host and port */
-/*     server: {
+    server: {
         host: "0.0.0.0",
-    }, */
+    },
 
     /** Express server */
     serverMiddleware: ["~/server/express.js"],
