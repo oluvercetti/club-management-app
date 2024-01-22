@@ -146,7 +146,6 @@ export default {
 
     fetch() {
         this.handleGetAllTransactions();
-        this.handleGetAllUsers();
     },
 
     fetchOnServer: false,
@@ -194,8 +193,8 @@ export default {
         handleGetAllTransactions() {
             this.isLoading = true;
             return this.$store.dispatch("gettransactionList").then((response) => {
-                this.isLoading = false;
                 this.transactionList = response.data;
+                this.handleGetAllUsers();
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data, {
@@ -282,7 +281,6 @@ export default {
             this.isLoading = true;
             return this.$store.dispatch("getAllUsers").then((response) => {
                 this.isLoading = false;
-                this.handleGetRouteList();
                 this.usersList = response.data;
             }).catch((error) => {
                 this.isLoading = false;

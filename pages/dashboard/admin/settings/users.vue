@@ -4,7 +4,7 @@
             <b-button variant="primary" class="mr-3" @click="showNewUserModal = !showNewUserModal">
                 Create New User
             </b-button>
-            <b-button variant="primary" @click="showNewUserModal = !showNewUserModal">
+            <b-button variant="primary" @click="showNewRoleModal = !showNewRoleModal">
                 Create New Role
             </b-button>
         </b-container>
@@ -70,7 +70,7 @@
         </b-modal>
 
         <b-modal v-model="showExistingUserModal" hide-footer title="Edit User">
-            <b-form @submit.prevent="updatedUser(selectedUser)">
+            <b-form @submit.prevent="handleUpdateSingleUser(selectedUser)">
                 <b-form-group label="Role" label-for="edit-role">
                     <b-form-select v-model="selectedUser.role" :options="computedRoleList" required></b-form-select>
                 </b-form-group>
@@ -94,6 +94,27 @@
                     Save User
                 </b-button>
                 <b-button type="button" @click="showExistingUserModal = !showExistingUserModal">
+                    Cancel
+                </b-button>
+            </b-form>
+        </b-modal>
+
+        <b-modal v-model="showNewRoleModal" hide-footer title="New Role">
+            <b-form autocomplete="false" @submit.prevent="handleCreateNewRole()">
+                <b-form-group label="Role Name" label-for="role-name">
+                    <b-form-input id="role-name" type="text" v-model="newRole.name" required />
+                </b-form-group>
+                <b-form-group label="Description" label-for="description">
+                    <b-form-textarea id="description" rows="2" v-model="newRole.description" />
+                </b-form-group>
+                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
+                    <span class="mr-2">Please wait...</span>
+                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                </b-button>
+                <b-button v-else type="submit" variant="primary" class="mr-3">
+                    Create Role
+                </b-button>
+                <b-button type="button" @click="showNewRoleModal = !showNewRoleModal">
                     Cancel
                 </b-button>
             </b-form>
@@ -130,7 +151,12 @@ export default {
                 name: null,
                 status: null
             },
+            newRole: {
+                name: null,
+                description: null,
+            },
             showNewUserModal: false,
+            showNewRoleModal: false,
             showExistingUserModal: false,
             isLoading: false,
         };
@@ -204,6 +230,32 @@ export default {
             });
         },
 
+        handleCreateNewRole() {
+            const payload = {
+                role_name: this.newRole.name,
+                role_description: this.newRole?.description,
+            };
+            this.isLoading = true;
+            return this.$store.dispatch("createNewRole", payload).then(() => {
+                this.$bvToast.toast("Role Created Successfully", {
+                    title: "Success",
+                    variant: "success",
+                    delay: 300,
+                });
+                this.showNewUserModal = false;
+                this.resetRoleValues();
+                this.isLoading = false;
+                this.handleGetRoleList();
+            }).catch((error) => {
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                this.isLoading = false;
+            });
+        },
+
         handleSelectedUser(data) {
             this.selectedUser.username = data.username;
             this.selectedUser.role = data.role;
@@ -213,14 +265,14 @@ export default {
             this.showExistingUserModal = true;
         },
 
-        updatedUser(data) {
+        handleUpdateSingleUser(data) {
             const id = data.id;
             const payload = {
                 location: data.location,
                 shortcode: data.shortcode?.toUpperCase(),
             };
             this.isLoading = true;
-            return this.$store.dispatch("updatedUser", { id, payload }).then((response) => {
+            return this.$store.dispatch("updateSingleUser", { id, payload }).then((response) => {
                 this.$bvToast.toast("User updated successfully", {
                     title: "Success",
                     variant: "success",
@@ -248,9 +300,16 @@ export default {
             }
         },
 
+        resetRoleValues() {
+            this.newRole = {
+                name: null,
+                description: null,
+            }
+        },
 
-        handleGetRouteList() {
-            return this.$store.dispatch("fetchRouteList").then((response) => {
+
+        handleGetRoleList() {
+            return this.$store.dispatch("getRoleList").then((response) => {
                 this.roleList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
@@ -264,7 +323,7 @@ export default {
 
         getRoleName(roleId) {
             const role = this.computedRoleList.find(item => item.value === roleId);
-            return role ? role.text : 'Unknown Role';
+            return role ? role.text : roleId;
         },
     },
 };
