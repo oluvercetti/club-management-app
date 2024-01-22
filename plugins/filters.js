@@ -103,14 +103,7 @@ export function toLowercase(str, igoredWords = []) {
     return lowers.join(" ");
 }
 
-export function randomAlphaNumeric(length){
-    let s = '';
-    Array.from({ length }).some(() => {
-      s += Math.random().toString(36).slice(2);
-      return s.length >= length;
-    });
-    return s.slice(0, length);
-  };
+
 
 Vue.filter("initials", initials);
 Vue.filter("phrase_to_sentence_case", phraseToSentenceCase);
@@ -121,4 +114,3 @@ Vue.filter("initials", formInitials);
 Vue.filter("html_to_text", htmlToText);
 Vue.filter("capitalize", captialize);
 Vue.filter("to_lowercase", toLowercase);
-Vue.filter("random_alpha_numeric", randomAlphaNumeric);
