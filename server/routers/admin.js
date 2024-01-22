@@ -3,6 +3,9 @@ const multer = require("multer");
 const sharp = require("sharp");
 const Admin = require("../models/admin");
 const Roles = require("../models/roles");
+const Purchases = require("../models/purchases");
+const Lodgements = require("../models/lodgements");
+const Roles = require("../models/roles");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");
@@ -230,6 +233,21 @@ router.get("/api/admin/users/:id", auth, async (req, res) => {
     }
 })
 
+//Get all purchases and lodgements
+router.get("/api/admin/transactions", auth, async (req, res) => {
+    
+    try {
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        const purchases = await Purchases.find();
+        const lodgments = await Lodgements.find();
+        res.status(200).send({ status: "Success", data: {purchases, lodgments} });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+})
 //To be deleted when going live
 router.post("/api/admin/over15", async(req, res) => {
     const admin = new Admin(req.body);

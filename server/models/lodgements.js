@@ -7,11 +7,6 @@ const lodgementsSchema = new mongoose.Schema({
         unique: true,
     },
 
-    trans_type: {
-        type: String,
-        required: true,
-    },
-
     mode_of_payment: {
         type: String,
         required: true,

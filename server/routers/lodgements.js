@@ -14,10 +14,6 @@ router.post("/api/admin/lodgements", auth, async (req, res) => {
 
     try {
         await Admin.checkUserPermission(req.admin.role, utils.permission_levels.cashier_only);
-        const isTransTypeValid = utils.trans_types.includes(req.body.trans_type);
-        if (!isTransTypeValid) {
-            throw new Error("Transaction type can only be lodgement or purchase");
-        }
         await lodgement.save();
         res.status(200).send({ lodgement, message: "Transaction saved successfully" });
 

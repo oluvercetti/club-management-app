@@ -13,11 +13,7 @@ router.post("/api/admin/purchases", auth, async (req, res) => {
     });
 
     try {
-        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.cashier_only);
-        const isTransTypeValid = utils.trans_types.includes(req.body.trans_type);
-        if (!isTransTypeValid) {
-            throw new Error("Transaction type can only be purchase or purchase");
-        }
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.coordinator_only);
         await purchase.save();
         res.status(200).send({ purchase, message: "Transaction saved successfully" });
 
