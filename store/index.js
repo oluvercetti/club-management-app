@@ -73,7 +73,7 @@ export const actions = ({
         });
     },
 
-    updateUser(_, { id, payload }) {
+    updateSingleUser(_, { id, payload }) {
         return this.$axios.patch(`/api/updateuser/${id}`, payload).then((response) => {
             return response.data;
         });
@@ -146,7 +146,13 @@ export const actions = ({
     },
 
     //Roles actions
-    fetchRouteList() {
+    createNewRole(_, payload) {
+        return this.$axios.post("/api/roles", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getRoleList() {
         return this.$axios.get("/api/roles").then((response) => {
             return response.data;
         });

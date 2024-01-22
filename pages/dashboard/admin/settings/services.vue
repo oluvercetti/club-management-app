@@ -2,12 +2,9 @@
     <div class="mt-3">
         <h2 class="mb-3"><b-icon icon="gear" class="mr-3" aria-hidden="true" /> Fees and Services Settings</h2>
         <b-container>
-            <b-form-group label="Table to view" v-slot="{ ariaDescribedby }">
-                <b-form-radio v-model="viewTable" :aria-describedby="ariaDescribedby" name="viewTable" value="fee">Fee
-                    Settings</b-form-radio>
-                <b-form-radio v-model="viewTable" :aria-describedby="ariaDescribedby" name="viewTable"
-                    value="services">Service Settings</b-form-radio>
-            </b-form-group>
+            <b-form-radio v-model="viewTable" name="viewTable" value="fee" class="mr-4">Fee
+                Settings</b-form-radio>
+            <b-form-radio v-model="viewTable" name="viewTable" value="services">Service Settings</b-form-radio>
         </b-container>
         <b-row>
             <b-col md="12" sm="12" v-if="viewTable === 'fee'">
@@ -31,7 +28,7 @@
                     </template>
                 </b-table>
             </b-col>
-            <b-col md="8" sm="12" v-if="viewTable === 'service'">
+            <b-col md="8" sm="12" v-if="viewTable === 'services'">
                 <b-button variant="primary" class="mr-3" @click="showNewServiceModal = !showNewServiceModal">
                     Create New Service
                 </b-button>
@@ -71,8 +68,10 @@
                     </b-form-select>
                 </b-form-group>
                 <b-form-group label="Value" label-for="feeValue">
-                    <b-form-input v-if="newFee.fee_type === 'flat'" id="feeValue" type="number" min="1" v-model="newFee.fee_value" required />
-                    <b-form-input v-else id="feeValue" type="number" min="1" max="100" v-model="newFee.fee_value" required />
+                    <b-form-input v-if="newFee.fee_type === 'flat'" id="feeValue" type="number" min="1"
+                        v-model="newFee.fee_value" required />
+                    <b-form-input v-else id="feeValue" type="number" min="1" max="100" v-model="newFee.fee_value"
+                        required />
                 </b-form-group>
                 <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
                     <span class="mr-2">Please wait...</span>
@@ -104,8 +103,10 @@
                     </b-form-select>
                 </b-form-group>
                 <b-form-group label="Value" label-for="feeValue">
-                    <b-form-input v-if="selectedFee.fee_type === 'flat'" id="feeValue" type="number" min="1" v-model="selectedFee.fee_value" required />
-                    <b-form-input v-else id="feeValue" type="number" min="1" max="100" v-model="selectedFee.fee_value" required />
+                    <b-form-input v-if="selectedFee.fee_type === 'flat'" id="feeValue" type="number" min="1"
+                        v-model="selectedFee.fee_value" required />
+                    <b-form-input v-else id="feeValue" type="number" min="1" max="100" v-model="selectedFee.fee_value"
+                        required />
                 </b-form-group>
                 <b-form-group label="Status" label-for="feeStatus">
                     <b-form-select v-model="selectedFee.status">
@@ -391,7 +392,7 @@ export default {
                 fee_value: null,
             }
         },
-        
+
         resetServiceValues() {
             this.newService = {
                 service_name: null,

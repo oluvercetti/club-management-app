@@ -60,13 +60,6 @@ export default {
                 { key: "coordinator", label: "Coordinator", sortable: true },
                 "Actions",
             ],
-            newLodgement: {
-                name: null,
-                amount: null,
-                coordinator: null,
-                service_type: null,
-                trans_type: null,
-            },
             selectedTransaction: {
                 id: null,
                 name: null,
@@ -75,9 +68,7 @@ export default {
                 coordinator: null,
                 service_type: null,
             },
-            usersList: [],
             serviceTypeList: [],
-            showNewLodgementModal: false,
             showViewExistingTransaction: false,
             isLoading: false,
         };
@@ -105,22 +96,6 @@ export default {
             });
         },
 
-        dancersList() {
-            return this.usersList.map((data) => {
-                if (data.role === 4) {
-                    return data;
-                }
-            });
-        },
-
-        coordinatorsList() {
-            return this.usersList.map((data) => {
-                if (data.role === 2) {
-                    return data;
-                }
-            });
-        },
-
         computedServiceTypeList() {
             return this.serviceTypeList.map((data) => {
                 return { value: data.name, text: data.name.toUpperCase() };
@@ -142,32 +117,6 @@ export default {
                     variant: "danger",
                     delay: 300,
                 });
-            });
-        },
-
-        handleCreateNewLodgement() {
-            const payload = {
-                location: this.newLodgement.location,
-                shortcode: this.newLodgement.shortcode?.toUpperCase(),
-            };
-            this.isLoading = true;
-            return this.$store.dispatch("createNewTransaction", payload).then(() => {
-                this.$bvToast.toast("Transaction completed", {
-                    title: "Success",
-                    variant: "success",
-                    delay: 300,
-                });
-                this.showNewLodgementModal = false;
-                this.resetLocationValues();
-                this.isLoading = false;
-                this.handleGetAllTransactions();
-            }).catch((error) => {
-                this.$bvToast.toast(error?.response?.data?.message, {
-                    title: "Error",
-                    variant: "danger",
-                    delay: 300,
-                });
-                this.isLoading = false;
             });
         },
 
@@ -205,27 +154,6 @@ export default {
                 }
             }).catch((err) => {
                 this.$bvToast.toast(err?.response?.data?.message, {
-                    title: "Error",
-                    variant: "danger",
-                    delay: 300,
-                });
-            });
-        },
-
-        resetLocationValues() {
-            this.newLodgement.location = "";
-            this.newLodgement.shortcode = "";
-        },
-
-        handleGetAllUsers() {
-            this.isLoading = true;
-            return this.$store.dispatch("getAllUsers").then((response) => {
-                this.isLoading = false;
-                this.handleGetRouteList();
-                this.usersList = response.data;
-            }).catch((error) => {
-                this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
