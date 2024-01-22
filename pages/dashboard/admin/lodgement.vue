@@ -140,7 +140,7 @@ export default {
             showNewLodgementModal: false,
             showViewExistingTransaction: false,
             isLoading: false,
-            trans_tag: random_alpha_numeric(4),
+            trans_tag: this.$random_alpha_numeric(4),
         };
     },
 

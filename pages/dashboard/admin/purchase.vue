@@ -187,7 +187,7 @@ export default {
                 { key: "500", value: "/img/500naira.webp" },
                 { key: "1000", value: "/img/1000naira.webp" },
             ],
-            trans_tag: random_alpha_numeric(4),
+            trans_tag: this.$random_alpha_numeric(4),
         };
     },
 

@@ -40,6 +40,7 @@ export default {
     plugins: [
         "~/plugins/axios",
         "~plugins/filters",
+        "~plugins/functions/math",
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
