@@ -39,7 +39,7 @@ export const mutations = ({
 export const actions = ({
     // Admin actions
     loginAdminUser({ commit, dispatch }, payload) {
-         return this.$axios.post("/api/admin/login", payload).then((response) => {
+        return this.$axios.post("/api/admin/login", payload).then((response) => {
             this.$cookies.set("sftoken", JSON.stringify(response.data.token), {
                 path: "/"
             });
@@ -151,7 +151,7 @@ export const actions = ({
         });
     },
 
-    fetchSinglePurchase(_, id ) {
+    fetchSinglePurchase(_, id) {
         return this.$axios.get(`/api/admin/purchases/${id}`).then((response) => {
             return response.data;
         });
@@ -164,7 +164,7 @@ export const actions = ({
         });
     },
 
-    getRoleList({commit}) {
+    getRoleList({ commit }) {
         return this.$axios.get("/api/roles").then((response) => {
             commit("setRoleList", response.data.data);
             return response.data;
@@ -192,18 +192,19 @@ export const actions = ({
     },
 
     async nuxtServerInit({ commit, dispatch }) {
-    
-            const authTokenCookie = this.$cookies.get("sftoken");
-            if (!authTokenCookie) {
-                return;
-            }
 
-            commit("setAuthToken", authTokenCookie);
-            await dispatch("getAdminUserProfile").catch((err) => {
-                this.$router.push("/login");
-            });
-            await dispatch("getRoleList")
-        
+        const authTokenCookie = this.$cookies.get("sftoken");
+        if (!authTokenCookie) {
+            return;
+        }
+
+        commit("setAuthToken", authTokenCookie);
+        await dispatch("getAdminUserProfile").then(() => {
+            return dispatch("getRoleList")
+        }).catch((err) => {
+            this.$router.push("/login");
+        });
+
 
     },
 
