@@ -27,7 +27,7 @@
                                 <h3><b>{{ computedAmount | format_amount }}</b></h3>
                             </b-form-group>
                             <b-form-group label="Transaction Type" label-for="transtype">
-                                <b-form-select v-model="form.trans_type" required>
+                                <b-form-select v-model="form.mode_of_payment" required>
                                     <template #first>
                                         <b-form-select-option value="" disabled>
                                             -- Please select --
@@ -81,7 +81,7 @@
                         Clear
                     </b-button>
 
-                    <b-button class="ml-4" type="button" variant="success" @click="clearGrid()">
+                    <b-button class="ml-4" type="button" variant="success" @click="handleCreateNewPurchase()">
                         Complete Purchase
                     </b-button>
                 </b-container>
@@ -93,8 +93,8 @@
                 striped hover outlined sort-icon-left>
                 <template #cell(actions)="row">
                     <div class="d-flex justify-content-around">
-                        <b-button variant="primary" @click="handleSelectedPurchase(row.item)">
-                            <b-icon icon="pencil"></b-icon>
+                        <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.trans_id}`">
+                            View Details
                         </b-button>
                         <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
                             <b-icon icon="printer"></b-icon>
@@ -124,7 +124,7 @@
                     </b-form-select>
                 </b-form-group>
                 <b-form-group label="Transaction Type" label-for="transtype">
-                    <b-form-select v-model="selectedPurchase.trans_type" disabled>
+                    <b-form-select v-model="selectedPurchase.mode_of_payment" disabled>
                         <b-form-select-option value="pos">POS</b-form-select-option>
                         <b-form-select-option value="cash">Cash</b-form-select-option>
                         <b-form-select-option value="transfer">Transfer</b-form-select-option>
@@ -162,7 +162,7 @@ export default {
             form: {
                 denomination: null,
                 quantity: null,
-                trans_type: null,
+                mode_of_payment: null,
             },
             gridItems: [],
             gridFields: [
@@ -175,7 +175,7 @@ export default {
                 id: null,
                 denomination: null,
                 amount: null,
-                trans_type: null,
+                mode_of_payment: null,
                 coordinator: null,
                 service_type: null,
             },
@@ -193,7 +193,6 @@ export default {
 
     fetch() {
         this.handleGetAllPurchases();
-        this.handleGetAllUsers();
     },
 
     fetchOnServer: false,
@@ -222,7 +221,7 @@ export default {
     methods: {
         handleGetAllPurchases() {
             this.isLoading = true;
-            return this.$store.dispatch("gettransactionList").then((response) => {
+            return this.$store.dispatch("fetchPurchaseList").then((response) => {
                 this.isLoading = false;
                 this.purchaseList = response.data;
             }).catch((error) => {
@@ -251,8 +250,8 @@ export default {
                     variant: "success",
                     delay: 300,
                 });
-                this.resetLocationValues();
                 this.isLoading = false;
+                this.clearGrid();
                 this.handleGetAllPurchases();
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
@@ -307,7 +306,7 @@ export default {
             // Add a new item to the items array
             this.gridItems.push({ ...this.form, amount: this.computedAmount, image: this.getImageSource(this.form.denomination) });
             // Clear the form fields
-            this.form = { denomination: null, quantity: null, amount: null };
+            this.form = { denomination: null, quantity: null, mode_of_payment: null };
         },
 
         calculateTotalAmount() {

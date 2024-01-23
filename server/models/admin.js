@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Ticket = require("./trip");
 
 const adminSchema = new mongoose.Schema({
     name: {
@@ -122,11 +121,6 @@ adminSchema.pre("save", async function(next) {
     next();
 });
 
-adminSchema.pre("remove", async function(next) {
-    const admin = this;
-    await Ticket.deleteMany({ owner: admin._id });
-    next();
-});
 const Admin = mongoose.model("Admin", adminSchema);
 
 module.exports = Admin;

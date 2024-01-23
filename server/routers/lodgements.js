@@ -9,15 +9,11 @@ const utils = require("../utils");
 router.post("/api/admin/lodgements", auth, async (req, res) => {
     const lodgement = new Lodgements({
         ...req.body,
-        owner: req.admin._id,
+        cashier: req.admin.username,
     });
 
     try {
         await Admin.checkUserPermission(req.admin.role, utils.permission_levels.cashier_only);
-        const isTransTypeValid = utils.trans_types.includes(req.body.trans_type);
-        if (!isTransTypeValid) {
-            throw new Error("Transaction type can only be lodgement or purchase");
-        }
         await lodgement.save();
         res.status(200).send({ lodgement, message: "Transaction saved successfully" });
 
@@ -60,7 +56,7 @@ router.get("/api/admin/lodgements", auth, async(req, res) => {
 router.get("/api/admin/lodgements/:id", auth, async(req, res) => {
     
     try {
-        const lodgement = await Lodgements.findOne({trans_id: req.body.trans_id});
+        const lodgement = await Lodgements.findOne({trans_id: req.params.id});
 
         res.status(200).send({ status: "Success", data: lodgement });
     } catch (error) {

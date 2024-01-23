@@ -19,8 +19,10 @@
                     <b-icon icon="book" aria-hidden="true" class="mr-3"></b-icon> Audit Log
                 </b-nav-item>
             </b-nav>
+
+            <p class="sidebar-container__menu--role"><b-icon icon="person" aria-hidden="true" class="mr-3"></b-icon>{{ getUserRoleInfo }}</p>
         </div>
-        <div class="sidebar-container__logout">
+        <div class="sidebar-container__logout mt-3">
             <b-button variant="danger" size="lg" block v-if="isAuthenticated" @click="handleAdminLogout()">
                 Logout
             </b-button>
@@ -54,6 +56,12 @@ export default {
         canSeeCashAuditLog() {
             return this.$store.getters.getUserInfo.role === 1;
         },
+
+        getUserRoleInfo() {
+            const roleId = this.$store.getters.getUserInfo.role;
+            const role = this.$store.getters.getRoleList && this.$store.getters.getRoleList.find(item => item.role_id === roleId);
+            return role?.role_name;
+        }
     },
     methods: {
         handleAdminLogout() {
@@ -83,6 +91,13 @@ export default {
 
         & > ul > li > a {
             color: #FFF;
+        }
+
+        &--role {
+            text-transform: capitalize;
+            border-top: 1px solid #FFF;
+            padding: 1rem;
+            font-size: 1.2rem;
         }
     }
 

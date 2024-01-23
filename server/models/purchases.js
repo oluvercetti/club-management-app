@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const purchasesSchema = new mongoose.Schema({
 
     trans_id: {
-        type: Number,
+        type: String,
         unique: true,
     },
 
@@ -23,7 +23,7 @@ const purchasesSchema = new mongoose.Schema({
     },
 
     coordinator: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
         ref: "Admin",
     },
@@ -36,7 +36,7 @@ purchasesSchema.pre("save", function (next) {
     const purchase = this;
     const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     // Create a unique identifier based on amount, denomination, trans_id, and username
-    const uniqueIdentifier = `${currentDate}${purchase.denomination}${purchase.amount}${purchase.trans_id}`.padEnd(30, '0');
+    const uniqueIdentifier = `${currentDate}${purchase.denomination}${purchase.amount}${purchase.trans_id}`.padEnd(20, '0');
 
     // Set the trans_id to the unique identifier
     purchase.trans_id = uniqueIdentifier;
