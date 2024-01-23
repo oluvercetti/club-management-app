@@ -91,6 +91,12 @@
             <h3 class="mb-3">Previous Purchases</h3>
             <b-table ref="transactions" :items="purchaseList" :fields="fields" :busy="isLoading" class="mt-4 small-font"
                 striped hover outlined sort-icon-left>
+                <template #cell(createdAt)="createdAt">
+                    <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                </template>
+                <template #cell(amount)="amount">
+                    <p>{{ amount.value | format_amount }}</p>
+                </template>
                 <template #cell(actions)="row">
                     <div class="d-flex justify-content-around">
                         <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.trans_id}`">

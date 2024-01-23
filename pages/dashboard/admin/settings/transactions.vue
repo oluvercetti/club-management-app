@@ -18,6 +18,12 @@
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
                 <b-table ref="lodgement" :items="lodgementList" :fields="lFields" :busy="isLoading" class="mt-4 small-font"
                     striped hover outlined sort-icon-left>
+                    <template #cell(createdAt)="createdAt">
+                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
+                    <template #cell(amount)="amount">
+                        <p>{{ amount.value | format_amount }}</p>
+                    </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
                             <b-button variant="primary" :to="`/dashboard/admin/lodgement/${row.item.id}`">
@@ -34,8 +40,14 @@
                 </b-table>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
-                <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading"
-                    class="mt-4 small-font" striped hover outlined sort-icon-left>
+                <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading" class="mt-4 small-font"
+                    striped hover outlined sort-icon-left>
+                    <template #cell(createdAt)="createdAt">
+                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
+                    <template #cell(amount)="amount">
+                        <p>{{ amount.value | format_amount }}</p>
+                    </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
                             <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.id}`">
