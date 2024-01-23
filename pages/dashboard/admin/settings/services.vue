@@ -1,10 +1,18 @@
 <template>
     <div class="mt-3">
-        <h2 class="mb-3"><b-icon icon="gear" class="mr-3" aria-hidden="true" /> Fees and Services Settings</h2>
-        <b-container>
-            <b-form-radio v-model="viewTable" name="viewTable" value="fee" class="mr-4">Fee
-                Settings</b-form-radio>
-            <b-form-radio v-model="viewTable" name="viewTable" value="services">Service Settings</b-form-radio>
+        <b-container class="mb-4">
+            <b-row>
+                <b-col md="4">
+                    <b-form-radio v-model="viewTable" name="viewTable" value="fee">
+                       View Fee Settings
+                    </b-form-radio>
+                </b-col>
+                <b-col md="4">
+                    <b-form-radio v-model="viewTable" name="viewTable" value="services">
+                        View Service Settings
+                    </b-form-radio>
+                </b-col>
+            </b-row>
         </b-container>
         <b-row>
             <b-col md="12" sm="12" v-if="viewTable === 'fee'">
@@ -248,7 +256,7 @@ export default {
 
         handleGetAllServices() {
             this.isLoading = true;
-            return this.$store.dispatch("getServices").then((response) => {
+            return this.$store.dispatch("getServiceList").then((response) => {
                 this.isLoading = false;
                 this.servicesList = response.data;
             }).catch((error) => {
@@ -318,6 +326,7 @@ export default {
             this.selectedFee.id = data.id;
             this.selectedFee.fee_name = data.fee_name;
             this.selectedFee.fee_type = data.fee_type;
+            this.selectedFee.fee_value = data.fee_value;
             this.selectedFee.status = data.status;
             this.showEditFeeModal = true;
         },

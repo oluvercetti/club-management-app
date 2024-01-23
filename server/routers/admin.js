@@ -5,7 +5,6 @@ const Admin = require("../models/admin");
 const Roles = require("../models/roles");
 const Purchases = require("../models/purchases");
 const Lodgements = require("../models/lodgements");
-const Roles = require("../models/roles");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");

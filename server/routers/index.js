@@ -4,7 +4,7 @@ const feesRouter = require("./fees");
 const rolesRouter = require("./roles");
 const servicesRouter = require("./services");
 const lodgementsRouter = require("./lodgements");
-const purchasesRouter = require("./lodgements");
+const purchasesRouter = require("./purchases");
 
 const allRouters = [adminRouter, feesRouter, rolesRouter, servicesRouter, lodgementsRouter, purchasesRouter];
 

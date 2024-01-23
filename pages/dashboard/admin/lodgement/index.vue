@@ -8,12 +8,9 @@
             striped hover outlined sort-icon-left>
             <template #cell(actions)="row">
                 <div class="d-flex justify-content-around">
-                    <b-button variant="primary" @click="handleSelectedTransaction(row.item)">
-                        <b-icon icon="pencil"></b-icon>
+                    <b-button variant="primary" :to="`/dashboard/admin/lodgement/${row.item.id}`">
+                        View Details
                     </b-button>
-                    <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
-                        <b-icon icon="printer"></b-icon>
-                    </b-button> -->
                 </div>
             </template>
             <template #table-busy>
@@ -36,7 +33,7 @@
                     </b-form-select>
                 </b-form-group>
                 <b-form-group label="Transaction Type" label-for="transtype">
-                    <b-form-select v-model="newLodgement.trans_type" required>
+                    <b-form-select v-model="newLodgement.mode_of_payment" required>
                         <template #first>
                             <b-form-select-option value="" disabled>
                                 -- Please select --
@@ -121,19 +118,20 @@ export default {
                 "Actions",
             ],
             newLodgement: {
-                name: null,
+                trans_id: null,
+                mode_of_payment: null,
+                username: null,
                 amount: null,
-                coordinator: null,
                 service_type: null,
-                trans_type: null,
+                coordinator: null,
             },
             selectedLodgement: {
-                id: null,
-                name: null,
+                trans_id: null,
+                mode_of_payment: null,
+                username: null,
                 amount: null,
-                trans_type: null,
-                coordinator: null,
                 service_type: null,
+                coordinator: null,
             },
             usersList: [],
             serviceTypeList: [],
@@ -145,7 +143,7 @@ export default {
     },
 
     fetch() {
-        this.handleGetAllTransactions();
+        this.handleGetAllLodgements();
     },
 
     fetchOnServer: false,
@@ -166,19 +164,15 @@ export default {
         },
 
         dancersList() {
-            return this.usersList.map((data) => {
-                if (data.role === 4) {
-                    return data;
-                }
-            });
+            return this.usersList
+                .filter((data) => data.role === 4)
+                .map((data) => ({ value: data._id, text: data.name }));
         },
 
         coordinatorsList() {
-            return this.usersList.map((data) => {
-                if (data.role === 2) {
-                    return data;
-                }
-            });
+            return this.usersList
+                .filter((data) => data.role === 2)
+                .map((data) => ({ value: data._id, text: data.name }));
         },
 
         computedServiceTypeList() {
@@ -190,9 +184,9 @@ export default {
     },
 
     methods: {
-        handleGetAllTransactions() {
+        handleGetAllLodgements() {
             this.isLoading = true;
-            return this.$store.dispatch("gettransactionList").then((response) => {
+            return this.$store.dispatch("fetchLodgementList").then((response) => {
                 this.transactionList = response.data;
                 this.handleGetAllUsers();
             }).catch((error) => {
@@ -211,16 +205,16 @@ export default {
                 shortcode: this.newLodgement.shortcode?.toUpperCase(),
             };
             this.isLoading = true;
-            return this.$store.dispatch("createNewTransaction", payload).then(() => {
+            return this.$store.dispatch("createNewLodgement", payload).then(() => {
                 this.$bvToast.toast("Transaction completed", {
                     title: "Success",
                     variant: "success",
                     delay: 300,
                 });
                 this.showNewLodgementModal = false;
-                this.resetLocationValues();
+                this.resetLodgementValues();
                 this.isLoading = false;
-                this.handleGetAllTransactions();
+                this.handleGetAllLodgements();
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
@@ -235,7 +229,7 @@ export default {
             this.selectedLodgement.trans_id = data.trans_id;
             this.selectedLodgement.name = data.name;
             this.selectedLodgement.amount = data.amount;
-            this.selectedLodgement.trans_type = data.trans_type;
+            this.selectedLodgement.mode_of_payment = data.mode_of_payment;
             this.selectedLodgement.coordinator = data.coordinator;
             this.selectedLodgement.service_type = data.service_type;
             this.showViewExistingTransaction = true;
@@ -260,7 +254,7 @@ export default {
                             variant: "success",
                             delay: 300,
                         });
-                        this.handleGetAllTransactions();
+                        this.handleGetAllLodgements();
                     });
                 }
             }).catch((err) => {
@@ -272,9 +266,23 @@ export default {
             });
         },
 
-        resetLocationValues() {
-            this.newLodgement.location = "";
-            this.newLodgement.shortcode = "";
+        resetLodgementValues() {
+            this.newLodgement = {
+                trans_id: null,
+                mode_of_payment: null,
+                username: null,
+                amount: null,
+                service_type: null,
+                coordinator: null,
+            }
+            this.selectedLodgement = {
+                trans_id: null,
+                mode_of_payment: null,
+                username: null,
+                amount: null,
+                service_type: null,
+                coordinator: null,
+            }
         },
 
         handleGetAllUsers() {

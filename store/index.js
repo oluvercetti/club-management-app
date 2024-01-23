@@ -67,8 +67,8 @@ export const actions = ({
     },
 
 
-    getAllUsers(_, payload) {
-        return this.$axios.get("/api/admin/users", payload).then((response) => {
+    getAllUsers() {
+        return this.$axios.get("/api/admin/users").then((response) => {
             return response.data;
         });
     },
@@ -86,7 +86,18 @@ export const actions = ({
         });
     },
 
+    getAllTransactions() {
+        return this.$axios.get("/api/admin/transactions").then((response) => {
+            return response.data;
+        });
+    },
+
     //Fees actions
+    createNewFee(_, payload) {
+        return this.$axios.post("/api/fees", payload).then((response) => {
+            return response.data;
+        });
+    },
 
     getFees() {
         return this.$axios.get("/api/fees").then((response) => {
@@ -94,53 +105,46 @@ export const actions = ({
         });
     },
 
-    deleteLocation(_, id) {
-        return this.$axios.delete(`/api/admin/locations/${id}`).then((response) => {
+    updateFee(_, { id, payload }) {
+        return this.$axios.patch(`/api/fees/${id}`, payload).then((response) => {
             return response.data;
         });
     },
 
-    // Route Actions
-    createRoute(_, payload) {
-        return this.$axios.post("/api/admin/trips/create", payload).then((response) => {
+    // Lodgement Actions
+    createNewLodgement(_, payload) {
+        return this.$axios.post("/api/admin/lodgements", payload).then((response) => {
             return response.data;
         });
     },
 
-    updateRoute(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/trips/${id}`, payload).then((response) => {
+    fetchLodgementList() {
+        return this.$axios.get("/api/admin/lodgements").then((response) => {
             return response.data;
         });
     },
 
-    fetchSingleRoute(_, payload) {
-        return this.$axios.post("/api/admin/trips/getTrip", payload).then((response) => {
+    fetchSingleLodgement(_, { id }) {
+        return this.$axios.get(`/api/admin/lodgements/${id}`, payload).then((response) => {
             return response.data;
         });
     },
 
-    fetchRouteList() {
-        return this.$axios.get("/api/admin/trips/getAllTrips").then((response) => {
+    // Purchase Actions
+    createNewPurchase(_, payload) {
+        return this.$axios.post("/api/admin/purchases", payload).then((response) => {
             return response.data;
         });
     },
 
-    // Ticket actions
-
-    createTicket(_, payload) {
-        return this.$axios.post("/api/admin/tickets/create", payload).then((response) => {
+    fetchPurchaseList() {
+        return this.$axios.get("/api/admin/purchases").then((response) => {
             return response.data;
         });
     },
 
-    updateTicket(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/tickets/${id}`, payload).then((response) => {
-            return response.data;
-        });
-    },
-
-    fetchTicketList() {
-        return this.$axios.get("/api/admin/tickets/getAlltickets").then((response) => {
+    fetchSinglePurchase(_, { id }) {
+        return this.$axios.get(`/api/admin/purchases/${id}`, payload).then((response) => {
             return response.data;
         });
     },
@@ -154,6 +158,26 @@ export const actions = ({
 
     getRoleList() {
         return this.$axios.get("/api/roles").then((response) => {
+            return response.data;
+        });
+    },
+
+    // Services actions
+
+    createService(_, payload) {
+        return this.$axios.post("/api/services", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    updateService(_, { id, payload }) {
+        return this.$axios.patch(`/api/services/${id}`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getServiceList() {
+        return this.$axios.get("/api/services").then((response) => {
             return response.data;
         });
     },

@@ -27,11 +27,6 @@ const lodgementsSchema = new mongoose.Schema({
         required: true,
     },
 
-    denomination: {
-        type: String,
-        required: true,
-    },
-
     coordinator: {
         type: String,
         required: true,

@@ -81,7 +81,7 @@
                         Clear
                     </b-button>
 
-                    <b-button class="ml-4" type="button" variant="success" @click="clearGrid()">
+                    <b-button class="ml-4" type="button" variant="success" @click="handleCreateNewPurchase()">
                         Complete Purchase
                     </b-button>
                 </b-container>
@@ -93,8 +93,8 @@
                 striped hover outlined sort-icon-left>
                 <template #cell(actions)="row">
                     <div class="d-flex justify-content-around">
-                        <b-button variant="primary" @click="handleSelectedPurchase(row.item)">
-                            <b-icon icon="pencil"></b-icon>
+                        <b-button variant="primary" :to="`/dashboard/admin/purchases/${row.item.id}`">
+                            View Details
                         </b-button>
                         <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
                             <b-icon icon="printer"></b-icon>
@@ -193,7 +193,6 @@ export default {
 
     fetch() {
         this.handleGetAllPurchases();
-        this.handleGetAllUsers();
     },
 
     fetchOnServer: false,
@@ -222,7 +221,7 @@ export default {
     methods: {
         handleGetAllPurchases() {
             this.isLoading = true;
-            return this.$store.dispatch("gettransactionList").then((response) => {
+            return this.$store.dispatch("fetchPurchaseList").then((response) => {
                 this.isLoading = false;
                 this.purchaseList = response.data;
             }).catch((error) => {

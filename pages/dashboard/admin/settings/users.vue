@@ -190,7 +190,7 @@ export default {
             this.isLoading = true;
             return this.$store.dispatch("getAllUsers").then((response) => {
                 this.isLoading = false;
-                this.handleGetRouteList();
+                this.handleGetRoleList();
                 this.userList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
