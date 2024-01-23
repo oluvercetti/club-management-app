@@ -97,6 +97,9 @@
                 <template #cell(amount)="amount">
                     <p>{{ amount.value | format_amount }}</p>
                 </template>
+                <template #cell(mode_of_payment)="mode">
+                    <p class="text-capitalize">{{ mode.value }}</p>
+                </template>
                 <template #cell(actions)="row">
                     <div class="d-flex justify-content-around">
                         <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.trans_id}`">

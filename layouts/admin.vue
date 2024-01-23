@@ -3,10 +3,10 @@
         <ErrorBoundary>
             <div>
                 <b-row>
-                    <b-col md="2" sm="2" xs="2">
+                    <b-col cols="4" md="2" sm="2">
                         <AppSidebar />
                     </b-col>
-                    <b-col md="10" sm="10" xs="10">
+                    <b-col cols="8" md="10" sm="10">
                         <div class="main-container">
                             <Nuxt />
                         </div>
