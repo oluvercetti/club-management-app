@@ -202,7 +202,7 @@ export const actions = ({
             await dispatch("getAdminUserProfile").catch((err) => {
                 this.$router.push("/login");
             });
-            await dispatch("getRoleList")
+            //await dispatch("getRoleList")
         
 
     },
