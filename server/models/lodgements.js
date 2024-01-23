@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const lodgementsSchema = new mongoose.Schema({
 
     trans_id: {
-        type: Number,
+        type: String,
         unique: true,
     },
 
@@ -33,7 +33,7 @@ const lodgementsSchema = new mongoose.Schema({
     },
 
     cashier: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
         ref: "Admin",
     },
@@ -46,7 +46,7 @@ lodgementsSchema.pre("save", function (next) {
     const lodgement = this;
     const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     // Create a unique identifier based on amount, denomination, trans_id, and username
-    const uniqueIdentifier = `${currentDate}${lodgement.denomination}${lodgement.amount}${lodgement.trans_id}`.padEnd(30, '0');
+    const uniqueIdentifier = `${currentDate}${lodgement.amount}${lodgement.trans_id}`.padEnd(20, '0');
 
     // Set the trans_id to the unique identifier
     lodgement.trans_id = uniqueIdentifier;

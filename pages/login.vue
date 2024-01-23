@@ -93,7 +93,7 @@ export default {
 
             return this.$store.dispatch("loginAdminUser", payload).then((response) => {
                 this.$store.commit("setIsAuthenticated", true);
-                if(response.role <= 2) {
+                if(response.role !== 4) {
                     this.$router.push("/dashboard/admin");
                 }else {
                     this.$router.push("/dashboard/user");

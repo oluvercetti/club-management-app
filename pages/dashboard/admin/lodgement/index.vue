@@ -8,7 +8,7 @@
             striped hover outlined sort-icon-left>
             <template #cell(actions)="row">
                 <div class="d-flex justify-content-around">
-                    <b-button variant="primary" :to="`/dashboard/admin/lodgement/${row.item.id}`">
+                    <b-button variant="primary" :to="`/dashboard/admin/lodgement/${row.item.trans_id}`">
                         View Details
                     </b-button>
                 </div>
@@ -144,6 +144,7 @@ export default {
 
     fetch() {
         this.handleGetAllLodgements();
+        this.handleGetAllServices();
     },
 
     fetchOnServer: false,
@@ -166,18 +167,18 @@ export default {
         dancersList() {
             return this.usersList
                 .filter((data) => data.role === 4)
-                .map((data) => ({ value: data._id, text: data.name }));
+                .map((data) => ({ value: data.username, text: data.name }));
         },
 
         coordinatorsList() {
             return this.usersList
                 .filter((data) => data.role === 2)
-                .map((data) => ({ value: data._id, text: data.name }));
+                .map((data) => ({ value: data.username, text: data.name }));
         },
 
         computedServiceTypeList() {
             return this.serviceTypeList.map((data) => {
-                return { value: data.name, text: data.name.toUpperCase() };
+                return { value: data.service_name, text: data.service_name.toUpperCase() };
             }
             )
         },
@@ -201,8 +202,12 @@ export default {
 
         handleCreateNewLodgement() {
             const payload = {
-                location: this.newLodgement.location,
-                shortcode: this.newLodgement.shortcode?.toUpperCase(),
+                trans_id: this.trans_tag,
+                mode_of_payment: this.newLodgement.mode_of_payment,
+                username: this.newLodgement.name,
+                amount: this.newLodgement.amount,
+                service_type: this.newLodgement.service_type,
+                coordinator: this.newLodgement.coordinator,
             };
             this.isLoading = true;
             return this.$store.dispatch("createNewLodgement", payload).then(() => {
@@ -290,6 +295,20 @@ export default {
             return this.$store.dispatch("getAllUsers").then((response) => {
                 this.isLoading = false;
                 this.usersList = response.data;
+            }).catch((error) => {
+                this.isLoading = false;
+                this.$bvToast.toast(error?.response?.data, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+            });
+        },
+
+        handleGetAllServices() {
+            return this.$store.dispatch("getServiceList").then((response) => {
+                this.isLoading = false;
+                this.serviceTypeList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data, {

@@ -323,7 +323,7 @@ export default {
         },
 
         handleSelectedFee(data) {
-            this.selectedFee.id = data.id;
+            this.selectedFee.id = data._id;
             this.selectedFee.fee_name = data.fee_name;
             this.selectedFee.fee_type = data.fee_type;
             this.selectedFee.fee_value = data.fee_value;
@@ -333,9 +333,9 @@ export default {
 
 
         handleSelectedService(data) {
-            this.selectedService.id = data.id;
+            this.selectedService.id = data._id;
             this.selectedService.service_name = data.service_name;
-            this.selectedFee.status = data.status;
+            this.selectedService.status = data.status;
             this.showEditServiceModal = true;
         },
 
@@ -374,7 +374,7 @@ export default {
                 status: this.selectedService.status,
             };
             this.isLoading = true;
-            return this.$store.dispatch("updateFee", { id, payload }).then((response) => {
+            return this.$store.dispatch("updateService", { id, payload }).then((response) => {
                 this.$bvToast.toast("Service updated successfully", {
                     title: "Success",
                     variant: "success",
@@ -382,7 +382,7 @@ export default {
                 });
                 this.showEditServiceModal = false;
                 this.isLoading = false;
-                this.handleGetAllFees();
+                this.handleGetAllServices();
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",

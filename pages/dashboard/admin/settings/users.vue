@@ -53,7 +53,7 @@
                 <b-form-group label="Username" label-for="newUsername">
                     <b-form-input id="newUsername" type="text" v-model="newUser.username" required />
                 </b-form-group>
-                <b-form-group label="Password" label-for="newPassword" v-if="newUser.role < 4">
+                <b-form-group label="Password" label-for="newPassword" v-if="newUser.role !== 4">
                     <b-form-input id="newPassword" type="password" v-model="newUser.password" required />
                 </b-form-group>
                 <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
@@ -242,7 +242,7 @@ export default {
                     variant: "success",
                     delay: 300,
                 });
-                this.showNewUserModal = false;
+                this.showNewRoleModal = false;
                 this.resetRoleValues();
                 this.isLoading = false;
                 this.handleGetRoleList();
@@ -259,7 +259,7 @@ export default {
         handleSelectedUser(data) {
             this.selectedUser.username = data.username;
             this.selectedUser.role = data.role;
-            this.selectedUser.id = data.id;
+            this.selectedUser.id = data._id;
             this.selectedUser.name = data.name;
             this.selectedUser.status = data.status;
             this.showExistingUserModal = true;
@@ -268,8 +268,10 @@ export default {
         handleUpdateSingleUser(data) {
             const id = data.id;
             const payload = {
-                location: data.location,
-                shortcode: data.shortcode?.toUpperCase(),
+                username: data.username,
+                role: data.role,
+                name: data.name,
+                status: data.status
             };
             this.isLoading = true;
             return this.$store.dispatch("updateSingleUser", { id, payload }).then((response) => {

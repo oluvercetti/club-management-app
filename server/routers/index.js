@@ -5,7 +5,8 @@ const rolesRouter = require("./roles");
 const servicesRouter = require("./services");
 const lodgementsRouter = require("./lodgements");
 const purchasesRouter = require("./purchases");
+const usersRouter = require("./users");
 
-const allRouters = [adminRouter, feesRouter, rolesRouter, servicesRouter, lodgementsRouter, purchasesRouter];
+const allRouters = [adminRouter, feesRouter, rolesRouter, servicesRouter, lodgementsRouter, purchasesRouter, usersRouter];
 
 module.exports = allRouters;

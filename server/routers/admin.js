@@ -207,7 +207,7 @@ router.patch("/api/admin/changepassword", auth, async(req, res) => {
 router.get("/api/admin/users", auth, async (req, res) => {
     
     try {
-        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        // await Admin.checkUserPermission(req.admin.role, permissions.admin);
         const users = await Admin.find();
         res.status(200).send({ status: "Success", data: users });
     } catch (error) {
@@ -238,8 +238,8 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
     try {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
         const purchases = await Purchases.find();
-        const lodgments = await Lodgements.find();
-        res.status(200).send({ status: "Success", data: {purchases, lodgments} });
+        const lodgements = await Lodgements.find();
+        res.status(200).send({ status: "Success", data: {purchases, lodgements} });
     } catch (error) {
         res.status(400).send({
             status: "error occurred",

@@ -23,50 +23,50 @@
                                 <b-col md="3">
                                     <strong>Transaction ID:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.trans_id }}</b-col>
+                                <b-col>{{ lodgementDetails?.trans_id }}</b-col>
                             </b-row>
 
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Type:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.mode_of_payment }}</b-col>
+                                <b-col>{{ lodgementDetails?.mode_of_payment }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Dancer:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.username }}</b-col>
+                                <b-col>{{ lodgementDetails?.username }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Amount:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.amount | format_amount }}</b-col>
+                                <b-col>{{ lodgementDetails?.amount | format_amount }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Service Type:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.service_type }}</b-col>
+                                <b-col>{{ lodgementDetails?.service_type }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Coordinator:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.coordinator }}</b-col>
+                                <b-col>{{ lodgementDetails?.coordinator }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Cashier:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.cashier }}</b-col>
+                                <b-col>{{ lodgementDetails?.cashier }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails.createdAt }}</b-col>
+                                <b-col>{{ lodgementDetails?.createdAt }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>
@@ -85,7 +85,7 @@ export default {
             isLoading: false,
         }
     },
-    fetch() {
+    created() {
         this.getLodgementDetails();
     },
     methods: {

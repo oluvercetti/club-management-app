@@ -33,7 +33,7 @@
                     </template>
                 </b-table>
             </b-col>
-            <b-col md="8" sm="12" v-if="viewTable === 'purchase'">
+            <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
                 <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading"
                     class="mt-4 small-font" striped hover outlined sort-icon-left>
                     <template #cell(actions)="row">
@@ -106,11 +106,11 @@ export default {
             this.isLoading = true;
             return this.$store.dispatch("getAllTransactions").then((response) => {
                 this.isLoading = false;
-                this.purchaseList = response.data.purchase;
-                this.lodgementList = response.data.lodgement;
+                this.purchaseList = response.data.purchases;
+                this.lodgementList = response.data.lodgements;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,

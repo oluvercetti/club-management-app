@@ -3,6 +3,7 @@ export const state = () => ({
     userInfo: {},
     authToken: null,
     isAuthenticated: false,
+    roleList: null
 });
 
 export const getters = ({
@@ -11,6 +12,8 @@ export const getters = ({
     getAuthToken: state => state.authToken,
 
     getIsAuthenticated: state => state.isAuthenticated,
+
+    getRoleList: state => state.roleList,
 
 });
 
@@ -27,17 +30,22 @@ export const mutations = ({
         state.isAuthenticated = value;
     },
 
+    setRoleList(state, value) {
+        state.roleList = value;
+    },
+
 });
 
 export const actions = ({
     // Admin actions
-    loginAdminUser({ commit }, payload) {
+    loginAdminUser({ commit, dispatch }, payload) {
          return this.$axios.post("/api/admin/login", payload).then((response) => {
             this.$cookies.set("sftoken", JSON.stringify(response.data.token), {
                 path: "/"
             });
             commit("setAuthToken", response.data.token);
             commit("setUserInfo", response.data.data);
+            dispatch("getRoleList")
             return response.data.data;
         });
     },
@@ -124,8 +132,8 @@ export const actions = ({
         });
     },
 
-    fetchSingleLodgement(_, { id }) {
-        return this.$axios.get(`/api/admin/lodgements/${id}`, payload).then((response) => {
+    fetchSingleLodgement(_, id) {
+        return this.$axios.get(`/api/admin/lodgements/${id}`).then((response) => {
             return response.data;
         });
     },
@@ -143,8 +151,8 @@ export const actions = ({
         });
     },
 
-    fetchSinglePurchase(_, { id }) {
-        return this.$axios.get(`/api/admin/purchases/${id}`, payload).then((response) => {
+    fetchSinglePurchase(_, id ) {
+        return this.$axios.get(`/api/admin/purchases/${id}`).then((response) => {
             return response.data;
         });
     },
@@ -156,15 +164,16 @@ export const actions = ({
         });
     },
 
-    getRoleList() {
+    getRoleList({commit}) {
         return this.$axios.get("/api/roles").then((response) => {
+            commit("setRoleList", response.data.data);
             return response.data;
         });
     },
 
     // Services actions
 
-    createService(_, payload) {
+    createNewService(_, payload) {
         return this.$axios.post("/api/services", payload).then((response) => {
             return response.data;
         });
@@ -193,6 +202,7 @@ export const actions = ({
             await dispatch("getAdminUserProfile").catch((err) => {
                 this.$router.push("/login");
             });
+            await dispatch("getRoleList")
         
 
     },

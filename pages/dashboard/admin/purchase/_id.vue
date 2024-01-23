@@ -23,38 +23,38 @@
                                 <b-col md="3">
                                     <strong>Transaction ID:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.trans_id }}</b-col>
+                                <b-col>{{ purchaseDetails?.trans_id }}</b-col>
                             </b-row>
 
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Type:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.mode_of_payment }}</b-col>
+                                <b-col>{{ purchaseDetails?.mode_of_payment }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Denomination:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.denomination }}</b-col>
+                                <b-col>{{ purchaseDetails?.denomination }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Amount:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.amount | format_amount }}</b-col>
+                                <b-col>{{ purchaseDetails?.amount | format_amount }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Processed by:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.coordinator }}</b-col>
+                                <b-col>{{ purchaseDetails?.coordinator }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails.createdAt }}</b-col>
+                                <b-col>{{ purchaseDetails?.createdAt }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>
