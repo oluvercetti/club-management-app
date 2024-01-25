@@ -21,6 +21,16 @@
                 </b-button>
                 <b-table ref="fees" :items="feesList" :fields="feeFields" :busy="isLoading" class="mt-4 small-font" striped
                     hover outlined sort-icon-left>
+                    <template #cell(status)="active">
+                        <!-- `active.value` is the value after formatted by the Formatter -->
+                        <p>{{ active.value ? "Active" : "Inactive" }}</p>
+                    </template>
+                    <template #cell(createdAt)="createdAt">
+                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
+                    <template #cell(updatedAt)="updatedAt">
+                        <p>{{ $moment(updatedAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
                             <b-button variant="primary" @click="handleSelectedFee(row.item)">
@@ -36,12 +46,22 @@
                     </template>
                 </b-table>
             </b-col>
-            <b-col md="8" sm="12" v-if="viewTable === 'services'">
+            <b-col md="12" sm="12" v-if="viewTable === 'services'">
                 <b-button variant="primary" class="mr-3" @click="showNewServiceModal = !showNewServiceModal">
                     Create New Service
                 </b-button>
                 <b-table ref="services" :items="servicesList" :fields="serviceFields" :busy="isLoading"
                     class="mt-4 small-font" striped hover outlined sort-icon-left>
+                    <template #cell(status)="active">
+                        <!-- `active.value` is the value after formatted by the Formatter -->
+                        <p>{{ active.value ? "Active" : "Inactive" }}</p>
+                    </template>
+                    <template #cell(createdAt)="createdAt">
+                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
+                    <template #cell(updatedAt)="updatedAt">
+                        <p>{{ $moment(updatedAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
                             <b-button variant="primary" @click="handleSelectedService(row.item)">

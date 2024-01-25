@@ -181,7 +181,7 @@ export default {
 
         coordinatorsList() {
             return this.usersList
-                .filter((data) => data.role === 2)
+                .filter((data) => data.role === 5)
                 .map((data) => ({ value: data.username, text: data.name }));
         },
 
