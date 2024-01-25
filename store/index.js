@@ -94,8 +94,8 @@ export const actions = ({
         });
     },
 
-    getAllTransactions() {
-        return this.$axios.get("/api/admin/transactions").then((response) => {
+    getAllTransactions(_, params) {
+        return this.$axios.get("/api/admin/transactions", { params }).then((response) => {
             return response.data;
         });
     },

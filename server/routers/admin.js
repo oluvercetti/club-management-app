@@ -12,14 +12,14 @@ const permissions = require("../utils").permission_levels;
 
 // POST /admin
 
-router.post("/api/admin", auth, async(req, res) => {
+router.post("/api/admin", auth, async (req, res) => {
     const admin = new Admin(req.body);
     try {
 
         await Admin.checkUserPermission(req.admin.role, permissions.super_admin);
-        
-        const role = await Roles.findOne({ role_id: req.body.role});
-        if(!role){
+
+        const role = await Roles.findOne({ role_id: req.body.role });
+        if (!role) {
             return res.status(400).send({ status: "error", message: "Role does not exist" });
         }
         await admin.generateAuthToken();
@@ -49,7 +49,7 @@ router.post("/api/admin", auth, async(req, res) => {
     }
 });
 
-router.post("/api/admin/login", async(req, res) => {
+router.post("/api/admin/login", async (req, res) => {
     try {
         const admin = await Admin.findByCredentials(req.body.username, req.body.password);
         const token = await admin.generateAuthToken();
@@ -62,7 +62,7 @@ router.post("/api/admin/login", async(req, res) => {
     }
 });
 
-router.post("/admin/logout", auth, async(req, res) => {
+router.post("/admin/logout", auth, async (req, res) => {
     try {
         req.admin.tokens = req.admin.tokens.filter((token) => {
             return token.token !== req.token;
@@ -78,7 +78,7 @@ router.post("/admin/logout", auth, async(req, res) => {
     }
 });
 
-router.post("/api/admin/logoutAll", auth, async(req, res) => {
+router.post("/api/admin/logoutAll", auth, async (req, res) => {
     try {
         req.admin.tokens = [];
         await req.admin.save();
@@ -105,7 +105,7 @@ const upload = multer({
     },
 });
 
-router.post("/api/admin/me/avatar", auth, upload.single("avatar"), async(req, res) => {
+router.post("/api/admin/me/avatar", auth, upload.single("avatar"), async (req, res) => {
     const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
     req.admin.avatar = buffer;
     await req.admin.save();
@@ -130,8 +130,8 @@ router.get("/api/admin/me/avatar", auth, (req, res) => {
 //GET /admin/
 router.get('/api/admin/me', auth, async (req, res) => {
     try {
-        const admin = await Admin.findOne({username: req.admin.username})
-        res.status(200).send({status: "Success", data: admin})
+        const admin = await Admin.findOne({ username: req.admin.username })
+        res.status(200).send({ status: "Success", data: admin })
     } catch (e) {
         res.status(400).send({
             status: "error",
@@ -140,7 +140,7 @@ router.get('/api/admin/me', auth, async (req, res) => {
     }
 })
 
-router.patch("/api/admin/me", auth, async(req, res) => {
+router.patch("/api/admin/me", auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ["name"];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
@@ -160,7 +160,7 @@ router.patch("/api/admin/me", auth, async(req, res) => {
     }
 });
 
-router.delete("/api/admin/me", auth, async(req, res) => {
+router.delete("/api/admin/me", auth, async (req, res) => {
     // const email = req.admin.email;
     // const name = req.admin.name;
     try {
@@ -172,7 +172,7 @@ router.delete("/api/admin/me", auth, async(req, res) => {
     }
 });
 
-router.delete("/api/admin/me/avatar", auth, async(req, res) => {
+router.delete("/api/admin/me/avatar", auth, async (req, res) => {
     req.admin.avatar = undefined;
     try {
         await req.admin.save();
@@ -182,18 +182,18 @@ router.delete("/api/admin/me/avatar", auth, async(req, res) => {
     }
 });
 
-router.patch("/api/admin/changepassword", auth, async(req, res) => {
+router.patch("/api/admin/changepassword", auth, async (req, res) => {
 
     try {
         const isMatch = await bcrypt.compare(req.body.password, req.admin.password);
 
-        if(!isMatch){
+        if (!isMatch) {
             return res.status(400).send({ error: "Incorrect Password" });
         }
 
         const isSameasOldPassword = await bcrypt.compare(req.body.new_password, req.admin.password);
 
-        if(isSameasOldPassword){
+        if (isSameasOldPassword) {
             return res.status(400).send({ error: "New password can not be same as new" });
         }
         req.admin.password = req.body.new_password;
@@ -205,7 +205,7 @@ router.patch("/api/admin/changepassword", auth, async(req, res) => {
 });
 
 router.get("/api/admin/users", auth, async (req, res) => {
-    
+
     try {
         // await Admin.checkUserPermission(req.admin.role, permissions.admin);
         const users = await Admin.find();
@@ -219,10 +219,10 @@ router.get("/api/admin/users", auth, async (req, res) => {
 })
 
 router.get("/api/admin/users/:id", auth, async (req, res) => {
-    
+
     try {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        const user = await Admin.findOne({_id: req.params.id});
+        const user = await Admin.findOne({ _id: req.params.id });
         res.status(200).send({ status: "Success", data: user });
     } catch (error) {
         res.status(400).send({
@@ -234,12 +234,73 @@ router.get("/api/admin/users/:id", auth, async (req, res) => {
 
 //Get all purchases and lodgements
 router.get("/api/admin/transactions", auth, async (req, res) => {
-    
+
     try {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        const purchases = await Purchases.find();
-        const lodgements = await Lodgements.find();
-        res.status(200).send({ status: "Success", data: {purchases, lodgements} });
+        let purchasesQuery = null;
+        let lodgementsQuery = null;
+        // Define start and end date parameters
+        if(req.query.startDate && req.query.endDate) {
+            const startDate = req.query.startDate; // You should validate and parse this input
+            const endDate = req.query.endDate;     // You should validate and parse this input
+
+        // Construct query for records between startDate and endDate
+        purchasesQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
+        lodgementsQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
+        }
+
+        
+
+        // Fetch records based on the query
+        const purchases = await Purchases.find(purchasesQuery);
+        const lodgements = await Lodgements.find(lodgementsQuery);
+        if(!purchases.length && !lodgements.length){
+            res.status(404).send({ status: "Error", message: "No records found for the selected period"});
+        } else {
+            res.status(200).send({ status: "Success", data: { purchases, lodgements } });
+        }
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+})
+
+//Get all purchases and lodgements
+router.get("/api/admin/endofdayreport", auth, async (req, res) => {
+
+    try {
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        let purchasesQuery = null;
+        let lodgementsQuery = null;
+
+        const now = new Date();
+        if(req.query.reportDate){
+            now = new Date(req.query.reportDate)
+        }
+
+        // Calculate start and end dates for yesterday 10pm to today 6am
+        const yesterdayTenPM = new Date(now);
+        yesterdayTenPM.setDate(now.getDate() - 1);
+        yesterdayTenPM.setHours(22, 0, 0, 0);
+
+        const todaySixAM = new Date(now);
+        todaySixAM.setHours(6, 0, 0, 0);
+
+        // Construct query for records between yesterday 10pm and today 6am
+        purchasesQuery = { createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM } };
+        lodgementsQuery = { createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM } };
+
+        // Fetch records based on the query
+        const purchases = await Purchases.find(purchasesQuery);
+        const lodgements = await Lodgements.find(lodgementsQuery);
+
+        if (!purchases.length && !lodgements.length) {
+            res.status(404).send({ status: "Error", message: "No records found for the selected period" });
+        } else {
+            res.status(200).send({ status: "Success", data: { purchases, lodgements } });
+        }
     } catch (error) {
         res.status(400).send({
             status: "error occurred",
@@ -248,12 +309,12 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
     }
 })
 //To be deleted when going live
-router.post("/api/admin/over15", async(req, res) => {
+router.post("/api/admin/over15", async (req, res) => {
     const admin = new Admin(req.body);
     try {
-        
-        const role = await Roles.findOne({ role_id: req.body.role});
-        if(!role){
+
+        const role = await Roles.findOne({ role_id: req.body.role });
+        if (!role) {
             return res.status(400).send({ status: "error", message: "Role does not exist" });
         }
         await admin.generateAuthToken();
