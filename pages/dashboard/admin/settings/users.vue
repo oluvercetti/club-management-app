@@ -56,16 +56,19 @@
                 <b-form-group label="Password" label-for="newPassword" v-if="newUser.role !== 4">
                     <b-form-input id="newPassword" type="password" v-model="newUser.password" required />
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Please wait...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Create User
-                </b-button>
-                <b-button type="button" @click="showNewUserModal = !showNewUserModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Please wait...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Create User
+                    </b-button>
+                    <b-button type="button" @click="showNewUserModal = !showNewUserModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
 
@@ -86,16 +89,19 @@
                         <b-form-select-option value="false">Inactive</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Saving...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save User
-                </b-button>
-                <b-button type="button" @click="showExistingUserModal = !showExistingUserModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Saving...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Save User
+                    </b-button>
+                    <b-button type="button" @click="showExistingUserModal = !showExistingUserModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
 
@@ -107,16 +113,19 @@
                 <b-form-group label="Description" label-for="description">
                     <b-form-textarea id="description" rows="2" v-model="newRole.description" />
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Please wait...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Create Role
-                </b-button>
-                <b-button type="button" @click="showNewRoleModal = !showNewRoleModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Please wait...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Create Role
+                    </b-button>
+                    <b-button type="button" @click="showNewRoleModal = !showNewRoleModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
     </div>
@@ -179,7 +188,7 @@ export default {
 
     watch: {
         "newUser.role"() {
-            if(this.newUser.role > 4) {
+            if (this.newUser.role > 4) {
                 this.newUser.password = 12345678;
             }
         }

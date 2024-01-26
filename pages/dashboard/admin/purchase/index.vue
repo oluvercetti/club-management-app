@@ -118,39 +118,6 @@
                 </template>
             </b-table>
         </b-container>
-
-        <b-modal v-model="showViewExistingTransaction" hide-footer title="View Lodgement">
-            <b-form @submit.prevent="printTransactionReceipt(selectedPurchase)">
-                <b-form-group label="Name" label-for="edit-name">
-                    <b-form-input id="edit-name" v-model="selectedPurchase.location" required />
-                </b-form-group>
-                <b-form-group label="Denomination" label-for="denomination">
-                    <b-form-select v-model="selectedPurchase.denomination" disabled>
-                        <b-form-select-option value="100">N100</b-form-select-option>
-                        <b-form-select-option value="200">N200</b-form-select-option>
-                        <b-form-select-option value="500">N500</b-form-select-option>
-                        <b-form-select-option value="1000">N1000</b-form-select-option>
-                    </b-form-select>
-                </b-form-group>
-                <b-form-group label="Transaction Type" label-for="transtype">
-                    <b-form-select v-model="selectedPurchase.mode_of_payment" disabled>
-                        <b-form-select-option value="pos">POS</b-form-select-option>
-                        <b-form-select-option value="cash">Cash</b-form-select-option>
-                        <b-form-select-option value="transfer">Transfer</b-form-select-option>
-                    </b-form-select>
-                </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Saving...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Reprint receipt
-                </b-button>
-                <b-button type="button" @click="showViewExistingTransaction = !showViewExistingTransaction">
-                    Cancel
-                </b-button>
-            </b-form>
-        </b-modal>
     </div>
 </template>
 

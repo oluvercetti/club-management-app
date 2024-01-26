@@ -74,7 +74,8 @@
                         </template>
                     </b-form-select>
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
+                <div class="form__button-container">
+                <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary" disabled>
                     <span class="mr-2">Please wait...</span>
                     <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                 </b-button>
@@ -83,7 +84,7 @@
                 </b-button>
                 <b-button type="button" @click="showNewLodgementModal = !showNewLodgementModal">
                     Cancel
-                </b-button>
+                </b-button></div>
             </b-form>
         </b-modal>
 
@@ -95,7 +96,8 @@
                 <b-form-group label="Shortcode" label-for="edit-shortcode">
                     <b-form-input id="edit-shortcode" v-model="selectedLodgement.shortcode" minlength="3" required />
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
+                <div class="form__button-container">
+                <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary" disabled>
                     <span class="mr-2">Saving...</span>
                     <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                 </b-button>
@@ -104,7 +106,7 @@
                 </b-button>
                 <b-button type="button" @click="showViewExistingTransaction = !showViewExistingTransaction">
                     Cancel
-                </b-button>
+                </b-button></div>
             </b-form>
         </b-modal>
     </div>

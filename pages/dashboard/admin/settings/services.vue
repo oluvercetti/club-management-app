@@ -4,7 +4,7 @@
             <b-row>
                 <b-col md="4">
                     <b-form-radio v-model="viewTable" name="viewTable" value="fee">
-                       View Fee Settings
+                        View Fee Settings
                     </b-form-radio>
                 </b-col>
                 <b-col md="4">
@@ -101,16 +101,19 @@
                     <b-form-input v-else id="feeValue" type="number" min="1" max="100" v-model="newFee.fee_value"
                         required />
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Please wait...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Create Fee
-                </b-button>
-                <b-button type="button" @click="showNewFeeModal = !showNewFeeModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Please wait...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Create Fee
+                    </b-button>
+                    <b-button type="button" @click="showNewFeeModal = !showNewFeeModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
 
@@ -142,16 +145,19 @@
                         <b-form-select-option value="false">Inactive</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Saving...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save
-                </b-button>
-                <b-button type="button" @click="showEditFeeModal = !showEditFeeModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Saving...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Save
+                    </b-button>
+                    <b-button type="button" @click="showEditFeeModal = !showEditFeeModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
         <b-modal v-model="showNewServiceModal" hide-footer title="New Service">
@@ -159,16 +165,19 @@
                 <b-form-group label="Service Name" label-for="serviceName">
                     <b-form-input id="serviceName" type="text" v-model="newService.service_name" required />
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Please wait...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Create Service
-                </b-button>
-                <b-button type="button" @click="showNewServiceModal = !showNewServiceModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Please wait...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Create Service
+                    </b-button>
+                    <b-button type="button" @click="showNewServiceModal = !showNewServiceModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
 
@@ -183,16 +192,19 @@
                         <b-form-select-option value="false">Inactive</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
-                <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary" disabled>
-                    <span class="mr-2">Saving...</span>
-                    <b-spinner style="width: 1.5rem; height: 1.5rem;" />
-                </b-button>
-                <b-button v-else type="submit" variant="primary" class="mr-3">
-                    Save Changes
-                </b-button>
-                <b-button type="button" @click="showEditServiceModal = !showEditServiceModal">
-                    Cancel
-                </b-button>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Saving...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Save Changes
+                    </b-button>
+                    <b-button type="button" @click="showEditServiceModal = !showEditServiceModal">
+                        Cancel
+                    </b-button>
+                </div>
             </b-form>
         </b-modal>
     </div>

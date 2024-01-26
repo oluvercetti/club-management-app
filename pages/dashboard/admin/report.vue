@@ -12,14 +12,18 @@
                         View Purchases
                     </b-form-radio>
                 </b-col>
+            </b-row>
+        </b-container>
+        <b-container class="mb-4">
+            <b-row>
                 <b-col md="4">
-                    <b-button type="button" variant="info" @click="showDateFilter = true">
-                        Filter by Date
-                    </b-button>
+                    <b-form-group label="Start Date" label-for="report-date">
+                    <b-form-datepicker id="report-date" v-model="reportDate" required></b-form-datepicker>
+                </b-form-group>
                 </b-col>
                 <b-col md="4">
-                    <b-button type="button" variant="info" to="/dashboard/admin/report">
-                        Generate End of Day Report
+                    <b-button type="button" variant="info" @click="handleGetReport()">
+                        Generate
                     </b-button>
                 </b-col>
             </b-row>
@@ -69,13 +73,6 @@
                     <template #cell(mode_of_payment)="mode">
                         <p class="text-capitalize">{{ mode.value }}</p>
                     </template>
-                    <template #cell(actions)="row">
-                        <div class="d-flex justify-content-around">
-                            <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.trans_id}`">
-                                View Details
-                            </b-button>
-                        </div>
-                    </template>
                     <template #table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle" />
@@ -85,22 +82,6 @@
                 </b-table>
             </b-col>
         </b-row>
-        <b-modal v-model="showDateFilter" centered hide-footer title="FIlter by date">
-            <b-form @submit.prevent="handleGetAllTransactions()">
-                <b-form-group label="Start Date" label-for="start-date">
-                    <b-form-datepicker id="start-date" v-model="startDate" required></b-form-datepicker>
-                </b-form-group>
-                <b-form-group label="End Date" label-for="end-date">
-                    <b-form-datepicker id="end-date" v-model="endDate" required></b-form-datepicker>
-                </b-form-group>
-                <b-button type="submit" variant="primary" class="mr-3" :disabled="!endDate || !startDate">
-                    Filter Records
-                </b-button>
-                <b-button type="button" @click="showDateFilter = !showDateFilter">
-                    Cancel
-                </b-button>
-            </b-form>
-        </b-modal>
     </div>
 </template>
 
@@ -113,42 +94,37 @@ export default {
             lodgementList: [],
             viewTable: "lodgement",
             lFields: [
-                { key: "createdAt", label: "Date", sortable: true },
+                { key: "createdAt", label: "Date" },
                 { key: "trans_id", label: "ID" },
-                { key: "mode_of_payment", label: "Mode", sortable: true },
-                { key: "username", label: "User", sortable: true },
-                { key: "amount", label: "Amount", sortable: true },
-                { key: "service_type", label: "Service", sortable: true },
-                { key: "coordinator", label: "Coordinator", sortable: true },
-                "Actions",
+                { key: "mode_of_payment", label: "Mode" },
+                { key: "username", label: "User" },
+                { key: "amount", label: "Amount" },
+                { key: "service_type", label: "Service" },
+                { key: "coordinator", label: "Coordinator" },
             ],
             pFields: [
-                { key: "createdAt", label: "Date", sortable: true },
+                { key: "createdAt", label: "Date" },
                 { key: "trans_id", label: "ID" },
-                { key: "mode_of_payment", label: "Mode", sortable: true },
-                { key: "amount", label: "Amount", sortable: true },
-                { key: "coordinator", label: "Coordinator", sortable: true },
-                "Actions",
+                { key: "mode_of_payment", label: "Mode" },
+                { key: "amount", label: "Amount" },
+                { key: "coordinator", label: "Coordinator" },
             ],
-            showDateFilter: false,
             isLoading: false,
-            startDate: null,
-            endDate: null
+            reportDate: new Date(),
         };
     },
 
     fetch() {
-        this.handleGetAllTransactions();
+        this.handleGetReport();
     },
 
     fetchOnServer: false,
 
     methods: {
-        handleGetAllTransactions() {
+        handleGetReport() {
             this.isLoading = true;
             const params = {
-                startDate: this.startDate,
-                endDate: this.endDate
+                reportDate: this.reportDate
             }
             return this.$store.dispatch("getAllTransactions", params).then((response) => {
                 this.isLoading = false;
@@ -163,16 +139,6 @@ export default {
                     delay: 300,
                 });
             });
-        },
-
-        handleSelectedTransaction(data) {
-            this.selectedTransaction.id = data.id;
-            this.selectedTransaction.name = data.name;
-            this.selectedTransaction.amount = data.amount;
-            this.selectedTransaction.trans_type = data.trans_type;
-            this.selectedTransaction.coordinator = data.coordinator;
-            this.selectedTransaction.service_type = data.service_type;
-            this.showDateFilter = true;
         },
 
         exportToPdf(){

@@ -155,8 +155,11 @@ router.patch("/api/admin/me", auth, async (req, res) => {
 
         await req.admin.save();
         res.send(req.admin);
-    } catch (err) {
-        res.status(400).send({ message: "Error occurred" });
+    }  catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
     }
 });
 
@@ -199,8 +202,11 @@ router.patch("/api/admin/changepassword", auth, async (req, res) => {
         req.admin.password = req.body.new_password;
         await req.admin.save();
         res.send(req.admin);
-    } catch (err) {
-        res.status(400).send({ message: "Error occurred", err });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
     }
 });
 

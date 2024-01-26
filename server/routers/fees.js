@@ -68,14 +68,14 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
         await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin);
         // Check if the current time is between 10pm of yesterday and 6am of today
         const now = new Date();
-        const yesterdayTenPM = new Date(now);
-        yesterdayTenPM.setDate(now.getDate() - 1);
-        yesterdayTenPM.setHours(22, 0, 0, 0);
+        const todayTenPm = new Date(now);
+        todayTenPm.setHours(22, 0, 0, 0);
 
-        const todaySixAM = new Date(now);
-        todaySixAM.setHours(6, 0, 0, 0);
+        const tomorrowSixAm = new Date(now);
+        tomorrowSixAm.setDate(now.getDate() + 1);
+        tomorrowSixAm.setHours(6, 0, 0, 0);
 
-        if (now >= yesterdayTenPM && now <= todaySixAM) {
+        if (now >= todayTenPm && now <= tomorrowSixAm) {
             throw new Error("Updates can not be made at this time");
         }
         const updates = Object.keys(req.body);
@@ -100,8 +100,11 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
 
         await fee.save();
         res.send(fee);
-    } catch (err) {
-        res.status(400).send({ message: "Error occurred" });
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
     }
 });
 
