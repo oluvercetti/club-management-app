@@ -82,7 +82,7 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
         const allowedUpdates = ["fee_name", "fee_value", "fee_type", "status"];
         const isValidOperation = updates.every(update => allowedUpdates.includes(update));
         if (!isValidOperation) {
-            return res.status(400).send({ error: "Invalid operation" });
+            return res.status(400).send({ message: "Invalid operation" });
         }
 
         const isFeeTypeValid = utils.fee_types.includes(req.body.fee_type);
@@ -92,7 +92,7 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
         const _id = req.params.id;
         const fee = await Fees.findOne({ _id });
         if (!fee) {
-            return res.status(404).send({ error: "fee not found" });
+            return res.status(404).send({ message: "fee not found" });
         }
         updates.forEach((update) => {
             fee[update] = req.body[update];
@@ -101,7 +101,7 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
         await fee.save();
         res.send(fee);
     } catch (err) {
-        res.status(400).send({ error: "Error occurred" });
+        res.status(400).send({ message: "Error occurred" });
     }
 });
 

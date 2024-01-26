@@ -111,7 +111,7 @@ router.post("/api/admin/me/avatar", auth, upload.single("avatar"), async (req, r
     await req.admin.save();
     res.send("Uploaded successfully");
 }, (error, req, res, next) => {
-    res.status(400).send({ error: error.message });
+    res.status(400).send({ message: error.message });
 });
 
 router.get("/api/admin/me/avatar", auth, (req, res) => {
@@ -123,7 +123,7 @@ router.get("/api/admin/me/avatar", auth, (req, res) => {
         res.set("Content-Type", "image/png");
         res.send(req.admin.avatar);
     } catch (e) {
-        res.status(404).send({ error: "Avatar not found" });
+        res.status(404).send({ message: "Avatar not found" });
     }
 });
 
@@ -145,7 +145,7 @@ router.patch("/api/admin/me", auth, async (req, res) => {
     const allowedUpdates = ["name"];
     const isValidOperation = updates.every(update => allowedUpdates.includes(update));
     if (!isValidOperation) {
-        return res.status(400).send({ error: "Invalid operation" });
+        return res.status(400).send({ message: "Invalid operation" });
     }
 
     try {
@@ -156,7 +156,7 @@ router.patch("/api/admin/me", auth, async (req, res) => {
         await req.admin.save();
         res.send(req.admin);
     } catch (err) {
-        res.status(400).send({ error: "Error occurred" });
+        res.status(400).send({ message: "Error occurred" });
     }
 });
 
@@ -188,19 +188,19 @@ router.patch("/api/admin/changepassword", auth, async (req, res) => {
         const isMatch = await bcrypt.compare(req.body.password, req.admin.password);
 
         if (!isMatch) {
-            return res.status(400).send({ error: "Incorrect Password" });
+            return res.status(400).send({ message: "Incorrect Password" });
         }
 
         const isSameasOldPassword = await bcrypt.compare(req.body.new_password, req.admin.password);
 
         if (isSameasOldPassword) {
-            return res.status(400).send({ error: "New password can not be same as new" });
+            return res.status(400).send({ message: "New password can not be same as new" });
         }
         req.admin.password = req.body.new_password;
         await req.admin.save();
         res.send(req.admin);
     } catch (err) {
-        res.status(400).send({ error: "Error occurred", err });
+        res.status(400).send({ message: "Error occurred", err });
     }
 });
 
