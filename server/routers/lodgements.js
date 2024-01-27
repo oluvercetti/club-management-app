@@ -39,9 +39,12 @@ router.get("/api/admin/lodgements", auth, async(req, res) => {
     if (req.query.sortBy) {
         const parts = req.query.sortBy.split(":");
         sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+    } else {
+        sort.createdAt = -1;
     }
+
     try {
-        const lodgements = await Lodgements.find(match);
+        const lodgements = await Lodgements.find(match).sort(sort);
 
         res.status(200).send({ status: "Success", data: lodgements });
     } catch (error) {

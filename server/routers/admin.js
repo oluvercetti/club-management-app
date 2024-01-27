@@ -281,7 +281,7 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         let purchasesQuery = null;
         let lodgementsQuery = null;
 
-        const now = new Date();
+        let now = new Date();
         if(req.query.reportDate){
             now = new Date(req.query.reportDate)
         }
@@ -292,21 +292,42 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         yesterdayTenPM.setHours(22, 0, 0, 0);
 
         const todaySixAM = new Date(now);
-        todaySixAM.setHours(6, 0, 0, 0);
+        todaySixAM.setHours(16, 0, 0, 0);
+        const lodgementsReport = await Lodgements.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM },
+                    username: { $exists: true, $ne: null },
+                },
+            },
+            {
+                $group: {
+                    _id: "$username",
+                    totalAmount: { $sum: "$amount" },
+                },
+            },
+        ]);
 
-        // Construct query for records between yesterday 10pm and today 6am
-        purchasesQuery = { createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM } };
-        lodgementsQuery = { createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM } };
+        const purchasesReport = await Purchases.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM },
+                    coordinator: { $exists: true, $ne: null },
+                },
+            },
+            {
+                $group: {
+                    _id: "$coordinator",
+                    totalAmount: { $sum: "$amount" },
+                },
+            },
+        ]);
 
-        // Fetch records based on the query
-        const purchases = await Purchases.find(purchasesQuery);
-        const lodgements = await Lodgements.find(lodgementsQuery);
-
-        if (!purchases.length && !lodgements.length) {
-            res.status(404).send({ status: "Error", message: "No records found for the selected period" });
-        } else {
-            res.status(200).send({ status: "Success", data: { purchases, lodgements } });
-        }
+        if (!lodgementsReport.length && !purchasesReport.length) {
+            return res.status(404).send({ status: "Error", message: "No report found for the selected day" });
+        } 
+        res.status(200).send({ status: "Success", data: { lodgementsReport, purchasesReport } });
+        
     } catch (error) {
         res.status(400).send({
             status: "error occurred",

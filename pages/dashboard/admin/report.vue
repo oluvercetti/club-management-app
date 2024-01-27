@@ -145,6 +145,12 @@ export default {
 
         }
     },
+
+    computed: {
+        computedReportList() {
+            return this.data 
+        }
+    },
 };
 </script>
 
