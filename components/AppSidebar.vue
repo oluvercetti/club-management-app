@@ -6,16 +6,16 @@
         <div class="sidebar-container__menu">
             <b-nav vertical>
 
-                <b-nav-item to="/dashboard/admin/lodgement" exact exact-active-class="active">
+                <b-nav-item v-if="canSeeCashLodgement" to="/dashboard/admin/lodgement" exact exact-active-class="active">
                     <b-icon icon="cash" aria-hidden="true" class="mr-3"></b-icon> Cash Logdement
                 </b-nav-item>
-                <b-nav-item to="/dashboard/admin/purchase" active-class="active">
+                <b-nav-item v-if="canSeeCashPurchase" to="/dashboard/admin/purchase" active-class="active">
                     <b-icon icon="cash" aria-hidden="true" class="mr-3"></b-icon> Cash Purchase
                 </b-nav-item>
-                <b-nav-item to="/dashboard/admin/settings" active-class="active">
+                <b-nav-item v-if="canSeeSettings" to="/dashboard/admin/settings" active-class="active">
                     <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
-                <b-nav-item to="/dashboard/admin/audit" active-class="active">
+                <b-nav-item v-if="canSeeCashAuditLog" to="/dashboard/admin/audit" active-class="active">
                     <b-icon icon="book" aria-hidden="true" class="mr-3"></b-icon> Audit Log
                 </b-nav-item>
             </b-nav>
@@ -46,7 +46,7 @@ export default {
         },
 
         canSeeCashPurchase() {
-            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 2;
+            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 5;
         },
 
         canSeeSettings() {

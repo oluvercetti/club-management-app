@@ -3,121 +3,54 @@
         <h2 class="mb-3"><b-icon icon="cash" class="mr-3" aria-hidden="true" /> Cash Purchase</h2>
         <div class="mb-4">
             <b-form-row>
-                <b-col md="5">
-                    <b-form @submit.prevent="addItem()">
-                        <b-form-group label="Denomination" label-for="denomination">
-                            <b-form-select v-model="form.denomination" required>
-                                <template #first>
-                                    <b-form-select-option value="" disabled>
-                                        -- Please select --
-                                    </b-form-select-option>
+                <b-col md="12">
+                    <b-form @submit.prevent="handleCreateNewPurchase()">
+                        <b-form-row class="radio">
+                            <b-col md="3" class="radio__item" v-for="option in denominationOptions" :key="option.value">
+                                <input :id="option.value" v-model="form.denomination" :value="option.value" type="radio"
+                                    :name="option.value" class="radio__input">
+                                <label :for="option.value" class="radio__label">
+                                    <img :src="option.image" :alt="option.label" class="img-fluid" />
+                                </label>
+                            </b-col>
+                        </b-form-row>
+                        <b-form-row>
+                            <b-col md="5">
+                                <template v-if="form.denomination">
+                                    <b-form-group label="How many bundles?" label-for="quantity">
+                                        <b-form-input id="quantity" type="number" min="1" max="100" v-model="form.quantity"
+                                            required />
+                                    </b-form-group>
+                                    <b-form-group label="Amount" label-for="amount">
+                                        <h3><b>{{ computedAmount | format_amount }}</b></h3>
+                                    </b-form-group>
+                                    <b-form-group label="Payment Type" label-for="transtype">
+                                        <b-form-select v-model="form.mode_of_payment" required>
+                                            <template #first>
+                                                <b-form-select-option value=null disabled>
+                                                    -- Please select --
+                                                </b-form-select-option>
+                                            </template>
+                                            <b-form-select-option value="pos">POS</b-form-select-option>
+                                            <b-form-select-option value="cash">Cash</b-form-select-option>
+                                            <b-form-select-option value="transfer">Transfer</b-form-select-option>
+                                        </b-form-select>
+                                    </b-form-group>
                                 </template>
-                                <b-form-select-option value="100">N100</b-form-select-option>
-                                <b-form-select-option value="200">N200</b-form-select-option>
-                                <b-form-select-option value="500">N500</b-form-select-option>
-                                <b-form-select-option value="1000">N1000</b-form-select-option>
-                            </b-form-select>
-                        </b-form-group>
-                        <template v-if="form.denomination">
-                            <b-form-group label="Quantity" label-for="quantity">
-                                <b-form-input id="quantity" type="number" min="1" max="100" v-model="form.quantity"
-                                    required />
-                            </b-form-group>
-                            <b-form-group label="Amount" label-for="amount">
-                                <h3><b>{{ computedAmount | format_amount }}</b></h3>
-                            </b-form-group>
-                            <b-form-group label="Transaction Type" label-for="transtype">
-                                <b-form-select v-model="form.mode_of_payment" required>
-                                    <template #first>
-                                        <b-form-select-option value="" disabled>
-                                            -- Please select --
-                                        </b-form-select-option>
-                                    </template>
-                                    <b-form-select-option value="pos">POS</b-form-select-option>
-                                    <b-form-select-option value="cash">Cash</b-form-select-option>
-                                    <b-form-select-option value="transfer">Transfer</b-form-select-option>
-                                </b-form-select>
-                            </b-form-group>
-                        </template>
+                            </b-col>
+                        </b-form-row>
                         <b-button v-if="isLoading" class="d-flex align-items-center" type="submit" variant="primary"
                             disabled>
                             <span class="mr-2">Please wait...</span>
                             <b-spinner style="width: 1.5rem; height: 1.5rem;" />
                         </b-button>
-                        <b-button v-else type="submit" variant="primary" class="mr-3">
-                            Add Purchase
+                        <b-button v-else type="submit" variant="primary" size="lg" class="mr-3 mt-3">
+                            Submit
                         </b-button>
                     </b-form>
                 </b-col>
             </b-form-row>
-            <b-container fluid v-if="gridItems.length > 0">
-                <b-table class="mt-4" ref="purchase" striped hover :items="gridItems" :fields="gridFields">
-                    <template #cell(denomination)="denomination">
-                        <div class="flex">
-                            <p>{{ denomination.value | format_amount }}</p>
-                        </div>
-                    </template>
-                    <template #cell(image)="image">
-                        <div class="img-container">
-                            <img :src="image.value" alt="image">
-                        </div>
-                    </template>
-                    <template #cell(total_amount)="price">
-                        <p>{{ price.value | format_amount }}</p>
-                    </template>
-                    <template #cell(actions)="row">
-                        <b-button-group>
-                            <b-button @click="updateItem(row.item)" variant="danger"><b-icon icon="trash"
-                                    aria-hidden="true" /></b-button>
-                        </b-button-group>
-                    </template>
-                </b-table>
-                <b-card class="mt-3">
-                    <b-card-title>Total Amount</b-card-title>
-                    <b-card-text>{{ calculateTotalAmount() | format_amount }}</b-card-text>
-                </b-card>
-                <b-container class="mt-3" fluid>
-                    <b-button type="button" variant="danger" @click="clearGrid()">
-                        Clear
-                    </b-button>
-
-                    <b-button class="ml-4" type="button" variant="success" @click="handleCreateNewPurchase()">
-                        Complete Purchase
-                    </b-button>
-                </b-container>
-            </b-container>
         </div>
-        <b-container v-if="purchaseList.length > 0">
-            <h3 class="mb-3">Previous Purchases</h3>
-            <b-table ref="transactions" :items="purchaseList" :fields="fields" :busy="isLoading" class="mt-4 small-font"
-                striped hover outlined sort-icon-left>
-                <template #cell(createdAt)="createdAt">
-                    <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
-                </template>
-                <template #cell(amount)="amount">
-                    <p>{{ amount.value | format_amount }}</p>
-                </template>
-                <template #cell(mode_of_payment)="mode">
-                    <p class="text-capitalize">{{ mode.value }}</p>
-                </template>
-                <template #cell(actions)="row">
-                    <div class="d-flex justify-content-around">
-                        <b-button variant="primary" :to="`/dashboard/admin/purchase/${row.item.trans_id}`">
-                            View Details
-                        </b-button>
-                        <!-- <b-button variant="danger" @click="printTransactionReceipt(row.item)">
-                            <b-icon icon="printer"></b-icon>
-                        </b-button> -->
-                    </div>
-                </template>
-                <template #table-busy>
-                    <div class="text-center text-info my-2">
-                        <b-spinner class="align-middle" />
-                        <strong>Loading...</strong>
-                    </div>
-                </template>
-            </b-table>
-        </b-container>
     </div>
 </template>
 
@@ -136,7 +69,7 @@ export default {
                 "Actions",
             ],
             form: {
-                denomination: null,
+                denomination: "500",
                 quantity: null,
                 mode_of_payment: null,
             },
@@ -157,18 +90,14 @@ export default {
             },
             showViewExistingTransaction: false,
             isLoading: false,
-            imageSource: [
-                { key: "100", value: "/img/100naira.webp" },
-                { key: "200", value: "/img/200naira.jpeg" },
-                { key: "500", value: "/img/500naira.webp" },
-                { key: "1000", value: "/img/1000naira.webp" },
+            denominationOptions: [
+                { value: "100", label: "N100", image: "/img/100naira.jpeg" },
+                { value: "200", label: "N200", image: "/img/200naira.jpeg" },
+                { value: "500", label: "N500", image: "/img/500naira.jpeg" },
+                { value: "1000", label: "N1000", image: "/img/1000naira.jpg" },
             ],
             trans_tag: this.$random_alpha_numeric(4),
         };
-    },
-
-    fetch() {
-        this.handleGetAllPurchases();
     },
 
     fetchOnServer: false,
@@ -195,30 +124,15 @@ export default {
     },
 
     methods: {
-        handleGetAllPurchases() {
-            this.isLoading = true;
-            return this.$store.dispatch("fetchPurchaseList").then((response) => {
-                this.isLoading = false;
-                this.purchaseList = response.data;
-            }).catch((error) => {
-                this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
-                    title: "Error",
-                    variant: "danger",
-                    delay: 300,
-                });
-            });
-        },
 
         handleCreateNewPurchase() {
-            const payload = this.gridItems.map(item => {
-                return {
-                    trans_id: this.trans_tag,
-                    mode_of_payment: item.mode_of_payment,
-                    amount: item.amount,
-                    denomination: item.denomination,
-                }
-            })
+            const payload = {
+                trans_id: this.trans_tag,
+                mode_of_payment: this.form.mode_of_payment,
+                amount: this.computedAmount,
+                denomination: this.form.denomination,
+            }
+
             this.isLoading = true;
             return this.$store.dispatch("createNewPurchase", payload).then(() => {
                 this.$bvToast.toast("Purchase completed", {
@@ -227,8 +141,7 @@ export default {
                     delay: 300,
                 });
                 this.isLoading = false;
-                this.clearGrid();
-                this.handleGetAllPurchases();
+                this.resetValues();
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
@@ -247,13 +160,13 @@ export default {
             this.showViewExistingTransaction = true;
         },
 
-        printTransactionReceipt(data) {
-            this.$bvModal.msgBoxConfirm(`Please confirm that you want to delete ${data.location}.`, {
-                title: "Delete Location",
+        printTransactionReceipt() {
+            this.$bvModal.msgBoxConfirm(`Please confirm if you want to print the receipt for this transaction.`, {
+                title: "Purchase Successful",
                 size: "md",
                 buttonSize: "md",
-                okVariant: "danger",
-                okTitle: "YES",
+                okVariant: "success",
+                okTitle: "Print Receipt",
                 cancelTitle: "NO",
                 footerClass: "p-2",
                 hideHeaderClose: false,
@@ -266,7 +179,7 @@ export default {
                             variant: "success",
                             delay: 300,
                         });
-                        this.handleGetAllPurchases();
+                        this.resetValues();
                     });
                 }
             }).catch((err) => {
@@ -278,46 +191,41 @@ export default {
             });
         },
 
-        addItem() {
-            // Add a new item to the items array
-            this.gridItems.push({ ...this.form, amount: this.computedAmount, image: this.getImageSource(this.form.denomination) });
-            // Clear the form fields
-            this.form = { denomination: null, quantity: null, mode_of_payment: null };
-        },
 
-        calculateTotalAmount() {
-            // Calculate the total amount by summing the amount of each item
-            return this.gridItems.reduce((total, item) => total + item.amount, 0);
-        },
-
-
-        resetFeeValues() {
-            this.newFee = {
-                fee_name: null,
-                fee_type: null,
-                fee_value: null,
+        resetValues() {
+            this.form = {
+                denomination: "500",
+                quantity: null,
+                mode_of_payment: null,
             }
         },
-
-        clearGrid() {
-            this.gridItems = [];
-        },
-
-        getImageSource(id) {
-            const imageSource = this.imageSource.find(img => img.key === id)
-            return imageSource.value;
-        }
     },
 };
 </script>
 
 <style lang="scss" scoped>
-.img-container {
-    max-width: 200px;
+.radio {
+    display: flex;
+    margin: 20px 0;
 
-    &>img {
-        max-width: 100%;
-        height: auto;
+    &__input {
+        display: none;
+
+        &:checked+.radio__label {
+            border: 2px solid red;
+            transition: transform 0.3s ease-in-out;
+            transform: scale(1.2);
+        }
+    }
+
+    &__label {
+        max-width: 250px;
+        cursor: pointer;
+
+        &>img {
+            max-width: 100%;
+            height: auto;
+        }
     }
 }
 </style>

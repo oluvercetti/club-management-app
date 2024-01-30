@@ -7,27 +7,15 @@ const utils = require("../utils");
 
 //Create purchase
 router.post("/api/admin/purchases", auth, async (req, res) => {
-    const purchasesData = req.body;
+    const purchase = new Purchases({
+        ...req.body,
+        coordinator: req.admin.username,
+    });
 
     try {
         await Admin.checkUserPermission(req.admin.role, utils.permission_levels.coordinator_only);
-        const createdPurchases = [];
-
-        // Iterate through each purchase in the array
-        for (const purchaseData of purchasesData) {
-            // Create a new Purchase instance and set the coordinator
-            const newPurchase = new Purchases({
-                ...purchaseData,
-                coordinator: req.admin.username, // Assuming req.admin contains the admin data
-            });
-
-            // Save the purchase to the database
-            const savedPurchase = await newPurchase.save();
-
-            // Add the saved purchase to the array
-            createdPurchases.push(savedPurchase);
-        }
-        res.status(200).send({ createdPurchases, message: "Transaction saved successfully" });
+        await purchase.save();
+        res.status(200).send({ purchase, message: "Transaction saved successfully" });
 
     } catch (error) {
         res.status(400).send({
@@ -51,9 +39,11 @@ router.get("/api/admin/purchases", auth, async (req, res) => {
     if (req.query.sortBy) {
         const parts = req.query.sortBy.split(":");
         sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+    } else {
+        sort.createdAt = -1;
     }
     try {
-        const purchases = await Purchases.find(match);
+        const purchases = await Purchases.find(match).sort(sort);
 
         res.status(200).send({ status: "Success", data: purchases });
     } catch (error) {
