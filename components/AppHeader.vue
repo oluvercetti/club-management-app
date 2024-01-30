@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-navbar-brand to="/">
+        <b-navbar-brand to="https://www.instagram.com/silverfox_nigeria" target="_blank">
             <AppLogo width="150" height="150" />
         </b-navbar-brand>
     </div>

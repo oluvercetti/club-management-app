@@ -42,11 +42,11 @@ export default {
         },
 
         canSeeCashLodgement() {
-            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 3;
+            return this.$store.getters.getUserInfo.role === 3;
         },
 
         canSeeCashPurchase() {
-            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 5;
+            return this.$store.getters.getUserInfo.role === 5;
         },
 
         canSeeSettings() {
