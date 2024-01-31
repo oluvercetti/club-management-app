@@ -27,7 +27,8 @@ export default {
 .main-container {
     min-width: 100%;
     color: #444;
-    min-height: 80vh;
+    height: 95vh;
+    overflow: scroll;
     margin-top: 1.5rem;
 }
 </style>

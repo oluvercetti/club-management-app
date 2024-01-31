@@ -245,6 +245,7 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
         let purchasesQuery = null;
         let lodgementsQuery = null;
+        const sort = {};
         // Define start and end date parameters
         if(req.query.startDate && req.query.endDate) {
             const startDate = req.query.startDate; // You should validate and parse this input
@@ -255,11 +256,16 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
         lodgementsQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
         }
 
-        
+        if (req.query.sortBy) {
+            const parts = req.query.sortBy.split(":");
+            sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+        } else {
+            sort.createdAt = -1;
+        }
 
         // Fetch records based on the query
-        const purchases = await Purchases.find(purchasesQuery);
-        const lodgements = await Lodgements.find(lodgementsQuery);
+        const purchases = await Purchases.find(purchasesQuery).sort(sort);
+        const lodgements = await Lodgements.find(lodgementsQuery).sort(sort);
         if(!purchases.length && !lodgements.length){
             res.status(404).send({ status: "Error", message: "No records found for the selected period"});
         } else {
@@ -278,8 +284,6 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
 
     try {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        let purchasesQuery = null;
-        let lodgementsQuery = null;
 
         let now = new Date();
         if(req.query.reportDate){

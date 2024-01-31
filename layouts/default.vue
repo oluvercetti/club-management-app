@@ -21,6 +21,8 @@ export default {
     min-width: 100%;
     color: #444;
     flex-flow: column;
+    height: 95vh;
+    overflow: scroll;
 }
 
 .page-container {

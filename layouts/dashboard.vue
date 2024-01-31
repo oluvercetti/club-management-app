@@ -25,6 +25,7 @@ export default {
     min-width: 100%;
     align-items: center;
     color: #444;
-    min-height: 80vh;
+    height: 95vh;
+    overflow: scroll;
 }
 </style>

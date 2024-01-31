@@ -18,5 +18,6 @@ export default {
     font-size: 1.2rem;
     font-weight: 200;
     padding: 1rem 0;
+    margin-top: auto;
 }
 </style>
