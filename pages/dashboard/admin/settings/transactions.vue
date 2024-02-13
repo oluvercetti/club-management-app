@@ -1,32 +1,30 @@
 <template>
     <div class="mt-3">
-        <b-container class="mb-4">
-            <b-row>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'lodgement'">
-                        View Lodgements
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'purchase'">
-                        View Purchases
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button type="button" variant="info" @click="showDateFilter = true">
-                        Filter by Date
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button type="button" variant="info" to="/dashboard/admin/report">
-                        Generate End of Day Report
-                    </b-button>
-                </b-col>
-            </b-row>
-        </b-container>
+        <b-row class="mb-3">
+            <b-col md="3">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'lodgement'">
+                    View Lodgements
+                </b-button>
+            </b-col>
+            <b-col md="3">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'purchase'">
+                    View Purchases
+                </b-button>
+            </b-col>
+            <b-col md="3">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="showDateFilter = true">
+                    Filter by Date
+                </b-button>
+            </b-col>
+            <b-col md="3">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" to="/dashboard/admin/report">
+                    Generate Report
+                </b-button>
+            </b-col>
+        </b-row>
         <b-row>
             <b-col md="4">
-                <b-button type="button" variant="success" @click="exportToPdf()">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToPdf()">
                     Export to PDF
                 </b-button>
             </b-col>
@@ -63,11 +61,17 @@
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
-                    <template #cell(amount)="amount">
-                        <p>{{ amount.value | format_amount }}</p>
+                    <template #cell(amount_booked)="amount_booked">
+                        <p>{{ amount_booked.value | format_amount }}</p>
                     </template>
-                    <template #cell(mode_of_payment)="mode">
-                        <p class="text-capitalize">{{ mode.value }}</p>
+                    <template #cell(amount_sold)="amount_sold">
+                        <p>{{ amount_sold.value | format_amount }}</p>
+                    </template>
+                    <template #cell(amount_returned)="amount_returned">
+                        <p>{{ amount_returned.value | format_amount }}</p>
+                    </template>
+                    <template #cell(service_charge_amount)="service_charge_amount">
+                        <p>{{ service_charge_amount.value | format_amount }}</p>
                     </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
@@ -125,7 +129,6 @@ export default {
             pFields: [
                 { key: "createdAt", label: "Date", sortable: true },
                 { key: "trans_id", label: "ID" },
-                { key: "mode_of_payment", label: "Mode", sortable: true },
                 { key: "amount_booked", label: "Booked", sortable: true },
                 { key: "amount_sold", label: "Sold", sortable: true },
                 { key: "amount_returned", label: "Returned", sortable: true },

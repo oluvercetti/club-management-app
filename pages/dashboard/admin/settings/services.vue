@@ -1,22 +1,20 @@
 <template>
     <div class="mt-3">
-        <b-container class="mb-4">
-            <b-row>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'fee'">
-                        View Fee Settings
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'services'">
-                        View Service Settings
-                    </b-button>
-                </b-col>
-            </b-row>
-        </b-container>
+        <b-row class="mb-3">
+            <b-col md="4">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'fee'">
+                    View Fee Settings
+                </b-button>
+            </b-col>
+            <b-col md="4">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'services'">
+                    View Service Settings
+                </b-button>
+            </b-col>
+        </b-row>
         <b-row>
             <b-col md="12" sm="12" v-if="viewTable === 'fee'">
-                <b-button variant="primary" class="mr-3" @click="showNewFeeModal = !showNewFeeModal">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewFeeModal = !showNewFeeModal">
                     Create New Fee
                 </b-button>
                 <b-table ref="fees" :items="feesList" :fields="feeFields" :busy="isLoading" class="mt-4 small-font" striped
@@ -47,7 +45,7 @@
                 </b-table>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'services'">
-                <b-button variant="primary" class="mr-3" @click="showNewServiceModal = !showNewServiceModal">
+                <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewServiceModal = !showNewServiceModal">
                     Create New Service
                 </b-button>
                 <b-table ref="services" :items="servicesList" :fields="serviceFields" :busy="isLoading"

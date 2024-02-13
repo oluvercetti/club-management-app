@@ -28,9 +28,9 @@
 
                             <b-row>
                                 <b-col md="3">
-                                    <strong>Transaction Type:</strong>
+                                    <strong>Amount Booked:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails?.mode_of_payment }}</b-col>
+                                <b-col>{{ purchaseDetails?.amount_booked | format_amount }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
@@ -40,9 +40,21 @@
                             </b-row>
                             <b-row>
                                 <b-col md="3">
-                                    <strong>Amount:</strong>
+                                    <strong>Amount Sold:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails?.amount | format_amount }}</b-col>
+                                <b-col>{{ purchaseDetails?.amount_sold | format_amount }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Amount Returned:</strong>
+                                </b-col>
+                                <b-col>{{ purchaseDetails?.amount_returned | format_amount }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Service Charge:</strong>
+                                </b-col>
+                                <b-col>{{ purchaseDetails?.service_charge_amount | format_amount }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
@@ -54,7 +66,7 @@
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails?.createdAt }}</b-col>
+                                <b-col>{{ $moment(purchaseDetails?.createdAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>
