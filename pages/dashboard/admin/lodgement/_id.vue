@@ -17,8 +17,8 @@
             <b-row>
                 <b-col>
                     <b-card>
-                        <b-card-title>Lodgement Details</b-card-title>
-                        <b-card-text>
+                        <b-card-title class="text__custom--lg">Lodgement Details</b-card-title>
+                        <b-card-text class="text__custom--lg">
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction ID:</strong>
@@ -66,7 +66,7 @@
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.createdAt }}</b-col>
+                                <b-col>{{ $moment(purchaseDetails?.createdAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>

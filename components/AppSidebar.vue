@@ -24,7 +24,7 @@
         </div>
         <div class="sidebar-container__logout mt-3">
             <b-button variant="danger" size="lg" block v-if="isAuthenticated" @click="handleAdminLogout()">
-                Logout
+                <b-icon icon="power" aria-hidden="true"></b-icon> Logout
             </b-button>
         </div>
         <div class="sidebar-container__footer">

@@ -1,37 +1,38 @@
 <template>
     <div class="mt-3">
-        <b-container class="mb-4">
-            <b-row>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'lodgement'">
-                        View Lodgements
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button variant="primary" class="mr-3" @click="viewTable = 'purchase'">
-                        View Purchases
-                    </b-button>
-                </b-col>
-            </b-row>
-        </b-container>
-        <b-container class="mb-4">
-            <b-row>
-                <b-col md="4">
-                    <b-form-group label="Start Date" label-for="report-date">
-                    <b-form-datepicker id="report-date" v-model="reportDate" required></b-form-datepicker>
-                </b-form-group>
-                </b-col>
-                <b-col md="4">
-                    <b-button type="button" variant="info" @click="handleGetReport()">
-                        Generate
-                    </b-button>
-                </b-col>
-            </b-row>
-        </b-container>
-        <b-row>
+        <b-row class="mb-3">
+            <b-col md="3" xs="3">
+                <b-button variant="link" @click="goBack()">
+                    Go Back
+                </b-button>
+            </b-col>
             <b-col md="4">
+                <b-button variant="primary" class="mr-3" @click="viewTable = 'lodgement'">
+                    View Lodgements
+                </b-button>
+            </b-col>
+            <b-col md="4">
+                <b-button variant="primary" class="mr-3" @click="viewTable = 'purchase'">
+                    View Purchases
+                </b-button>
+            </b-col>
+        </b-row>
+        <b-row class="mb-3">
+            <b-col md="4">
+                <b-form-group label="Report Date" label-for="report-date">
+                <b-form-datepicker id="report-date" v-model="reportDate" required></b-form-datepicker>
+            </b-form-group>
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col md="3">
                 <b-button type="button" variant="success" @click="exportToPdf()">
                     Export to PDF
+                </b-button>
+            </b-col>
+            <b-col md="3">
+                <b-button type="button" variant="info" @click="handleGetReport()">
+                    Generate
                 </b-button>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
@@ -67,11 +68,17 @@
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
-                    <template #cell(amount)="amount">
-                        <p>{{ amount.value | format_amount }}</p>
+                    <template #cell(amount_booked)="amount_booked">
+                        <p>{{ amount_booked.value | format_amount }}</p>
                     </template>
-                    <template #cell(mode_of_payment)="mode">
-                        <p class="text-capitalize">{{ mode.value }}</p>
+                    <template #cell(amount_sold)="amount_sold">
+                        <p>{{ amount_sold.value | format_amount }}</p>
+                    </template>
+                    <template #cell(amount_returned)="amount_returned">
+                        <p>{{ amount_returned.value | format_amount }}</p>
+                    </template>
+                    <template #cell(service_charge_amount)="service_charge_amount">
+                        <p>{{ service_charge_amount.value | format_amount }}</p>
                     </template>
                     <template #table-busy>
                         <div class="text-center text-info my-2">
@@ -103,11 +110,13 @@ export default {
                 { key: "coordinator", label: "Coordinator" },
             ],
             pFields: [
-                { key: "createdAt", label: "Date" },
+                { key: "createdAt", label: "Date", sortable: true },
                 { key: "trans_id", label: "ID" },
-                { key: "mode_of_payment", label: "Mode" },
-                { key: "amount", label: "Amount" },
-                { key: "coordinator", label: "Coordinator" },
+                { key: "amount_booked", label: "Booked", sortable: true },
+                { key: "amount_sold", label: "Sold", sortable: true },
+                { key: "amount_returned", label: "Returned", sortable: true },
+                { key: "service_charge_amount", label: "Charge", sortable: true },
+                { key: "coordinator", label: "Coordinator", sortable: true },
             ],
             isLoading: false,
             reportDate: new Date(),
@@ -143,7 +152,11 @@ export default {
 
         exportToPdf(){
 
-        }
+        },
+
+        goBack() {
+            this.$router.go(-1);
+        },
     },
 
     computed: {

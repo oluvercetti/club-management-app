@@ -1,0 +1,11 @@
+.text {
+    &__custom {
+        &--lg {
+            font-size: 1.5rem;
+        }
+
+        &--xlg {
+            font-size: 2rem;
+        }
+    }
+}

@@ -1,23 +1,21 @@
 <template>
     <div class="mt-3">
         <h2 class="mb-3"><b-icon icon="cash" class="mr-3" aria-hidden="true" /> Cash Lodgement</h2>
-        <b-container>
-            <b-row class="mb-3">
-                <b-col>
-                    <b-button variant="primary" class="mr-3" @click="mode = 'dancer'">
-                        DANCER
-                    </b-button>
-                    <b-button variant="primary" @click="mode = 'coordinator'">
-                        CASH SALES
-                    </b-button>
-                </b-col>
-                <b-col md="4">
-                    <b-button type="button" variant="info" to="/dashboard/admin/report">
-                        Generate End of Day Report
-                    </b-button>
-                </b-col>
-            </b-row>
-        </b-container>
+        <b-row class="mb-3">
+            <b-col>
+                <b-button variant="primary" class="mr-3 btn__custom--lg" @click="mode = 'dancer'">
+                    <b-icon icon="person-fill"></b-icon> DANCER
+                </b-button>
+                <b-button variant="primary" class="mr-3 btn__custom--lg" @click="mode = 'coordinator'">
+                    <b-icon icon="cash-stack"></b-icon> CASH SALES
+                </b-button>
+            </b-col>
+            <b-col md="4">
+                <b-button type="button" class="mr-1 btn__custom--lg" variant="info" to="/dashboard/admin/report">
+                    Generate End of Day Report
+                </b-button>
+            </b-col>
+        </b-row>
         <b-form-row v-if="mode === 'dancer'">
             <b-col md="12">
                 <b-form @submit.prevent="handleCreateNewLodgement()">

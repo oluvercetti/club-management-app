@@ -17,8 +17,8 @@
             <b-row>
                 <b-col>
                     <b-card>
-                        <b-card-title>Purchase Details</b-card-title>
-                        <b-card-text>
+                        <b-card-title class="text__custom--lg">Purchase Details</b-card-title>
+                        <b-card-text class="text__custom--lg">
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction ID:</strong>

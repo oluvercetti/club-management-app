@@ -71,11 +71,10 @@ router.patch("/api/fees/:id", auth, async (req, res) => {
         const todayTenPm = new Date(now);
         todayTenPm.setHours(22, 0, 0, 0);
 
-        const tomorrowSixAm = new Date(now);
-        tomorrowSixAm.setDate(now.getDate() + 1);
-        tomorrowSixAm.setHours(6, 0, 0, 0);
+        const todaySixAm = new Date(now);
+        todaySixAm.setHours(6, 0, 0, 0);
 
-        if (now >= todayTenPm && now <= tomorrowSixAm) {
+        if (now >= todayTenPm && todaySixAm <= now) {
             throw new Error("Updates can not be made at this time");
         }
         const updates = Object.keys(req.body);
