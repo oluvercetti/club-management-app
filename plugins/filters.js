@@ -27,6 +27,9 @@ export function capitalizeFirstLetter(str = "") {
 }
 
 export function formatAmount(amount = 0) {
+    if(isNaN(amount) || !amount){
+        return 0.00
+    };
     try {
         return "\u20A6" + (parseFloat(amount).toFixed(2) * 1).toLocaleString("en", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
     } catch {

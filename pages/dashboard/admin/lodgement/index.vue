@@ -154,9 +154,16 @@
                         <b-form-select-option value="No">No</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
-                <b-form-group v-if="selectedTransaction.sold_all == 'No'" label="Amount Returned" label-for="amount-returned">
-                    <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked" type="number" v-model="selectedTransaction.amount_returned" :required="selectedTransaction.sold_all === 'No'" />
-                </b-form-group>
+                <b-form-row v-if="selectedTransaction.sold_all == 'No'" class="mb-2">
+                    <b-col md="12">
+                        <b-form-group label="Amount Returned" label-for="amount-returned">
+                            <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked" type="number" v-model="selectedTransaction.amount_returned" :required="selectedTransaction.sold_all === 'No'" />
+                        </b-form-group>
+                    </b-col>
+                    <b-col md="12">
+                        <h3>Confirm Amount: <b>{{ selectedTransaction.amount_returned | format_amount }}</b></h3>
+                    </b-col>
+                </b-form-row>
                 <b-form-group label="Amount Sold" label-for="amount-sold">
                     <p><strong>{{ computedAmountSold | format_amount }}</strong></p>
                 </b-form-group>
@@ -266,7 +273,7 @@ export default {
         },
 
         computedAmountSold() {
-            return parseFloat(this.selectedTransaction.amount_booked) - parseFloat(this.selectedTransaction.amount_returned)
+            return parseFloat(this.selectedTransaction.amount_booked) - parseFloat(this.selectedTransaction.amount_returned || 0)
         },
 
         computedServiceCharge() {

@@ -6,7 +6,8 @@
                 <b-col md="12">
                     <b-form @submit.prevent="handleCreateNewPurchase()">
                         <b-form-row class="radio">
-                            <b-col md="3" class="radio__item" v-for="option in denominationOptions" :key="option.value" :disabled="disableFields">
+                            <b-col md="3" class="radio__item" v-for="option in denominationOptions" :key="option.value"
+                                :disabled="disableFields">
                                 <input :id="option.value" v-model="form.denomination" :value="option.value" type="radio"
                                     :name="option.value" class="radio__input">
                                 <label :for="option.value" class="radio__label">
@@ -20,7 +21,7 @@
                                 <template v-if="form.denomination">
                                     <b-form-group label="How many bundles?" label-for="quantity">
                                         <b-form-input id="quantity" type="number" min="1" max="100" v-model="form.quantity"
-                                            required :disabled="disableFields"/>
+                                            required :disabled="disableFields" />
                                     </b-form-group>
                                     <b-form-group label="Amount to change" label-for="amount">
                                         <h3><b>{{ computedAmount | format_amount }}</b></h3>
@@ -28,7 +29,7 @@
                                 </template>
                             </b-col>
                         </b-form-row>
-                        <hr/>
+                        <hr />
                         <b-form-row>
                             <b-col md="12">
                                 <div class="form__button-container">
@@ -147,7 +148,7 @@ export default {
                 denomination: "500",
                 quantity: null,
             },
-            this.trans_tag = this.$random_alpha_numeric(4)
+                this.trans_tag = this.$random_alpha_numeric(4)
 
             this.disableFields = false;
             if (showToast) {
@@ -161,10 +162,10 @@ export default {
 
         printOrder() {
             this.$bvToast.toast("Print feature is coming soon", {
-                    title: "Pending",
-                    variant: "info",
-                    delay: 300,
-                });
+                title: "Pending",
+                variant: "info",
+                delay: 300,
+            });
         },
     },
 };
