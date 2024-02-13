@@ -1,12 +1,32 @@
 <template>
     <div class="mt-3">
         <b-container>
-            <b-button variant="primary" class="mr-3" @click="showNewUserModal = !showNewUserModal">
-                Create New User
-            </b-button>
-            <b-button variant="primary" @click="showNewRoleModal = !showNewRoleModal">
-                Create New Role
-            </b-button>
+            <b-row class="mb-3">
+                <b-col md="3" sm="3">
+                    <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewUserModal = !showNewUserModal">
+                        Create New User
+                    </b-button>
+                </b-col>
+                <b-col md="3" sm="3">
+                    <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewRoleModal = !showNewRoleModal">
+                        Create New Role
+                    </b-button>
+                </b-col>
+                <b-col md="3" sm="3">
+                    <b-button variant="primary" class="mr-1 btn__custom--lg" @click="handleGetAllUsers(4)">
+                        View Dancers
+                    </b-button>
+                </b-col>
+                <b-col md="3" sm="3">
+                    <b-button variant="primary" class="mr-1 btn__custom--lg" @click="handleGetAllUsers()">
+                        View All Users
+                    </b-button>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                </b-col>
+            </b-row>
         </b-container>
         <b-table ref="users" :items="userList" :fields="fields" :busy="isLoading" class="mt-4 small-font" striped hover
             outlined sort-icon-left>
@@ -195,15 +215,18 @@ export default {
     },
 
     methods: {
-        handleGetAllUsers() {
+        handleGetAllUsers(role = null) {
             this.isLoading = true;
-            return this.$store.dispatch("getAllUsers").then((response) => {
+            const params = {
+                role,
+            }
+            return this.$store.dispatch("getAllUsers", params).then((response) => {
                 this.isLoading = false;
                 this.handleGetRoleList();
                 this.userList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,

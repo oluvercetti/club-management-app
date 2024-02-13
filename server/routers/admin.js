@@ -212,10 +212,17 @@ router.patch("/api/admin/changepassword", auth, async (req, res) => {
 
 router.get("/api/admin/users", auth, async (req, res) => {
 
+    const role = req.query?.role;
     try {
+        // Parse role parameter to integer
+        if(role){
+            const users = await Admin.find({ role });
+            res.status(200).send({ status: "Success", data: users });
+        } else {
+            const users = await Admin.find();
+            res.status(200).send({ status: "Success", data: users });
+        }
         // await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        const users = await Admin.find();
-        res.status(200).send({ status: "Success", data: users });
     } catch (error) {
         res.status(400).send({
             status: "error occurred",
@@ -248,8 +255,13 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
         const sort = {};
         // Define start and end date parameters
         if(req.query.startDate && req.query.endDate) {
-            const startDate = req.query.startDate; // You should validate and parse this input
-            const endDate = req.query.endDate;     // You should validate and parse this input
+            const startDate = new Date(req.query.startDate); // You should validate and parse this input
+            const endDate = new Date(req.query.endDate);
+            // Set hours for start date to 00:00 (midnight)
+            startDate.setHours(0, 0, 0, 0);
+
+            // Set hours for end date to 23:59 (just before midnight)
+            endDate.setHours(23, 59, 59, 999); 
 
         // Construct query for records between startDate and endDate
         purchasesQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
@@ -296,7 +308,7 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         yesterdayTenPM.setHours(22, 0, 0, 0);
 
         const todaySixAM = new Date(now);
-        todaySixAM.setHours(16, 0, 0, 0);
+        todaySixAM.setHours(6, 0, 0, 0);
         const lodgementsReport = await Lodgements.aggregate([
             {
                 $match: {

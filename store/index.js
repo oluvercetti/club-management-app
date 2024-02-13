@@ -75,8 +75,8 @@ export const actions = ({
     },
 
 
-    getAllUsers() {
-        return this.$axios.get("/api/admin/users").then((response) => {
+    getAllUsers(_, params) {
+        return this.$axios.get("/api/admin/users", { params }).then((response) => {
             return response.data;
         });
     },
@@ -145,14 +145,20 @@ export const actions = ({
         });
     },
 
-    fetchPurchaseList() {
-        return this.$axios.get("/api/admin/purchases").then((response) => {
+    fetchPurchaseList(_, params) {
+        return this.$axios.get("/api/admin/purchases", { params }).then((response) => {
             return response.data;
         });
     },
 
     fetchSinglePurchase(_, id) {
         return this.$axios.get(`/api/admin/purchases/${id}`).then((response) => {
+            return response.data;
+        });
+    },
+        
+    updateSinglePurchase(_, { id, payload }) {
+        return this.$axios.patch(`/api/admin/purchases/${id}`, payload).then((response) => {
             return response.data;
         });
     },

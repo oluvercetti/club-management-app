@@ -22,20 +22,8 @@
                                         <b-form-input id="quantity" type="number" min="1" max="100" v-model="form.quantity"
                                             required :disabled="disableFields"/>
                                     </b-form-group>
-                                    <b-form-group label="Amount" label-for="amount">
+                                    <b-form-group label="Amount to change" label-for="amount">
                                         <h3><b>{{ computedAmount | format_amount }}</b></h3>
-                                    </b-form-group>
-                                    <b-form-group label="Payment Type" label-for="transtype">
-                                        <b-form-select v-model="form.mode_of_payment" required :disabled="disableFields">
-                                            <template #first>
-                                                <b-form-select-option value=null disabled>
-                                                    -- Please select --
-                                                </b-form-select-option>
-                                            </template>
-                                            <b-form-select-option value="pos">POS</b-form-select-option>
-                                            <b-form-select-option value="cash">Cash</b-form-select-option>
-                                            <b-form-select-option value="transfer">Transfer</b-form-select-option>
-                                        </b-form-select>
                                     </b-form-group>
                                 </template>
                             </b-col>
@@ -80,7 +68,6 @@ export default {
             fields: [
                 { key: "createdAt", label: "Date", sortable: true },
                 { key: "trans_id", label: "ID" },
-                { key: "mode_of_payment", label: "Mode", sortable: true },
                 { key: "amount", label: "Amount", sortable: true },
                 { key: "coordinator", label: "Coordinator", sortable: true },
                 "Actions",
@@ -88,7 +75,6 @@ export default {
             form: {
                 denomination: "500",
                 quantity: null,
-                mode_of_payment: null,
             },
             gridItems: [],
             gridFields: [
@@ -101,7 +87,6 @@ export default {
                 id: null,
                 denomination: null,
                 amount: null,
-                mode_of_payment: null,
                 coordinator: null,
                 service_type: null,
             },
@@ -133,8 +118,7 @@ export default {
         handleCreateNewPurchase() {
             const payload = {
                 trans_id: this.trans_tag,
-                mode_of_payment: this.form.mode_of_payment,
-                amount: this.computedAmount,
+                amount_booked: this.computedAmount,
                 denomination: this.form.denomination,
             }
 
@@ -162,8 +146,8 @@ export default {
             this.form = {
                 denomination: "500",
                 quantity: null,
-                mode_of_payment: null,
             },
+            this.trans_tag = this.$random_alpha_numeric(4)
 
             this.disableFields = false;
             if (showToast) {

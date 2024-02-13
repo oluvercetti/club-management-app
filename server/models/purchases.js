@@ -7,19 +7,34 @@ const purchasesSchema = new mongoose.Schema({
         unique: true,
     },
 
-    mode_of_payment: {
-        type: String,
+    amount_booked: {
+        type: Number,
         required: true,
     },
 
-    amount: {
+    amount_sold: {
         type: Number,
-        required: true,
+        default: 0,
+    },
+
+    amount_returned: {
+        type: Number,
+        default: 0,
     },
 
     denomination: {
         type: String,
         required: true,
+    },
+
+    service_charge_amount: {
+        type: Number,
+        default: 0,
+    },
+
+    status: {
+        type: String,
+        default: "Open",
     },
 
     coordinator: {
@@ -34,12 +49,14 @@ const purchasesSchema = new mongoose.Schema({
 purchasesSchema.pre("save", function (next) {
     // Access the document being saved
     const purchase = this;
-    const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    // Create a unique identifier based on amount, denomination, trans_id, and username
-    const uniqueIdentifier = `${currentDate}${purchase.denomination}${purchase.amount}${purchase.trans_id}`.padEnd(20, '0');
-
-    // Set the trans_id to the unique identifier
-    purchase.trans_id = uniqueIdentifier;
+    if (purchase.isNew) {
+        const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        // Create a unique identifier based on amount, denomination, trans_id, and username
+        const uniqueIdentifier = `${currentDate}${purchase.denomination}${purchase.amount_booked}${purchase.trans_id}`.padEnd(20, '0');
+    
+        // Set the trans_id to the unique identifier
+        purchase.trans_id = uniqueIdentifier;
+    }
 
     // Continue with the save operation
     next();
