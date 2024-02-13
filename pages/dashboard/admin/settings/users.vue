@@ -2,12 +2,12 @@
     <div class="mt-3">
         <b-container>
             <b-row class="mb-3">
-                <b-col md="3" sm="3">
+                <b-col md="3" sm="3" v-if="roleId == 1">
                     <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewUserModal = !showNewUserModal">
                         Create New User
                     </b-button>
                 </b-col>
-                <b-col md="3" sm="3">
+                <b-col md="3" sm="3" v-if="roleId == 1">
                     <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewRoleModal = !showNewRoleModal">
                         Create New Role
                     </b-button>
@@ -188,6 +188,7 @@ export default {
             showNewRoleModal: false,
             showExistingUserModal: false,
             isLoading: false,
+            roleId: this.$store.getters?.getUserInfo?.role
         };
     },
 

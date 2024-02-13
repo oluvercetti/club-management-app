@@ -1,6 +1,6 @@
 <template>
     <div class="mt-3">
-        <b-row class="mb-3">
+        <b-row class="mb-3" v-if="roleId == 1">
             <b-col md="4">
                 <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'fee'">
                     View Fee Settings
@@ -257,6 +257,7 @@ export default {
             showNewServiceModal: false,
             showEditServiceModal: false,
             isLoading: false,
+            roleId: this.$store.getters?.getUserInfo?.role
         };
     },
 

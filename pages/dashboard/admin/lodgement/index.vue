@@ -5,10 +5,10 @@
             <b-row class="mb-3">
                 <b-col>
                     <b-button variant="primary" class="mr-3" @click="mode = 'dancer'">
-                        Dancer
+                        DANCER
                     </b-button>
                     <b-button variant="primary" @click="mode = 'coordinator'">
-                        Coordinator
+                        CASH SALES
                     </b-button>
                 </b-col>
                 <b-col md="4">
