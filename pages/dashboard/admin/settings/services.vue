@@ -3,14 +3,14 @@
         <b-container class="mb-4">
             <b-row>
                 <b-col md="4">
-                    <b-form-radio v-model="viewTable" name="viewTable" value="fee">
+                    <b-button variant="primary" class="mr-3" @click="viewTable = 'fee'">
                         View Fee Settings
-                    </b-form-radio>
+                    </b-button>
                 </b-col>
                 <b-col md="4">
-                    <b-form-radio v-model="viewTable" name="viewTable" value="services">
+                    <b-button variant="primary" class="mr-3" @click="viewTable = 'services'">
                         View Service Settings
-                    </b-form-radio>
+                    </b-button>
                 </b-col>
             </b-row>
         </b-container>

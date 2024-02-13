@@ -11,6 +11,11 @@
                         Coordinator
                     </b-button>
                 </b-col>
+                <b-col md="4">
+                    <b-button type="button" variant="info" to="/dashboard/admin/report">
+                        Generate End of Day Report
+                    </b-button>
+                </b-col>
             </b-row>
         </b-container>
         <b-form-row v-if="mode === 'dancer'">
