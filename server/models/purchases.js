@@ -42,6 +42,11 @@ const purchasesSchema = new mongoose.Schema({
         required: true,
         ref: "Admin",
     },
+    
+    cashier: {
+        type: String,
+        ref: "Admin",
+    }
 }, {
     timestamps: true,
 });

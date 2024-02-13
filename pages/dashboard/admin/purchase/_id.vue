@@ -60,7 +60,13 @@
                                 <b-col md="3">
                                     <strong>Processed by:</strong>
                                 </b-col>
-                                <b-col>{{ purchaseDetails?.coordinator }}</b-col>
+                                <b-col class="text-capitalize">{{ purchaseDetails?.coordinator }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Completed by:</strong>
+                                </b-col>
+                                <b-col class="text-capitalize">{{ purchaseDetails?.cashier }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">

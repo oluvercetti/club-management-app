@@ -110,6 +110,7 @@ router.patch("/api/admin/purchases/:id", auth, async(req, res) => {
         const service_charge_amount = parseFloat(req.body.amount_sold) * parseFloat(serviceChargePercentage);
         purchase.service_charge_amount = parseFloat(service_charge_amount);
         purchase.status = "Closed";
+        purchase.cashier = req.admin.username;
         // Update other fields if provided
         Object.assign(purchase, updates);
         await purchase.save();
