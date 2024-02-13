@@ -57,9 +57,9 @@
                                 <b-form-input id="amount" type="number" v-model="newLodgement.amount" required
                                     :disabled="disableFields" />
                             </b-form-group>
-                            <b-form-row>
+                            <b-form-row class="mb-2">
                                 <b-col>
-                                    <h3><b>{{ newLodgement.amount | format_amount }}</b></h3>
+                                    <h3>Confirm Amount: <b>{{ newLodgement.amount | format_amount }}</b></h3>
                                 </b-col>
                             </b-form-row>
                             <b-form-group label="Coordinator" label-for="cord">
