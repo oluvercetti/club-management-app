@@ -56,7 +56,7 @@
                 </b-table>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
-                <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading" class="mt-4 small-font"
+                <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading" class="mt-4 small-font"
                     striped hover outlined sort-icon-left>
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
@@ -109,6 +109,7 @@
 </template>
 
 <script>
+import html2pdf from 'html2pdf.js';
 export default {
     layout: "admin",
     data() {
@@ -182,7 +183,8 @@ export default {
         },
 
         exportToPdf(){
-
+            const element = document.getElementById('b-table-export'); // Replace 'b-table-export' with the ID of your b-table
+            html2pdf(element);
         }
     },
 };

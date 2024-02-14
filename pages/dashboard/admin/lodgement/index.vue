@@ -57,11 +57,13 @@
                                 <b-form-input id="amount" type="number" v-model="newLodgement.amount" required
                                     :disabled="disableFields" />
                             </b-form-group>
-                            <b-form-row class="mb-2">
-                                <b-col>
-                                    <h3>Confirm Amount: <b>{{ newLodgement.amount | format_amount }}</b></h3>
-                                </b-col>
-                            </b-form-row>
+                            <transition name="slide">
+                                <b-form-row class="mb-2" v-if="newLodgement.amount">
+                                    <b-col>
+                                        <h3>Confirm Amount: <b>{{ newLodgement.amount | format_amount }}</b></h3>
+                                    </b-col>
+                                </b-form-row>
+                            </transition>
                             <b-form-group label="Coordinator" label-for="cord">
                                 <b-form-select v-model="newLodgement.coordinator" :options="coordinatorsList" required
                                     :disabled="disableFields">
@@ -160,10 +162,14 @@
                             <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked" type="number" v-model="selectedTransaction.amount_returned" :required="selectedTransaction.sold_all === 'No'" />
                         </b-form-group>
                     </b-col>
-                    <b-col md="12">
-                        <h3>Confirm Amount: <b>{{ selectedTransaction.amount_returned | format_amount }}</b></h3>
-                    </b-col>
                 </b-form-row>
+                <transition name="slide">
+                    <b-form-row class="mb-2" v-if="selectedTransaction.amount_returned">
+                        <b-col>
+                            <h3>Confirm Amount: <b>{{ selectedTransaction.amount_returned | format_amount }}</b></h3>
+                        </b-col>
+                    </b-form-row>
+                </transition>
                 <b-form-group label="Amount Sold" label-for="amount-sold">
                     <p><strong>{{ computedAmountSold | format_amount }}</strong></p>
                 </b-form-group>
@@ -198,7 +204,7 @@ export default {
                 trans_id: null,
                 mode_of_payment: null,
                 username: null,
-                amount: 0,
+                amount: null,
                 service_type: null,
                 coordinator: null,
             },
