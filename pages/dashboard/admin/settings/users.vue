@@ -70,12 +70,16 @@
                 <b-form-group label="Name" label-for="name">
                     <b-form-input id="name" type="text" v-model="newUser.name" required />
                 </b-form-group>
-                <b-form-group label="Username" label-for="newUsername">
-                    <b-form-input id="newUsername" type="text" v-model="newUser.username" required />
-                </b-form-group>
-                <b-form-group label="Password" label-for="newPassword" v-if="newUser.role !== 4">
-                    <b-form-input id="newPassword" type="password" v-model="newUser.password" required />
-                </b-form-group>
+                <b-form-row v-if="newUser.role !== 4">
+                    <b-col md="12">
+                        <b-form-group label="Username" label-for="newUsername">
+                            <b-form-input autocomplete="off" id="newUsername" type="text" v-model="newUser.username" :required="newUser.role !== 4" />
+                        </b-form-group></b-col>
+                    <b-col md="12">
+                        <b-form-group label="Password" label-for="newPassword">
+                            <b-form-input autocomplete="off" id="newPassword" type="password" v-model="newUser.password" required />
+                        </b-form-group></b-col>
+                </b-form-row>
                 <div class="form__button-container">
                     <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
                         disabled>
@@ -237,7 +241,7 @@ export default {
 
         handleCreateNewUser() {
             const payload = {
-                username: this.newUser.username,
+                username: this.newUser.role !== 4 ? this.newUser.username : this.newUser.name.toLowerCase(),
                 password: this.newUser.password,
                 role: this.newUser.role,
                 name: this.newUser.name,

@@ -425,7 +425,7 @@ export default {
                 this.showUpdatePurchaseModal = false;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
@@ -440,7 +440,7 @@ export default {
                 this.feesList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
