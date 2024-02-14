@@ -369,11 +369,13 @@ export default {
         },
 
         printOrder() {
-            this.$bvToast.toast("Print feature is coming soon", {
-                title: "Pending",
+            this.$store.dispatch("sendToPrinter", "test").then(() => {
+                this.$bvToast.toast("Printing is done", {
+                title: "Printed",
                 variant: "info",
                 delay: 300,
             });
+            })
         },
 
         handleFetchPurchaseList() {
@@ -451,4 +453,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped></style>~/server/printer

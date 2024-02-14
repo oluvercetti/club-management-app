@@ -197,6 +197,12 @@ export const actions = ({
         });
     },
 
+    sendToPrinter(_, payload){
+        return this.$axios.post("/api/admin/print", payload).then((response) => {
+            return response.data;
+        });
+    },
+
     async nuxtServerInit({ commit, dispatch }) {
 
         const authTokenCookie = this.$cookies.get("sftoken");

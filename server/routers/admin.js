@@ -9,6 +9,7 @@ const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");
 const permissions = require("../utils").permission_levels;
+const sendToPrinter = require("../printer");
 
 // POST /admin
 
@@ -348,6 +349,20 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         res.status(400).send({
             status: "error occurred",
             message: error.message,
+        } || "Error occurred");
+    }
+})
+
+router.post("/api/admin/print", async (req, res) => {
+
+    try {
+        sendToPrinter(req.body.content)
+        res.status(200).send({ message: "Success" });
+
+    } catch (error) {
+        res.status(400).send({
+            status: "error",
+            message: error?.message,
         } || "Error occurred");
     }
 })
