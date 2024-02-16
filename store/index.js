@@ -203,6 +203,12 @@ export const actions = ({
         });
     },
 
+    getReport(_, params) {
+        return this.$axios.get("/api/admin/endofdayreport", { params }).then((response) => {
+            return response.data;
+        });
+    },
+
     async nuxtServerInit({ commit, dispatch }) {
 
         const authTokenCookie = this.$cookies.get("sftoken");

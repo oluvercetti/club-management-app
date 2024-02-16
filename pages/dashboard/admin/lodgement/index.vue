@@ -159,7 +159,9 @@
                 <b-form-row v-if="selectedTransaction.sold_all == 'No'" class="mb-2">
                     <b-col md="12">
                         <b-form-group label="Amount Returned" label-for="amount-returned">
-                            <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked" type="number" v-model="selectedTransaction.amount_returned" :required="selectedTransaction.sold_all === 'No'" />
+                            <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked"
+                                type="number" v-model="selectedTransaction.amount_returned"
+                                :required="selectedTransaction.sold_all === 'No'" />
                         </b-form-group>
                     </b-col>
                 </b-form-row>
@@ -371,10 +373,10 @@ export default {
         printOrder() {
             this.$store.dispatch("sendToPrinter", "test").then(() => {
                 this.$bvToast.toast("Printing is done", {
-                title: "Printed",
-                variant: "info",
-                delay: 300,
-            });
+                    title: "Printed",
+                    variant: "info",
+                    delay: 300,
+                });
             })
         },
 

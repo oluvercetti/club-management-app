@@ -66,7 +66,7 @@
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
-                                <b-col>{{ $moment(purchaseDetails?.createdAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
+                                <b-col>{{ $moment(lodgementDetails?.createdAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>

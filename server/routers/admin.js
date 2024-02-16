@@ -296,7 +296,7 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
 router.get("/api/admin/endofdayreport", auth, async (req, res) => {
 
     try {
-        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        await Admin.checkUserPermission(req.admin.role, permissions.admin_cashier);
 
         let now = new Date();
         if(req.query.reportDate){

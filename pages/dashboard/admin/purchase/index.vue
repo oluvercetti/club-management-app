@@ -161,11 +161,13 @@ export default {
         },
 
         printOrder() {
-            this.$bvToast.toast("Print feature is coming soon", {
-                title: "Pending",
-                variant: "info",
-                delay: 300,
-            });
+            this.$store.dispatch("sendToPrinter", "test").then(() => {
+                this.$bvToast.toast("Printing is done", {
+                    title: "Printed",
+                    variant: "info",
+                    delay: 300,
+                });
+            })
         },
     },
 };

@@ -28,9 +28,12 @@
                     Export to PDF
                 </b-button>
             </b-col>
+            <b-col md="12" class="mt-3" v-if="startDate && endDate && showDate">
+                <h3>Date Range from {{ $moment(startDate).format("DD-MM-YYYY") }} to {{ $moment(endDate).format("DD-MM-YYYY") }}</h3>
+            </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
-                <b-table ref="lodgement" :items="lodgementList" :fields="lFields" :busy="isLoading" class="mt-4 small-font"
-                    striped hover outlined sort-icon-left>
+                <b-table ref="lodgement" id="b-table-export" :items="lodgementList" :fields="lFields" :busy="isLoading"
+                    class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage"  striped hover outlined sort-icon-left>
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
@@ -54,10 +57,12 @@
                         </div>
                     </template>
                 </b-table>
+                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage" :total-rows="lTotalRows" :per-page="lodgement.perPage"
+                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
-                <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading" class="mt-4 small-font"
-                    striped hover outlined sort-icon-left>
+                <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading"
+                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage"   striped hover outlined sort-icon-left>
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
@@ -87,6 +92,8 @@
                         </div>
                     </template>
                 </b-table>
+                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage" :total-rows="pTotalRows" :per-page="purchase.perPage"
+                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
         </b-row>
         <b-modal v-model="showDateFilter" centered hide-footer title="FIlter by date">
@@ -109,7 +116,6 @@
 </template>
 
 <script>
-import html2pdf from 'html2pdf.js';
 export default {
     layout: "admin",
     data() {
@@ -140,7 +146,16 @@ export default {
             showDateFilter: false,
             isLoading: false,
             startDate: null,
-            endDate: null
+            endDate: null,
+            showDate: false,
+            lodgement: {
+                perPage: 8,
+                currentPage: 1,
+            },
+            purchase: {
+                perPage: 8,
+                currentPage: 1,
+            }
         };
     },
 
@@ -149,6 +164,16 @@ export default {
     },
 
     fetchOnServer: false,
+
+    computed: {
+        pTotalRows() {
+            return this.purchaseList?.length;
+        },
+
+        lTotalRows() {
+            return this.lodgementList?.length;
+        },
+    },
 
     methods: {
         handleGetAllTransactions() {
@@ -162,6 +187,9 @@ export default {
                 this.purchaseList = response.data.purchases;
                 this.lodgementList = response.data.lodgements;
                 this.showDateFilter = false;
+                if(this.startDate && this.endDate) {
+                    this.showDate = true;
+                }
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data?.message, {
@@ -182,9 +210,69 @@ export default {
             this.showDateFilter = true;
         },
 
-        exportToPdf(){
-            const element = document.getElementById('b-table-export'); // Replace 'b-table-export' with the ID of your b-table
-            html2pdf(element);
+        async exportToPdf() {
+            const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
+            const today = new Date().toISOString().split('T')[0];
+            let tableContent = `<h2>${this.viewTable === "lodgement" ? "CASH LODGEMENT" : "CASH SALES"} SUMMARY </h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">`;
+            if (this.viewTable === 'lodgement') {
+
+                tableContent += `<thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Date</th>
+                <th style="border: 1px solid black; padding: 5px;">ID</th>
+                <th style="border: 1px solid black; padding: 5px;">Mode</th>
+                <th style="border: 1px solid black; padding: 5px;">User</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount</th>
+                <th style="border: 1px solid black; padding: 5px;">Service</th>
+                <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.mode_of_payment.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.username.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.service_type.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.coordinator.toUpperCase()}</td>
+                    </tr>`;
+                });
+
+            } else {
+
+                tableContent += `<thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Date</th>
+                <th style="border: 1px solid black; padding: 5px;">ID</th>
+                <th style="border: 1px solid black; padding: 5px;">Booked</th>
+                <th style="border: 1px solid black; padding: 5px;">Sold</th>
+                <th style="border: 1px solid black; padding: 5px;">Returned</th>
+                <th style="border: 1px solid black; padding: 5px;">Charge</th>
+                <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_booked)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_sold)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_returned)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.coordinator.toUpperCase()}</td>
+                    </tr>`;
+                });
+            }
+            tableContent += '</tbody></table>';
+            const filename = `${this.viewTable}_${today}.pdf`;
+            var opt = {
+                margin: 1,
+                filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 4 },
+                jsPDF: { unit: 'in', format: 'a2', orientation: 'portrait' }
+            };
+            await this.$html2pdf(tableContent, opt);
         }
     },
 };
