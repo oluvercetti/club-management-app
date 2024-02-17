@@ -339,6 +339,7 @@ export default {
                     delay: 300,
                 });
             }
+            this.trans_tag = this.$random_alpha_numeric(4);
         },
 
         handleGetAllUsers() {
@@ -455,4 +456,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>~/server/printer
+<style lang="scss" scoped></style>
