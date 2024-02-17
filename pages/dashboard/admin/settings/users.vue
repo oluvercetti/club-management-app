@@ -28,7 +28,7 @@
                 </b-col>
             </b-row>
         </b-container>
-        <b-table ref="users" :items="userList" :fields="fields" :busy="isLoading" class="mt-4 small-font" striped hover
+        <b-table ref="users" :items="userList" :fields="fields" :busy="isLoading"  :per-page="user.perPage" :current-page="user.currentPage" class="mt-4 small-font" striped hover
             outlined sort-icon-left>
 
             <template #cell(role)="role">
