@@ -61,6 +61,9 @@
                 </div>
             </template>
         </b-table>
+        <b-pagination v-if="userTotalRows > user.perPage" v-model="user.currentPage" :total-rows="userTotalRows"
+            :per-page="user.perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg"
+            align="center" />
 
         <b-modal v-model="showNewUserModal" hide-footer title="New User">
             <b-form autocomplete="false" @submit.prevent="handleCreateNewUser()">
@@ -73,11 +76,13 @@
                 <b-form-row v-if="newUser.role !== 4">
                     <b-col md="12">
                         <b-form-group label="Username" label-for="newUsername">
-                            <b-form-input autocomplete="off" id="newUsername" type="text" v-model="newUser.username" :required="newUser.role !== 4" />
+                            <b-form-input autocomplete="off" id="newUsername" type="text" v-model="newUser.username"
+                                :required="newUser.role !== 4" />
                         </b-form-group></b-col>
                     <b-col md="12">
                         <b-form-group label="Password" label-for="newPassword">
-                            <b-form-input autocomplete="off" id="newPassword" type="password" v-model="newUser.password" required />
+                            <b-form-input autocomplete="off" id="newPassword" type="password" v-model="newUser.password"
+                                required />
                         </b-form-group></b-col>
                 </b-form-row>
                 <div class="form__button-container">
@@ -192,7 +197,11 @@ export default {
             showNewRoleModal: false,
             showExistingUserModal: false,
             isLoading: false,
-            roleId: this.$store.getters?.getUserInfo?.role
+            roleId: this.$store.getters?.getUserInfo?.role,
+            user: {
+                perPage: 8,
+                currentPage: 1,
+            }
         };
     },
 
@@ -208,6 +217,10 @@ export default {
                 return { value: data.role_id, text: data.role_name.toUpperCase() };
             }
             )
+        },
+
+        userTotalRows() {
+            return this.userList?.length;
         },
     },
 
