@@ -186,7 +186,7 @@ export default {
                 });
                 return false;
             }
-            const today = this.reportDate.toISOString().split('T')[0] || new Date().toISOString().split('T')[0];
+            const today = this.reportDate || new Date().toISOString().split('T')[0];
             let tableContent = `<h2>${this.viewTable === "lodgement" ? "GIRLS SALES" : "CASH PURCHASE"} SUMMARY ${today}</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">`;
             if (this.viewTable === 'lodgement') {
