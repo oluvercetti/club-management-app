@@ -212,6 +212,24 @@ export default {
 
         async exportToPdf() {
             const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
+
+            if(this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+                this.$bvToast.toast("There are no cash lodgement records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+
+            if(this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+                this.$bvToast.toast("There are no cash purchase records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
             const today = new Date().toISOString().split('T')[0];
             let tableContent = `<h2>${this.viewTable === "lodgement" ? "CASH LODGEMENT" : "CASH SALES"} SUMMARY </h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">`;
