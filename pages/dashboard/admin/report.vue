@@ -126,7 +126,7 @@ export default {
                 { key: "service_charge_amount", label: "Charge", sortable: true },
             ],
             isLoading: false,
-            reportDate: new Date(),
+            reportDate: new Date().toISOString().split('T')[0],
             lodgement: {
                 perPage: 8,
                 currentPage: 1,
