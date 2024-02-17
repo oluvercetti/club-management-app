@@ -37,6 +37,9 @@ router.get("/api/fees", auth, async (req, res) => {
 
     try {
         const fees = await Fees.find();
+        if(!fees) {
+            return res.status(404).send({ status: "No Fees have been set" });
+        }
         res.status(200).send({ status: "Success", data: fees });
     } catch (error) {
         res.status(400).send({

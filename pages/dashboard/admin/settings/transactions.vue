@@ -221,7 +221,7 @@ export default {
                 <th style="border: 1px solid black; padding: 5px;">Date</th>
                 <th style="border: 1px solid black; padding: 5px;">ID</th>
                 <th style="border: 1px solid black; padding: 5px;">Mode</th>
-                <th style="border: 1px solid black; padding: 5px;">User</th>
+                <th style="border: 1px solid black; padding: 5px;">Dancer</th>
                 <th style="border: 1px solid black; padding: 5px;">Amount</th>
                 <th style="border: 1px solid black; padding: 5px;">Service</th>
                 <th style="border: 1px solid black; padding: 5px;">Coordinator</th>

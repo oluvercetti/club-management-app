@@ -5,6 +5,7 @@ const Admin = require("../models/admin");
 const Roles = require("../models/roles");
 const Purchases = require("../models/purchases");
 const Lodgements = require("../models/lodgements");
+const Fees = require("../models/fees");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 const bcrypt = require("bcrypt");
@@ -310,6 +311,15 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
 
         const todaySixAM = new Date(now);
         todaySixAM.setHours(6, 0, 0, 0);
+        const fees = await Fees.find({status: true});
+        const dancerHouseFee = fees.find(fee => fee.fee_name.toLowerCase() == "house fee for dancers");
+        const coordinatorFee = fees.find(fee => fee.fee_name.toLowerCase() == "coordinator's fee");
+        if(!dancerHouseFee) {
+            return res.status(400).send({ status: "error", message: "House fee for dancers has not been set" });
+        }
+        if(!coordinatorFee) {
+            return res.status(400).send({ status: "error", message: "Coordinator Fee has not been set" });
+        }
         const lodgementsReport = await Lodgements.aggregate([
             {
                 $match: {
@@ -320,9 +330,22 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
             {
                 $group: {
                     _id: "$username",
-                    totalAmount: { $sum: "$amount" },
+                    total_amount: { $sum: "$amount" },
+                    total_commission: { $sum: { $multiply: ["$amount", parseFloat(dancerHouseFee.fee_value) / 100] }},
+                    sub_total: { $sum: { $subtract: ["$amount", { $multiply: ["$amount", parseFloat(dancerHouseFee.fee_value) / 100] }]}},
+                    coordinator_fee: { $first: parseFloat(coordinatorFee.fee_value) }
                 },
             },
+            {
+                $project: {
+                    _id: 1,
+                    total_amount: 1,
+                    total_commission: 1,
+                    sub_total: 1,
+                    coordinator_fee: 1,
+                    net_total: { $subtract: ["$sub_total", "$coordinator_fee"] },
+                }
+            }
         ]);
 
         const purchasesReport = await Purchases.aggregate([
@@ -330,12 +353,16 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
                 $match: {
                     createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM },
                     coordinator: { $exists: true, $ne: null },
+                    status: "Closed",
                 },
             },
             {
                 $group: {
                     _id: "$coordinator",
-                    totalAmount: { $sum: "$amount" },
+                    amount_booked: { $sum: "$amount_booked" },
+                    amount_sold: { $sum: "$amount_sold" },
+                    amount_returned: { $sum: "$amount_returned" },
+                    service_charge_amount: { $sum: "$service_charge_amount" },
                 },
             },
         ]);

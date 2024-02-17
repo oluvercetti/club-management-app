@@ -29,34 +29,36 @@
         </client-only>
         <b-row>
             <b-col md="3">
-                <b-button type="button" variant="success" @click="exportToPdf()">
-                    Export to PDF
+                <b-button type="button" variant="info" @click="handleGetReport()">
+                    Regenerate Report
                 </b-button>
             </b-col>
             <b-col md="3">
-                <b-button type="button" variant="info" @click="handleGetReport()">
-                    Generate
+                <b-button type="button" variant="success" @click="exportToPdf()">
+                    Export to PDF
                 </b-button>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
                 <b-table ref="lodgement" id="b-table-export" :items="lodgementList" :fields="lFields" :busy="isLoading"
                     class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage" striped hover outlined
                     sort-icon-left>
-                    <template #cell(createdAt)="createdAt">
-                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    <template #cell(_id)="name">
+                        <p>{{ name.value.toUpperCase() }}</p>
                     </template>
-                    <template #cell(amount)="amount">
-                        <p>{{ amount.value | format_amount }}</p>
+                    <template #cell(total_amount)="total_amount">
+                        <p>{{ total_amount.value | format_amount }}</p>
                     </template>
-                    <template #cell(mode_of_payment)="mode">
-                        <p class="text-capitalize">{{ mode.value }}</p>
+                    <template #cell(total_commission)="total_commission">
+                        <p>{{ total_commission.value | format_amount }}</p>
                     </template>
-                    <template #cell(actions)="row">
-                        <div class="d-flex justify-content-around">
-                            <b-button variant="primary" :to="`/dashboard/admin/lodgement/${row.item.trans_id}`">
-                                View Details
-                            </b-button>
-                        </div>
+                    <template #cell(sub_total)="sub_total">
+                        <p>{{ sub_total.value | format_amount }}</p>
+                    </template>
+                    <template #cell(coordinator_fee)="coordinator_fee">
+                        <p>{{ coordinator_fee.value | format_amount }}</p>
+                    </template>
+                    <template #cell(net_total)="net_total">
+                        <p>{{ net_total.value | format_amount }}</p>
                     </template>
                     <template #table-busy>
                         <div class="text-center text-info my-2">
@@ -71,8 +73,8 @@
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
                 <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading"
                     class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage"  striped hover outlined sort-icon-left>
-                    <template #cell(createdAt)="createdAt">
-                        <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
+                    <template #cell(_id)="name">
+                        <p>{{ name.value.toUpperCase() }}</p>
                     </template>
                     <template #cell(amount_booked)="amount_booked">
                         <p>{{ amount_booked.value | format_amount }}</p>
@@ -109,20 +111,19 @@ export default {
             lodgementList: [],
             viewTable: "lodgement",
             lFields: [
-                { key: "createdAt", label: "Date" },
-                { key: "trans_id", label: "ID" },
-                { key: "username", label: "User" },
-                { key: "amount", label: "Amount" },
-                { key: "coordinator", label: "Coordinator" },
+                { key: "_id", label: "Name" },
+                { key: "total_amount", label: "Lodge Fee" },
+                { key: "total_commission", label: "Commission" },
+                { key: "sub_total", label: "Girls Money" },
+                { key: "coordinator_fee", label: "Coordinator" },
+                { key: "net_total", label: "Take Home" },
             ],
             pFields: [
-                { key: "createdAt", label: "Date", sortable: true },
-                { key: "trans_id", label: "ID" },
+                { key: "_id", label: "Name" },
                 { key: "amount_booked", label: "Booked", sortable: true },
                 { key: "amount_sold", label: "Sold", sortable: true },
                 { key: "amount_returned", label: "Returned", sortable: true },
                 { key: "service_charge_amount", label: "Charge", sortable: true },
-                { key: "coordinator", label: "Coordinator", sortable: true },
             ],
             isLoading: false,
             reportDate: new Date(),
@@ -133,12 +134,14 @@ export default {
             purchase: {
                 perPage: 8,
                 currentPage: 1,
-            }
+            },
+            feesList: [],
         };
     },
 
     fetch() {
         this.handleGetReport();
+        this.handleGetAllFees();
     },
 
     fetchOnServer: false,
@@ -151,8 +154,8 @@ export default {
             }
             return this.$store.dispatch("getReport", params).then((response) => {
                 this.isLoading = false;
-                this.purchaseList = response.data.purchases;
-                this.lodgementList = response.data.lodgements;
+                this.purchaseList = response.data.purchasesReport;
+                this.lodgementList = response.data.lodgementsReport;
                 this.showDateFilter = false;
             }).catch((error) => {
                 this.isLoading = false;
@@ -167,44 +170,47 @@ export default {
         async exportToPdf() {
             const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
             const today = new Date().toISOString().split('T')[0];
-            let tableContent = `<h2>${this.viewTable === "lodgement" ? "GIRLS SALES" : "CASH PURCHASE"} SUMMARY ${today}</h2>
+            let tableContent = `<h2>${this.viewTable === "lodgement" ? "GIRLS SALES" : "CASH PURCHASE"} SUMMARY ${today}</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">`;
             if (this.viewTable === 'lodgement') {
 
                 tableContent += `<thead><tr>
                 <th style="border: 1px solid black; padding: 5px;">Name</th>
-                <th style="border: 1px solid black; padding: 5px;">ID</th>
                 <th style="border: 1px solid black; padding: 5px;">Lodge Fee</th>
-                <th style="border: 1px solid black; padding: 5px;">Commission</th>
-                <th style="border: 1px solid black; padding: 5px;">Girls Money</th>
+                <th style="border: 1px solid black; padding: 5px;">${this.dancersFee}% Commission</th>
+                <th style="border: 1px solid black; padding: 5px;">${100 - parseFloat(this.dancersFee)}% Girls Money</th>
                 <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
                 <th style="border: 1px solid black; padding: 5px;">Take Home</th>
                 </tr></thead>
                 <tbody>`;
                 data.forEach(item => {
                     tableContent += `<tr>
-                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${item.username}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item._id.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.total_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.total_commission)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.sub_total)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.coordinator_fee)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.net_total)}</td>
                     </tr>`;
                 });
 
             } else {
 
                 tableContent += `<thead><tr>
-                <th style="border: 1px solid black; padding: 5px;">Date</th>
-                <th style="border: 1px solid black; padding: 5px;">ID</th>
                 <th style="border: 1px solid black; padding: 5px;">Name</th>
-                <th style="border: 1px solid black; padding: 5px;">Amount</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount Booked</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount Sold</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount Returned</th>
+                <th style="border: 1px solid black; padding: 5px;">${this.serviceCharge}% Service Charge</th>
                 </tr></thead>
                 <tbody>`;
                 data.forEach(item => {
                     tableContent += `<tr>
-                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${item.username}</td>
-                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item._id.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_booked)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_sold)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_returned)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
                     </tr>`;
                 });
             }
@@ -223,6 +229,20 @@ export default {
         goBack() {
             this.$router.go(-1);
         },
+
+        handleGetAllFees() {
+            return this.$store.dispatch("getFees").then((response) => {
+                this.isLoading = false;
+                this.feesList = response.data;
+            }).catch((error) => {
+                this.isLoading = false;
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+            });
+        },
     },
 
     computed: {
@@ -236,6 +256,16 @@ export default {
 
         lTotalRows() {
             return this.lodgementList?.length;
+        },
+
+        serviceCharge() {
+            const fee = this.feesList.find(fee => fee.fee_name === 'purchase_service_charge');
+            return fee?.fee_value;
+        },
+
+        dancersFee() {
+            const fee = this.feesList.find(fee => fee.fee_name.toLowerCase() == "house fee for dancers");
+            return fee?.fee_value;
         },
     },
 };
