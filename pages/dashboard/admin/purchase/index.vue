@@ -167,7 +167,13 @@ export default {
                     variant: "info",
                     delay: 300,
                 });
-            })
+            }).catch((error) => {
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+            });
         },
     },
 };

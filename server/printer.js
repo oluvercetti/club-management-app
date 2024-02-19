@@ -19,7 +19,7 @@ const print = (text) => {
           .close();
       });
   } catch (err){
-    console.log(err);
+    throw new Error(err)
   }
 
 }

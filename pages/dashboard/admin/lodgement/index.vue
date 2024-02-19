@@ -349,7 +349,7 @@ export default {
                 this.usersList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
@@ -363,7 +363,7 @@ export default {
                 this.serviceTypeList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
-                this.$bvToast.toast(error?.response?.data, {
+                this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
@@ -378,7 +378,13 @@ export default {
                     variant: "info",
                     delay: 300,
                 });
-            })
+            }).catch((error) => {
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+            });
         },
 
         handleFetchPurchaseList() {

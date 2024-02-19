@@ -232,7 +232,7 @@ export default {
             }
             const today = new Date().toISOString().split('T')[0];
             let tableContent = `<h2>${this.viewTable === "lodgement" ? "CASH LODGEMENT" : "CASH SALES"} SUMMARY </h2><br>
-            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">`;
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">`;
             if (this.viewTable === 'lodgement') {
 
                 tableContent += `<thead><tr>
