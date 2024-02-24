@@ -34,8 +34,13 @@
                 </b-button>
             </b-col>
             <b-col md="3">
-                <b-button type="button" variant="success" @click="exportToPdf()">
+                <b-button type="button" variant="info" @click="exportToPdf()">
                     Export to PDF
+                </b-button>
+            </b-col>
+            <b-col md="3">
+                <b-button type="button" variant="info" @click="exportToExcel()">
+                    Export to Excel
                 </b-button>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
@@ -241,6 +246,74 @@ export default {
                 jsPDF: { unit: 'in', format: 'a2', orientation: 'portrait' }
             };
             await this.$html2pdf(tableContent, opt);
+        },
+
+        async exportToExcel() {
+            const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
+            if(this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+                this.$bvToast.toast("There are no cash lodgement records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+
+            if(this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+                this.$bvToast.toast("There are no cash purchase records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+            const today = this.reportDate || new Date().toISOString().split('T')[0];
+            let tableContent = `<table>`;
+            if (this.viewTable === 'lodgement') {
+
+                tableContent += `<thead><tr>
+                <th>Name</th>
+                <th>Lodge Fee</th>
+                <th>${this.dancersFee}% Commission</th>
+                <th>${100 - parseFloat(this.dancersFee)}% Girls Money</th>
+                <th>Coordinator</th>
+                <th>Take Home</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td>${item._id.toUpperCase()}</td>
+                    <td>${this.$options.filters.format_amount(item.total_amount)}</td>
+                    <td>${this.$options.filters.format_amount(item.total_commission)}</td>
+                    <td>${this.$options.filters.format_amount(item.sub_total)}</td>
+                    <td>${this.$options.filters.format_amount(item.coordinator_fee)}</td>
+                    <td>${this.$options.filters.format_amount(item.net_total)}</td>
+                    </tr>`;
+                });
+
+            } else {
+
+                tableContent += `<thead><tr>
+                <th>Name</th>
+                <th>Amount Booked</th>
+                <th>Amount Sold</th>
+                <th>Amount Returned</th>
+                <th>${this.serviceCharge}% Service Charge</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td>${item._id.toUpperCase()}</td>
+                    <td>${this.$options.filters.format_amount(item.amount_booked)}</td>
+                    <td>${this.$options.filters.format_amount(item.amount_sold)}</td>
+                    <td>${this.$options.filters.format_amount(item.amount_returned)}</td>
+                    <td>${this.$options.filters.format_amount(item.service_charge_amount)}</td>
+                    </tr>`;
+                });
+            }
+            tableContent += '</tbody></table>';
+            const filename = `${this.viewTable}_${today}`;
+            await this.$htmlToXlsx(tableContent, filename);
         },
 
         goBack() {

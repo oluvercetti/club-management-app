@@ -41,7 +41,8 @@ export default {
         "~/plugins/axios",
         "~plugins/filters",
         "~plugins/functions/math",
-        { src: '~/plugins/html2pdf.js', mode: 'client' }
+        { src: '~/plugins/html2pdf.js', mode: 'client' },
+        { src: '~/plugins/html2xlsx.js', mode: 'client' }
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components

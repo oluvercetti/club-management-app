@@ -28,6 +28,11 @@
                     Export to PDF
                 </b-button>
             </b-col>
+            <b-col md="4">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToExcel()">
+                    Export to Excel
+                </b-button>
+            </b-col>
             <b-col md="12" class="mt-3" v-if="startDate && endDate && showDate">
                 <h3>Date Range from {{ $moment(startDate).format("DD-MM-YYYY") }} to {{ $moment(endDate).format("DD-MM-YYYY") }}</h3>
             </b-col>
@@ -291,6 +296,83 @@ export default {
                 jsPDF: { unit: 'in', format: 'a2', orientation: 'portrait' }
             };
             await this.$html2pdf(tableContent, opt);
+        },
+
+
+        async exportToExcel() {
+            const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
+
+            if(this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+                this.$bvToast.toast("There are no cash lodgement records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+
+            if(this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+                this.$bvToast.toast("There are no cash purchase records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+            const today = new Date().toISOString().split('T')[0];
+            let tableContent = `<h2>${this.viewTable === "lodgement" ? "CASH LODGEMENT" : "CASH SALES"} SUMMARY </h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">`;
+            if (this.viewTable === 'lodgement') {
+
+                tableContent += `<thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Date</th>
+                <th style="border: 1px solid black; padding: 5px;">ID</th>
+                <th style="border: 1px solid black; padding: 5px;">Mode</th>
+                <th style="border: 1px solid black; padding: 5px;">Dancer</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount</th>
+                <th style="border: 1px solid black; padding: 5px;">Service</th>
+                <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.mode_of_payment.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.username.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.service_type.toUpperCase()}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.coordinator.toUpperCase()}</td>
+                    </tr>`;
+                });
+
+            } else {
+
+                tableContent += `<thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Date</th>
+                <th style="border: 1px solid black; padding: 5px;">ID</th>
+                <th style="border: 1px solid black; padding: 5px;">Booked</th>
+                <th style="border: 1px solid black; padding: 5px;">Sold</th>
+                <th style="border: 1px solid black; padding: 5px;">Returned</th>
+                <th style="border: 1px solid black; padding: 5px;">Charge</th>
+                <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `<tr>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$moment(item.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.trans_id}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_booked)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_sold)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_returned)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${item.coordinator.toUpperCase()}</td>
+                    </tr>`;
+                });
+            }
+            tableContent += '</tbody></table>';
+            const filename = `${this.viewTable}_${today}`;
+            await this.$htmlToXlsx(tableContent, filename);
         }
     },
 };
