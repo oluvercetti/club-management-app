@@ -23,12 +23,12 @@
             </b-col>
         </b-row>
         <b-row>
-            <b-col md="4">
+            <b-col md="3">
                 <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToPdf()">
                     Export to PDF
                 </b-button>
             </b-col>
-            <b-col md="4">
+            <b-col md="3">
                 <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToExcel()">
                     Export to Excel
                 </b-button>
