@@ -1,5 +1,6 @@
 <template>
     <div class="mt-3">
+        <iframe id="printFrame" style="display:none;"></iframe>
         <b-row class="mb-3">
             <b-col md="3" xs="3">
                 <b-button variant="link" @click="goBack()">
@@ -27,7 +28,7 @@
                 </b-col>
             </b-row>
         </client-only>
-        <b-row>
+        <b-row class="mb-3">
             <b-col md="3">
                 <b-button type="button" variant="info" @click="handleGetReport()">
                     Regenerate Report
@@ -43,10 +44,18 @@
                     Export to Excel
                 </b-button>
             </b-col>
+            <b-col md="3" v-if="viewTable === 'lodgement'">
+                <b-button type="button" variant="info" @click="createPrintOut()">
+                    Print
+                </b-button>
+            </b-col>
+        </b-row>
+        <b-row>
+
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
                 <b-table ref="lodgement" id="b-table-export" :items="lodgementList" :fields="lFields" :busy="isLoading"
-                    class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage" striped hover outlined
-                    sort-icon-left>
+                    class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage" striped
+                    hover outlined sort-icon-left>
                     <template #cell(_id)="name">
                         <p>{{ name.value.toUpperCase() }}</p>
                     </template>
@@ -72,12 +81,14 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage" :total-rows="lTotalRows" :per-page="lodgement.perPage"
-                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
+                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage" :total-rows="lTotalRows"
+                    :per-page="lodgement.perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last"
+                    size="lg" align="center" />
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
                 <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading"
-                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage"  striped hover outlined sort-icon-left>
+                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage" striped hover
+                    outlined sort-icon-left>
                     <template #cell(_id)="name">
                         <p>{{ name.value.toUpperCase() }}</p>
                     </template>
@@ -100,8 +111,9 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage" :total-rows="lTotalRows" :per-page="purchase.perPage"
-                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
+                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage" :total-rows="lTotalRows"
+                    :per-page="purchase.perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last"
+                    size="lg" align="center" />
             </b-col>
         </b-row>
     </div>
@@ -174,7 +186,7 @@ export default {
 
         async exportToPdf() {
             const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
-            if(this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+            if (this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
                 this.$bvToast.toast("There are no cash lodgement records ", {
                     title: "Error",
                     variant: "danger",
@@ -183,7 +195,7 @@ export default {
                 return false;
             }
 
-            if(this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+            if (this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
                 this.$bvToast.toast("There are no cash purchase records ", {
                     title: "Error",
                     variant: "danger",
@@ -250,7 +262,7 @@ export default {
 
         async exportToExcel() {
             const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
-            if(this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+            if (this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
                 this.$bvToast.toast("There are no cash lodgement records ", {
                     title: "Error",
                     variant: "danger",
@@ -259,7 +271,7 @@ export default {
                 return false;
             }
 
-            if(this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+            if (this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
                 this.$bvToast.toast("There are no cash purchase records ", {
                     title: "Error",
                     variant: "danger",
@@ -332,6 +344,46 @@ export default {
                     delay: 300,
                 });
             });
+        },
+
+
+        createPrintOut() {
+            if (this.viewTable === 'lodgement' && this.lodgementList?.length < 1) {
+                this.$bvToast.toast("There are no cash lodgement records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+            const data = this.lodgementList;
+            const today = this.reportDate || new Date().toISOString().split('T')[0];
+            let tableContent = `<h2>End of Day Report for ${this.$moment(today).format("DD-MM-YYYY")}</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                <thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Dancer</th>
+                <th style="border: 1px solid black; padding: 5px;">Lodge Fee</th>
+                <th style="border: 1px solid black; padding: 5px;">Take Home</th>
+                </tr></thead>
+                <tbody>`;
+            data.forEach(item => {
+                    tableContent += `
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">${item._id.toUpperCase()}</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.total_amount)}</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.net_total)}</td>
+                    </tr>`;
+                });
+            tableContent += '</tbody></table>';
+
+            const printFrame = document.getElementById('printFrame');
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(tableContent);
+            frameDoc.close();
+
+            printFrame.contentWindow.focus(); // Focus the iframe
+            printFrame.contentWindow.print(); // Print the iframe content
         },
     },
 
