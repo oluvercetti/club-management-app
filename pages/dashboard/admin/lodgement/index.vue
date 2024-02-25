@@ -477,8 +477,8 @@ export default {
         },
 
         createPrintOut(data) {
-            let tableContent = `<h2>Bar Docket</h2><br>
-            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">
+            let tableContent = `<h2>Cash Lodgement</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead></thead>
                 <tbody>
                     <tr>
