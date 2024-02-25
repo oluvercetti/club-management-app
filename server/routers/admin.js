@@ -310,7 +310,7 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         yesterdayTenPM.setHours(22, 0, 0, 0);
 
         const todaySixAM = new Date(now);
-        todaySixAM.setHours(6, 0, 0, 0);
+        todaySixAM.setHours(8, 0, 0, 0);
         const fees = await Fees.find({status: true});
         const dancerHouseFee = fees.find(fee => fee.fee_name.toLowerCase() == "house fee for dancers");
         const coordinatorFee = fees.find(fee => fee.fee_name.toLowerCase() == "coordinator's fee");
