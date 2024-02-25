@@ -1,5 +1,6 @@
 <template>
     <div class="mt-3">
+        <iframe id="printFrame" style="display:none;"></iframe>
         <h2 class="mb-3"><b-icon icon="cash" class="mr-3" aria-hidden="true" /> Cash Purchase</h2>
         <div class="mb-4">
             <b-form-row>
@@ -47,7 +48,7 @@
                                     <b-button v-else size="lg" type="button" @click="resetValues()">
                                         Clear Order
                                     </b-button>
-                                    <b-button v-if="disableFields" size="lg" type="button" @click="printOrder()">
+                                    <b-button v-if="disableFields" size="lg" type="button" @click="printOrder(printCopy)">
                                         Reprint
                                     </b-button>
                                 </div>
@@ -101,6 +102,7 @@ export default {
             ],
             trans_tag: this.$random_alpha_numeric(4),
             disableFields: false,
+            printCopy: null,
         };
     },
 
@@ -124,7 +126,7 @@ export default {
             }
 
             this.isLoading = true;
-            return this.$store.dispatch("createNewPurchase", payload).then(() => {
+            return this.$store.dispatch("createNewPurchase", payload).then((response) => {
                 this.$bvToast.toast("Purchase completed", {
                     title: "Success",
                     variant: "success",
@@ -132,6 +134,8 @@ export default {
                 });
                 this.isLoading = false;
                 this.disableFields = true;
+                const printOut = this.createPrintOut(response.purchase)
+                this.printOrder(printOut);
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
@@ -158,22 +162,67 @@ export default {
                     delay: 300,
                 });
             }
+
+            this.printCopy = null;
         },
 
-        printOrder() {
-            this.$store.dispatch("sendToPrinter", "test").then(() => {
+        printOrder(data) {
+            this.$store.dispatch("sendToPrinter", data).then(() => {
                 this.$bvToast.toast("Printing is done", {
                     title: "Printed",
                     variant: "info",
                     delay: 300,
                 });
             }).catch((error) => {
-                this.$bvToast.toast(error?.response?.data?.message, {
+                /* this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
-                });
+                }); */
+                this.printFromClient(data)
             });
+        },
+
+        createPrintOut(data) {
+            let tableContent = `<h2>Bar Docket</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Transaction ID</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.trans_id.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Denomination</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.denomination}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked)}</td>
+                    </tr>
+                </tbody>
+            </table>`
+            this.printCopy = tableContent;
+            return tableContent;
+        },
+
+        printFromClient(data) {
+            const printFrame = document.getElementById('printFrame');
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(data);
+            frameDoc.close();
+
+            printFrame.contentWindow.focus(); // Focus the iframe
+            printFrame.contentWindow.print(); // Print the iframe content
         },
     },
 };

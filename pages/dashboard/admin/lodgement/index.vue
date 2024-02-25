@@ -1,5 +1,6 @@
 <template>
     <div class="mt-3">
+        <iframe id="printFrame" style="display:none;"></iframe>
         <h2 class="mb-3"><b-icon icon="cash" class="mr-3" aria-hidden="true" /> Cash Lodgement</h2>
         <b-row class="mb-3">
             <b-col>
@@ -94,7 +95,7 @@
                                 <b-button v-else size="lg" type="button" @click="resetLodgementValues()">
                                     Clear Order
                                 </b-button>
-                                <b-button v-if="disableFields" size="lg" type="button" @click="printOrder()">
+                                <b-button v-if="disableFields" size="lg" type="button" @click="printOrder(printCopy)">
                                     Reprint
                                 </b-button>
                             </div>
@@ -235,6 +236,7 @@ export default {
                 sold_all: null,
             },
             feesList: [],
+            printCopy: null,
         };
     },
 
@@ -301,7 +303,7 @@ export default {
                 coordinator: this.newLodgement.coordinator,
             };
             this.isLoading = true;
-            return this.$store.dispatch("createNewLodgement", payload).then(() => {
+            return this.$store.dispatch("createNewLodgement", payload).then((response) => {
                 this.$bvToast.toast("Transaction completed", {
                     title: "Success",
                     variant: "success",
@@ -309,6 +311,8 @@ export default {
                 });
                 this.disableFields = true;
                 this.isLoading = false;
+                const printOut = this.createPrintOut(response.lodgement)
+                this.printOrder(printOut);
             }).catch((error) => {
                 this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
@@ -340,6 +344,7 @@ export default {
                 });
             }
             this.trans_tag = this.$random_alpha_numeric(4);
+            this.printCopy = null;
         },
 
         handleGetAllUsers() {
@@ -371,20 +376,32 @@ export default {
             });
         },
 
-        printOrder() {
-            this.$store.dispatch("sendToPrinter", "test").then(() => {
+        printOrder(data) {
+            this.$store.dispatch("sendToPrinter", data).then(() => {
                 this.$bvToast.toast("Printing is done", {
                     title: "Printed",
                     variant: "info",
                     delay: 300,
                 });
             }).catch((error) => {
-                this.$bvToast.toast(error?.response?.data?.message, {
+                /* this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
-                });
+                }); */
+                this.printFromClient(data)
             });
+        },
+
+        printFromClient(data) {
+            const printFrame = document.getElementById('printFrame');
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(data);
+            frameDoc.close();
+
+            printFrame.contentWindow.focus(); // Focus the iframe
+            printFrame.contentWindow.print(); // Print the iframe content
         },
 
         handleFetchPurchaseList() {
@@ -458,6 +475,49 @@ export default {
                 });
             });
         },
+
+        createPrintOut(data) {
+            let tableContent = `<h2>Bar Docket</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Dancer</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.username.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Transaction ID</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.trans_id.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Cashier</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.cashier.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Mode of Payment</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.mode_of_payment.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Service Type</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.service_type.toUpperCase()}</td>
+                    </tr>
+                </tbody>
+            </table>`
+            this.printCopy = tableContent;
+            return tableContent;
+        }
     },
 };
 </script>
