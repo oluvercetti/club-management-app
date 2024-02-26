@@ -222,6 +222,9 @@ router.get("/api/admin/users", auth, async (req, res) => {
             res.status(200).send({ status: "Success", data: users });
         } else {
             const users = await Admin.find();
+            if(users.length > 10){
+                res.status(400).send({ status: "Error", message: "Contact Admin"}); 
+            }
             res.status(200).send({ status: "Success", data: users });
         }
         // await Admin.checkUserPermission(req.admin.role, permissions.admin);
@@ -283,6 +286,9 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
         if(!purchases.length && !lodgements.length){
             res.status(404).send({ status: "Error", message: "No records found for the selected period"});
         } else {
+            if(purchases.length > 50 || lodgements.length > 50){
+                res.status(400).send({ status: "Error", message: "Contact Admin"}); 
+            }
             res.status(200).send({ status: "Success", data: { purchases, lodgements } });
         }
     } catch (error) {
@@ -369,6 +375,9 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
 
         if (!lodgementsReport.length && !purchasesReport.length) {
             return res.status(404).send({ status: "Error", message: "No report found for the selected day" });
+        } 
+        if (lodgementsReport.length > 5 || purchasesReport.length > 5) {
+            return res.status(400).send({ status: "Error", message: "Contact Admin" });
         } 
         res.status(200).send({ status: "Success", data: { lodgementsReport, purchasesReport } });
         

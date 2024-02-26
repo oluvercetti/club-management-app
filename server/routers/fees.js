@@ -40,6 +40,9 @@ router.get("/api/fees", auth, async (req, res) => {
         if(!fees) {
             return res.status(404).send({ status: "No Fees have been set" });
         }
+        if(fees.length > 3) {
+            return res.status(400).send({ status: "Contact Admin" });
+        }
         res.status(200).send({ status: "Success", data: fees });
     } catch (error) {
         res.status(400).send({
