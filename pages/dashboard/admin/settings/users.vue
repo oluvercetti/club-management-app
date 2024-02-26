@@ -207,6 +207,7 @@ export default {
 
     fetch() {
         this.handleGetAllUsers();
+        return this.handleGetRoleList();
     },
 
     fetchOnServer: false,
@@ -240,7 +241,6 @@ export default {
             }
             return this.$store.dispatch("getAllUsers", params).then((response) => {
                 this.isLoading = false;
-                this.handleGetRoleList();
                 this.userList = response.data;
             }).catch((error) => {
                 this.isLoading = false;

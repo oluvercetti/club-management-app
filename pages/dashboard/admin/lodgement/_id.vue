@@ -1,5 +1,6 @@
 <template>
     <div>
+        <iframe id="printFrame" style="display:none;"></iframe>
         <b-container>
             <b-row>
                 <b-col md="3" xs="3">
@@ -131,13 +132,59 @@ export default {
                     });
                 }
             }).catch((err) => {
-                this.$bvToast.toast(err?.response?.data?.message, {
-                    title: "Error",
-                    variant: "danger",
-                    delay: 300,
-                });
+                this.createPrintOut(this.lodgementDetails)
             });
         },
+
+        createPrintOut(data) {
+            let tableContent = `<h2>Cash Lodgement</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Dancer</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.username.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Transaction ID</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.trans_id.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Cashier</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.cashier.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Mode of Payment</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.mode_of_payment.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Service Type</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.service_type.toUpperCase()}</td>
+                    </tr>
+                </tbody>
+            </table>`
+            this.printCopy = tableContent;
+            const printFrame = document.getElementById('printFrame');
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(tableContent);
+            frameDoc.close();
+
+            printFrame.contentWindow.focus(); // Focus the iframe
+            printFrame.contentWindow.print(); // Print the iframe content
+        }
     },
 }
 </script>
