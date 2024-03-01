@@ -234,13 +234,20 @@ router.patch("/api/admin/resetpassword", auth, async (req, res) => {
 router.get("/api/admin/users", auth, async (req, res) => {
 
     const role = req.query?.role;
+    const sort = {};
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split(":");
+        sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+    } else {
+        sort.createdAt = -1;
+    }
     try {
         // Parse role parameter to integer
         if(role){
-            const users = await Admin.find({ role });
+            const users = await Admin.find({ role }).sort(sort);
             res.status(200).send({ status: "Success", data: users });
         } else {
-            const users = await Admin.find();
+            const users = await Admin.find().sort(sort);
             res.status(200).send({ status: "Success", data: users });
         }
         // await Admin.checkUserPermission(req.admin.role, permissions.admin);
