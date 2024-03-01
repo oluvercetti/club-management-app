@@ -102,7 +102,33 @@
         </b-modal>
 
         <b-modal v-model="showExistingUserModal" hide-footer title="Edit User">
-            <b-form @submit.prevent="handleUpdateSingleUser(selectedUser)">
+            <template v-if="selectedUser.role !== 4">
+                <b-button v-if="resetPassword" type="button" variant="info" @click="resetPassword = !resetPassword">
+                    Update User
+                </b-button>
+                <b-button v-else type="button" variant="danger" @click="resetPassword = !resetPassword">
+                    Reset User Password
+                </b-button>
+            </template>
+            <b-form class="mt-3" v-if="resetPassword" @submit.prevent="handleResetPassword(selectedUser)">
+                <b-form-group label="New Reset Password" label-for="newResetPassword">
+                    <b-form-input autocomplete="off" id="newResetPassword" type="password" v-model="selectedUser.newResetPassword" required />
+                </b-form-group>
+                <div class="form__button-container">
+                    <b-button v-if="isLoading" class="d-flex align-items-center mr-3" type="submit" variant="primary"
+                        disabled>
+                        <span class="mr-2">Saving...</span>
+                        <b-spinner style="width: 1.5rem; height: 1.5rem;" />
+                    </b-button>
+                    <b-button v-else type="submit" variant="primary" class="mr-3">
+                        Save User
+                    </b-button>
+                    <b-button type="button" @click="showExistingUserModal = !showExistingUserModal">
+                        Cancel
+                    </b-button>
+                </div>
+            </b-form>
+            <b-form class="mt-3" v-else @submit.prevent="handleUpdateSingleUser(selectedUser)">
                 <b-form-group label="Role" label-for="edit-role">
                     <b-form-select v-model="selectedUser.role" :options="computedRoleList" required></b-form-select>
                 </b-form-group>
@@ -201,7 +227,8 @@ export default {
             user: {
                 perPage: 8,
                 currentPage: 1,
-            }
+            },
+            resetPassword: false,
         };
     },
 
@@ -307,6 +334,7 @@ export default {
         },
 
         handleSelectedUser(data) {
+            this.resetPassword = false;
             this.selectedUser.username = data.username;
             this.selectedUser.role = data.role;
             this.selectedUser.id = data._id;
@@ -350,6 +378,14 @@ export default {
                 role: null,
                 name: null
             }
+
+            this.selectedUser = {
+                id: null,
+                username: null,
+                role: null,
+                name: null,
+                status: null
+            }
         },
 
         resetRoleValues() {
@@ -376,6 +412,32 @@ export default {
         getRoleName(roleId) {
             const role = this.computedRoleList.find(item => item.value === roleId);
             return role ? role.text : roleId;
+        },
+
+        handleResetPassword() {
+            const payload = {
+                user_id: this.selectedUser.id,
+                password: this.selectedUser.newResetPassword,
+            };
+            this.isLoading = true;
+            return this.$store.dispatch("resetPassword", { payload }).then(() => {
+                this.$bvToast.toast("Password Reset Successfully", {
+                    title: "Success",
+                    variant: "success",
+                    delay: 300,
+                });
+                this.showExistingUserModal = false;
+                this.resetUserValues();
+                this.isLoading = false;
+                this.handleGetAllUsers();
+            }).catch((error) => {
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                this.isLoading = false;
+            });
         },
     },
 };

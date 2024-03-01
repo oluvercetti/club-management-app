@@ -94,6 +94,12 @@ export const actions = ({
         });
     },
 
+    resetPassword(_, { payload }) {
+        return this.$axios.patch(`/api/admin/resetpassword`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
     getAllTransactions(_, params) {
         return this.$axios.get("/api/admin/transactions", { params }).then((response) => {
             return response.data;

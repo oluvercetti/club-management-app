@@ -212,6 +212,25 @@ router.patch("/api/admin/changepassword", auth, async (req, res) => {
     }
 });
 
+router.patch("/api/admin/resetpassword", auth, async (req, res) => {
+
+    try {
+        await Admin.checkUserPermission(req.admin.role, permissions.super_admin);
+        const user = await Admin.findOne({_id: req.body.user_id});
+        if(!req.body.password){
+            throw new Error("Provide reset password");
+        }
+        user.password = req.body.password;
+        await user.save();
+        res.send(user);
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+});
+
 router.get("/api/admin/users", auth, async (req, res) => {
 
     const role = req.query?.role;
