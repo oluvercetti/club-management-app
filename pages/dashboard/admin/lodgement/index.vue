@@ -289,7 +289,12 @@ export default {
         computedServiceCharge() {
             const serviceCharge = parseFloat(this.serviceCharge) / 100
             return parseFloat(this.computedAmountSold * serviceCharge)
-        }
+        },
+
+        houseFeeCharge() {
+            const fee = this.feesList.find(fee => fee.fee_name === 'house fee for dancers');
+            return fee?.fee_value;
+        },
     },
 
     methods: {
@@ -477,6 +482,8 @@ export default {
         },
 
         createPrintOut(data) {
+            const houseFee = parseFloat(this.houseFeeCharge)/100;
+            const houseAmount = parseFloat(data.amount * houseFee);
             let tableContent = `<h2>Cash Lodgement</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead></thead>
@@ -494,16 +501,16 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${data.trans_id.toUpperCase()}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid black; padding: 5px;">Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">Total Amount</td>
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount)}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid black; padding: 5px;">Cashier</td>
-                        <td style="border: 1px solid black; padding: 5px;">${data.cashier.toUpperCase()}</td>
+                        <td style="border: 1px solid black; padding: 5px;">House Charge</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(houseAmount)}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
-                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
+                        <td style="border: 1px solid black; padding: 5px;">Take Home</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount - houseAmount)}</td>
                     </tr>
                     <tr>
                         <td style="border: 1px solid black; padding: 5px;">Mode of Payment</td>
@@ -512,6 +519,14 @@ export default {
                     <tr>
                         <td style="border: 1px solid black; padding: 5px;">Service Type</td>
                         <td style="border: 1px solid black; padding: 5px;">${data.service_type.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Cashier</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.cashier.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
                     </tr>
                 </tbody>
             </table>`
