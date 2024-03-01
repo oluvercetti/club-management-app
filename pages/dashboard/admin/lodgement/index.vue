@@ -198,6 +198,7 @@
 </template>
 
 <script>
+import appLogo from "@/plugins/logo"
 export default {
     layout: "admin",
     data() {
@@ -484,7 +485,8 @@ export default {
         createPrintOut(data) {
             const houseFee = parseFloat(this.houseFeeCharge)/100;
             const houseAmount = parseFloat(data.amount * houseFee);
-            let tableContent = `<h2>Cash Lodgement</h2><br>
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>Cash Lodgement</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead></thead>
                 <tbody>

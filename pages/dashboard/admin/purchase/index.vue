@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import appLogo from "@/plugins/logo"
 export default {
     layout: "admin",
     data() {
@@ -103,9 +104,13 @@ export default {
             trans_tag: this.$random_alpha_numeric(4),
             disableFields: false,
             printCopy: null,
+            feesList: [],
         };
     },
 
+    created () {
+        this.handleGetAllFees();
+    },
     fetchOnServer: false,
 
     computed: {
@@ -113,6 +118,10 @@ export default {
         computedAmount() {
             const quantity = this.form?.quantity * 100;
             return quantity * this.form?.denomination;
+        },
+        serviceCharge() {
+            const fee = this.feesList.find(fee => fee.fee_name === 'purchase_service_charge');
+            return fee?.fee_value;
         },
     },
 
@@ -184,7 +193,10 @@ export default {
         },
 
         createPrintOut(data) {
-            let tableContent = `<h2>Cash Purchase</h2><br>
+            const charge = parseFloat(this.serviceCharge)/100;
+            const chargeAmount = parseFloat(data.amount_booked * charge);
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>Cash Purchase</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead></thead>
                 <tbody>
@@ -205,8 +217,12 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${data.denomination}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid black; padding: 5px;">Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">Amount Booked</td>
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Total Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked + chargeAmount)}</td>
                     </tr>
                 </tbody>
             </table>`
@@ -223,6 +239,19 @@ export default {
 
             printFrame.contentWindow.focus(); // Focus the iframe
             printFrame.contentWindow.print(); // Print the iframe content
+        },
+        handleGetAllFees() {
+            return this.$store.dispatch("getFees").then((response) => {
+                this.isLoading = false;
+                this.feesList = response.data;
+            }).catch((error) => {
+                this.isLoading = false;
+                this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+            });
         },
     },
 };

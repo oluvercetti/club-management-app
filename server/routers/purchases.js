@@ -43,8 +43,12 @@ router.get("/api/admin/purchases", auth, async (req, res) => {
         // Set hours for end date to 23:59 (just before midnight)
         endDate.setHours(23, 59, 59, 999); 
 
-        // Construct query for records between startDate and endDate
-        match.createdAt = { $gte: new Date(startDate), $lt: new Date(endDate) };
+        // Construct query for records between startDate and endDate or 
+
+        match.$or = [
+            { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } },
+            { status: 'Open' }
+        ];
     }
 
     if(req.query.status) {
@@ -59,7 +63,9 @@ router.get("/api/admin/purchases", auth, async (req, res) => {
     }
     try {
         const purchases = await Purchases.find(match).sort(sort);
-
+        if(!purchases.length){
+            res.status(404).send({ status: "Error", message: "No records found" });
+        }
         res.status(200).send({ status: "Success", data: purchases });
     } catch (error) {
         return res.status(400).send({

@@ -44,7 +44,7 @@
                     Export to Excel
                 </b-button>
             </b-col>
-            <b-col md="3" v-if="viewTable === 'lodgement'">
+            <b-col md="3">
                 <b-button type="button" variant="info" @click="createPrintOut()">
                     Print
                 </b-button>
@@ -120,6 +120,7 @@
 </template>
 
 <script>
+import appLogo from "@/plugins/logo"
 export default {
     layout: "admin",
     data() {
@@ -356,17 +357,28 @@ export default {
                 });
                 return false;
             }
-            const data = this.lodgementList;
+
+            if (this.viewTable === 'purchase' && this.purchaseList?.length < 1) {
+                this.$bvToast.toast("There are no cash purchase records ", {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                return false;
+            }
+            const data = this.viewTable === 'lodgement' ? this.lodgementList : this.purchaseList;
             const today = this.reportDate || new Date().toISOString().split('T')[0];
-            let tableContent = `<h2>End of Day Report for ${this.$moment(today).format("DD-MM-YYYY")}</h2><br>
-            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>End of Day Report for ${this.$moment(today).format("DD-MM-YYYY")}</h2><br>`;
+            if (this.viewTable === 'lodgement') {
+                tableContent = `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead><tr>
                 <th style="border: 1px solid black; padding: 5px;">Dancer</th>
                 <th style="border: 1px solid black; padding: 5px;">Lodge Fee</th>
                 <th style="border: 1px solid black; padding: 5px;">Take Home</th>
                 </tr></thead>
                 <tbody>`;
-            data.forEach(item => {
+                data.forEach(item => {
                     tableContent += `
                     <tr>
                         <td style="border: 1px solid black; padding: 5px;">${item._id.toUpperCase()}</td>
@@ -374,6 +386,24 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.net_total)}</td>
                     </tr>`;
                 });
+            } else {
+                tableContent = `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                <thead><tr>
+                <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
+                <th style="border: 1px solid black; padding: 5px;">Amount Sold</th>
+                <th style="border: 1px solid black; padding: 5px;">Charge</th>
+                </tr></thead>
+                <tbody>`;
+                data.forEach(item => {
+                    tableContent += `
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">${item._id.toUpperCase()}</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.amount_sold)}</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
+                    </tr>`;
+                });
+            }
+
             tableContent += '</tbody></table>';
 
             const printFrame = document.getElementById('printFrame');
