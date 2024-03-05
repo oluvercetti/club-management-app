@@ -8,7 +8,7 @@ const [HOST, PORT] = process.env.BASE_URL.replace(
 ).split(":");
 */
 
-export default {
+module.exports = {
     env,
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
