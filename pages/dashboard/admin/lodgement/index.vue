@@ -259,27 +259,27 @@ export default {
     computed: {
 
         dancersList() {
-            return this.usersList?.filter((data) => data.role === 4)?.map((data) => ({ value: data.username, text: data.name }));
+            return this.usersList?.filter((data) => data.role === 4)?.map((data) => ({ value: data?.username, text: data?.name }));
         },
 
         coordinatorsList() {
-            return this.usersList?.filter((data) => data.role === 5)?.map((data) => ({ value: data.username, text: data.name }));
+            return this.usersList?.filter((data) => data.role === 5)?.map((data) => ({ value: data?.username, text: data?.name }));
         },
 
         computedServiceTypeList() {
-            return this.serviceTypeList.map((data) => {
-                return { value: data.service_name, text: data.service_name.toUpperCase() };
+            return this.serviceTypeList?.map((data) => {
+                return { value: data?.service_name, text: data?.service_name.toUpperCase() };
             }
             )
         },
 
         serviceCharge() {
-            const fee = this.feesList.find(fee => fee.fee_name === 'purchase_service_charge');
+            const fee = this.feesList?.find(fee => fee.fee_name === 'purchase_service_charge');
             return fee?.fee_value;
         },
 
         computedAmountSold() {
-            return parseFloat(this.selectedTransaction.amount_booked) - parseFloat(this.selectedTransaction.amount_returned || 0)
+            return parseFloat(this.selectedTransaction?.amount_booked) - parseFloat(this.selectedTransaction?.amount_returned || 0)
         },
 
         computedServiceCharge() {

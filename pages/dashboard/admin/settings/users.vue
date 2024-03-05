@@ -213,8 +213,8 @@ export default {
 
     computed: {
         computedRoleList() {
-            return this.roleList.map((data) => {
-                return { value: data.role_id, text: data.role_name.toUpperCase() };
+            return this.roleList?.map((data) => {
+                return { value: data?.role_id, text: data?.role_name.toUpperCase() };
             })
         },
 
@@ -360,8 +360,8 @@ export default {
 
         handleGetRoleList() {
             return this.$store.dispatch("getRoleList").then((response) => {
-                this.roleList = response.data;
                 this.isLoading = false;
+                this.roleList = response.data;
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data, {
@@ -373,7 +373,7 @@ export default {
         },
 
         getRoleName(roleId) {
-            const role = this.computedRoleList.find(item => item.value === roleId);
+            const role = this.computedRoleList?.find(item => item.value === roleId);
             return role ? role.text : roleId;
         },
     },
