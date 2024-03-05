@@ -243,7 +243,7 @@ export default {
     fetch() {
         this.handleGetAllUsers();
         this.handleGetAllServices();
-        this.handleFetchPurchaseList();
+        return this.handleFetchPurchaseList();
     },
 
     watch: {
@@ -259,15 +259,11 @@ export default {
     computed: {
 
         dancersList() {
-            return this.usersList
-                .filter((data) => data.role === 4)
-                .map((data) => ({ value: data.username, text: data.name }));
+            return this.usersList?.filter((data) => data.role === 4)?.map((data) => ({ value: data.username, text: data.name }));
         },
 
         coordinatorsList() {
-            return this.usersList
-                .filter((data) => data.role === 5)
-                .map((data) => ({ value: data.username, text: data.name }));
+            return this.usersList?.filter((data) => data.role === 5)?.map((data) => ({ value: data.username, text: data.name }));
         },
 
         computedServiceTypeList() {

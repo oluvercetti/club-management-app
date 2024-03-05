@@ -215,8 +215,7 @@ export default {
         computedRoleList() {
             return this.roleList.map((data) => {
                 return { value: data.role_id, text: data.role_name.toUpperCase() };
-            }
-            )
+            })
         },
 
         userTotalRows() {
@@ -239,7 +238,6 @@ export default {
                 role,
             }
             return this.$store.dispatch("getAllUsers", params).then((response) => {
-                this.isLoading = false;
                 this.handleGetRoleList();
                 this.userList = response.data;
             }).catch((error) => {
@@ -363,6 +361,7 @@ export default {
         handleGetRoleList() {
             return this.$store.dispatch("getRoleList").then((response) => {
                 this.roleList = response.data;
+                this.isLoading = false;
             }).catch((error) => {
                 this.isLoading = false;
                 this.$bvToast.toast(error?.response?.data, {
