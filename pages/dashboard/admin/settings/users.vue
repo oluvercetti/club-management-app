@@ -241,8 +241,8 @@ export default {
 
     computed: {
         computedRoleList() {
-            return this.roleList.map((data) => {
-                return { value: data.role_id, text: data.role_name.toUpperCase() };
+            return this.roleList?.map((data) => {
+                return { value: data?.role_id, text: data?.role_name.toUpperCase() };
             }
             )
         },
