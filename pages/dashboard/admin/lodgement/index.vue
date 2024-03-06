@@ -244,7 +244,7 @@ export default {
     fetch() {
         this.handleGetAllUsers();
         this.handleGetAllServices();
-        this.handleFetchPurchaseList();
+        return this.handleFetchPurchaseList();
     },
 
     watch: {

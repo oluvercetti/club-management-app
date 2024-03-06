@@ -221,7 +221,7 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked)}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid black; padding: 5px;">Total Amount</td>
+                        <td style="border: 1px solid black; padding: 5px;">Total Amount To Be Paid</td>
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked + chargeAmount)}</td>
                     </tr>
                 </tbody>
