@@ -1,4 +1,4 @@
-const appLogo = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px"
+const appLogo = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="200px" height="200px"
         viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
         <g transform="translate(0.000000,300.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
             <path d="M1200 1905 l0 -160 45 -28 c86 -55 167 -172 182 -263 l6 -39 -42 38

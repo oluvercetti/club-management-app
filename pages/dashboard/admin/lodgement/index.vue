@@ -33,7 +33,9 @@
                                 </b-form-select>
                             </b-form-group>
                             <b-form-group label="Transaction Type" label-for="transtype">
-                                <b-form-select v-model="newLodgement.mode_of_payment" required :disabled="disableFields">
+                                <b-form-select v-model="newLodgement.mode_of_payment" required
+                                    :disabled="disableFields">
+
                                     <template #first>
                                         <b-form-select-option value=null disabled>
                                             -- Please select --
@@ -47,6 +49,7 @@
                             <b-form-group label="Service Type" label-for="service_type">
                                 <b-form-select v-model="newLodgement.service_type" :options="computedServiceTypeList"
                                     required :disabled="disableFields">
+
                                     <template #first>
                                         <b-form-select-option value=null disabled>
                                             -- Please select --
@@ -56,7 +59,7 @@
                             </b-form-group>
                             <b-form-group label="Amount" label-for="amount">
                                 <b-form-input id="amount" type="number" v-model="newLodgement.amount" required
-                                    :disabled="disableFields" />
+                                    :disabled="disableFields" @focus="clearLodgementAmount()" />
                             </b-form-group>
                             <transition name="slide">
                                 <b-form-row class="mb-2" v-if="newLodgement.amount">
@@ -68,6 +71,7 @@
                             <b-form-group label="Coordinator" label-for="cord">
                                 <b-form-select v-model="newLodgement.coordinator" :options="coordinatorsList" required
                                     :disabled="disableFields">
+
                                     <template #first>
                                         <b-form-select-option value=null disabled>
                                             -- Please select --
@@ -89,7 +93,8 @@
                                 <b-button :disabled="disableFields" size="lg" v-else type="submit" variant="primary">
                                     Proceed
                                 </b-button>
-                                <b-button v-if="disableFields" size="lg" type="button" @click="resetLodgementValues(true)">
+                                <b-button v-if="disableFields" size="lg" type="button"
+                                    @click="resetLodgementValues(true)">
                                     Close Order
                                 </b-button>
                                 <b-button v-else size="lg" type="button" @click="resetLodgementValues()">
@@ -109,23 +114,29 @@
                 <p>Service charge: {{ serviceCharge }}%</p>
             </b-col>
             <b-col md="12" sm="12">
-                <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading" class="mt-4 small-font"
-                    striped hover outlined sort-icon-left>
+                <b-table ref="purchase" :items="purchaseList" :fields="pFields" :busy="isLoading"
+                    class="mt-4 small-font" striped hover outlined sort-icon-left>
+
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
+
                     <template #cell(amount_booked)="amount_booked">
                         <p>{{ amount_booked.value | format_amount }}</p>
                     </template>
+
                     <template #cell(amount_sold)="amount_sold">
                         <p>{{ amount_sold.value | format_amount }}</p>
                     </template>
+
                     <template #cell(amount_returned)="amount_returned">
                         <p>{{ amount_returned.value | format_amount }}</p>
                     </template>
+
                     <template #cell(service_charge_amount)="service_charge_amount">
                         <p>{{ service_charge_amount.value | format_amount }}</p>
                     </template>
+
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
                             <b-button v-if="row.item.status === 'Open'" variant="primary"
@@ -137,6 +148,7 @@
                             </b-button>
                         </div>
                     </template>
+
                     <template #table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle" />
@@ -162,7 +174,7 @@
                         <b-form-group label="Amount Returned" label-for="amount-returned">
                             <b-form-input id="amount-returned" min="0" :max="selectedTransaction.amount_booked"
                                 type="number" v-model="selectedTransaction.amount_returned"
-                                :required="selectedTransaction.sold_all === 'No'" />
+                                :required="selectedTransaction.sold_all === 'No'" @focus="clearSalesAmount"/>
                         </b-form-group>
                     </b-col>
                 </b-form-row>
@@ -207,8 +219,8 @@ export default {
             newLodgement: {
                 trans_id: null,
                 mode_of_payment: null,
-                username: null,
-                amount: null,
+                name: null,
+                amount: 0,
                 service_type: null,
                 coordinator: null,
             },
@@ -479,7 +491,7 @@ export default {
         },
 
         createPrintOut(data) {
-            const houseFee = parseFloat(this.houseFeeCharge)/100;
+            const houseFee = parseFloat(this.houseFeeCharge) / 100;
             const houseAmount = parseFloat(data.amount * houseFee);
             let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
             <h2>Cash Lodgement</h2><br>
@@ -530,6 +542,18 @@ export default {
             </table>`
             this.printCopy = tableContent;
             return tableContent;
+        },
+
+        clearLodgementAmount() {
+            if (this.newLodgement.amount === 0) {
+                this.newLodgement.amount = ''; // Clear the value
+            }
+        },
+
+        clearSalesAmount() {
+            if (this.selectedTransaction.amount_returned === 0) {
+                this.selectedTransaction.amount_returned = ''; // Clear the value
+            }
         }
     },
 };
