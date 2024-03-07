@@ -59,21 +59,27 @@
                     <template #cell(_id)="name">
                         <p>{{ name.value.toUpperCase() }}</p>
                     </template>
+
                     <template #cell(total_amount)="total_amount">
                         <p>{{ total_amount.value | format_amount }}</p>
                     </template>
+
                     <template #cell(total_commission)="total_commission">
                         <p>{{ total_commission.value | format_amount }}</p>
                     </template>
+
                     <template #cell(sub_total)="sub_total">
                         <p>{{ sub_total.value | format_amount }}</p>
                     </template>
+
                     <template #cell(coordinator_fee)="coordinator_fee">
                         <p>{{ coordinator_fee.value | format_amount }}</p>
                     </template>
+
                     <template #cell(net_total)="net_total">
                         <p>{{ net_total.value | format_amount }}</p>
                     </template>
+
                     <template #table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle" />
@@ -81,29 +87,35 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage" :total-rows="lTotalRows"
-                    :per-page="lodgement.perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last"
-                    size="lg" align="center" />
+                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage"
+                    :total-rows="lTotalRows" :per-page="lodgement.perPage" first-text="First" prev-text="Prev"
+                    next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
                 <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading"
-                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage" striped hover
-                    outlined sort-icon-left>
+                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage" striped
+                    hover outlined sort-icon-left>
+
                     <template #cell(_id)="name">
                         <p>{{ name.value.toUpperCase() }}</p>
                     </template>
+
                     <template #cell(amount_booked)="amount_booked">
                         <p>{{ amount_booked.value | format_amount }}</p>
                     </template>
+
                     <template #cell(amount_sold)="amount_sold">
                         <p>{{ amount_sold.value | format_amount }}</p>
                     </template>
+
                     <template #cell(amount_returned)="amount_returned">
                         <p>{{ amount_returned.value | format_amount }}</p>
                     </template>
+
                     <template #cell(service_charge_amount)="service_charge_amount">
                         <p>{{ service_charge_amount.value | format_amount }}</p>
                     </template>
+
                     <template #table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle" />
@@ -111,9 +123,9 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage" :total-rows="lTotalRows"
-                    :per-page="purchase.perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last"
-                    size="lg" align="center" />
+                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage"
+                    :total-rows="lTotalRows" :per-page="purchase.perPage" first-text="First" prev-text="Prev"
+                    next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
         </b-row>
     </div>
@@ -167,6 +179,8 @@ export default {
     methods: {
         handleGetReport() {
             this.isLoading = true;
+            this.purchaseList = [];
+            this.lodgementList = [];
             const params = {
                 reportDate: this.reportDate
             }
@@ -205,7 +219,8 @@ export default {
                 return false;
             }
             const today = this.reportDate || new Date().toISOString().split('T')[0];
-            let tableContent = `<h2>${this.viewTable === "lodgement" ? "GIRLS SALES" : "CASH PURCHASE"} SUMMARY ${today}</h2><br>
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>${this.viewTable === "lodgement" ? "GIRLS SALES" : "CASH PURCHASE"} SUMMARY ${today}</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px;">`;
             if (this.viewTable === 'lodgement') {
 
@@ -229,6 +244,26 @@ export default {
                     </tr>`;
                 });
 
+                const totals = data.reduce((acc, obj) => {
+                    acc.total_amount += obj.total_amount;
+                    acc.total_commission += obj.total_commission;
+                    acc.sub_total += obj.sub_total;
+                    acc.coordinator_fee += obj.coordinator_fee;
+                    acc.net_total += obj.net_total;
+                    return acc;
+                }, { total_amount: 0, total_commission: 0, sub_total: 0, coordinator_fee: 0, net_total: 0 });
+
+                tableContent += `<tfoot>
+                                <tr>
+                                    <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.total_amount)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.total_commission)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.sub_total)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.coordinator_fee)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.net_total)}</td>
+                                </tr>
+                            </tfoot>`;
+
             } else {
 
                 tableContent += `<thead><tr>
@@ -248,6 +283,24 @@ export default {
                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
                     </tr>`;
                 });
+
+                const totals = data.reduce((acc, obj) => {
+                    acc.amount_booked += obj.amount_booked;
+                    acc.amount_sold += obj.amount_sold;
+                    acc.amount_returned += obj.amount_returned;
+                    acc.service_charge_amount += obj.service_charge_amount;
+                    return acc;
+                }, { amount_booked: 0, amount_sold: 0, amount_returned: 0, service_charge_amount: 0 });
+
+                tableContent += `<tfoot>
+                                <tr>
+                                    <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_booked)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_sold)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_returned)}</td>
+                                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
+                                </tr>
+                            </tfoot>`;
             }
             tableContent += '</tbody></table>';
             const filename = `${this.viewTable}_${today}.pdf`;
@@ -304,6 +357,26 @@ export default {
                     </tr>`;
                 });
 
+                const totals = data.reduce((acc, obj) => {
+                    acc.total_amount += obj.total_amount;
+                    acc.total_commission += obj.total_commission;
+                    acc.sub_total += obj.sub_total;
+                    acc.coordinator_fee += obj.coordinator_fee;
+                    acc.net_total += obj.net_total;
+                    return acc;
+                }, { total_amount: 0, total_commission: 0, sub_total: 0, coordinator_fee: 0, net_total: 0 });
+
+                tableContent += `<tfoot>
+                                <tr>
+                                    <td>TOTAL</td>
+                                    <td>${this.$options.filters.format_amount(totals.total_amount)}</td>
+                                    <td>${this.$options.filters.format_amount(totals.total_commission)}</td>
+                                    <td>${this.$options.filters.format_amount(totals.sub_total)}</td>
+                                    <td>${this.$options.filters.format_amount(totals.coordinator_fee)}</td>
+                                    <td>${this.$options.filters.format_amount(totals.net_total)}</td>
+                                </tr>
+                            </tfoot>`;
+
             } else {
 
                 tableContent += `<thead><tr>
@@ -323,6 +396,24 @@ export default {
                     <td>${this.$options.filters.format_amount(item.service_charge_amount)}</td>
                     </tr>`;
                 });
+
+                const totals = data.reduce((acc, obj) => {
+                    acc.amount_booked += obj.amount_booked;
+                    acc.amount_sold += obj.amount_sold;
+                    acc.amount_returned += obj.amount_returned;
+                    acc.service_charge_amount += obj.service_charge_amount;
+                    return acc;
+                }, { amount_booked: 0, amount_sold: 0, amount_returned: 0, service_charge_amount: 0 });
+
+                tableContent += `<tfoot>
+                <tr>
+                    <td>TOTAL</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_booked)}</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_sold)}</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_returned)}</td>
+                    <td>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
+                </tr>
+            </tfoot>`;
             }
             tableContent += '</tbody></table>';
             const filename = `${this.viewTable}_${today}`;
@@ -371,7 +462,7 @@ export default {
             let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
             <h2>End of Day Report for ${this.$moment(today).format("DD-MM-YYYY")}</h2><br>`;
             if (this.viewTable === 'lodgement') {
-                tableContent = `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                tableContent += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead><tr>
                 <th style="border: 1px solid black; padding: 5px;">Dancer</th>
                 <th style="border: 1px solid black; padding: 5px;">Lodge Fee</th>
@@ -387,7 +478,7 @@ export default {
                     </tr>`;
                 });
             } else {
-                tableContent = `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                tableContent += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead><tr>
                 <th style="border: 1px solid black; padding: 5px;">Coordinator</th>
                 <th style="border: 1px solid black; padding: 5px;">Amount Sold</th>

@@ -282,7 +282,7 @@ export default {
         handleCreateNewUser() {
             const payload = {
                 username: this.newUser.role !== 4 ? this.newUser.username : this.newUser.name.toLowerCase(),
-                password: this.newUser.password,
+                password: this.newUser.role !== 4 ? this.newUser.password : "abcd",
                 role: this.newUser.role,
                 name: this.newUser.name,
             };
