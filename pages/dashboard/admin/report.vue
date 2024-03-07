@@ -477,6 +477,20 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.net_total)}</td>
                     </tr>`;
                 });
+
+                const totals = data.reduce((acc, obj) => {
+                    acc.total_amount += obj.total_amount;
+                    acc.net_total += obj.net_total;
+                    return acc;
+                }, { total_amount: 0, net_total: 0 });
+
+                tableContent += `<tfoot>
+                <tr>
+                    <td>TOTAL</td>
+                    <td>${this.$options.filters.format_amount(totals.total_amount)}</td>
+                    <td>${this.$options.filters.format_amount(totals.net_total)}</td>
+                </tr>
+            </tfoot>`;
             } else {
                 tableContent += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead><tr>
@@ -493,6 +507,22 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(item.service_charge_amount)}</td>
                     </tr>`;
                 });
+                
+                const totals = data.reduce((acc, obj) => {
+                    acc.amount_sold += obj.amount_sold;
+                    acc.service_charge_amount += obj.service_charge_amount;
+                    return acc;
+                }, { amount_sold: 0, service_charge_amount: 0 });
+
+                tableContent += `<tfoot>
+                <tr>
+                    <td>TOTAL</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_booked)}</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_sold)}</td>
+                    <td>${this.$options.filters.format_amount(totals.amount_returned)}</td>
+                    <td>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
+                </tr>
+            </tfoot>`;
             }
 
             tableContent += '</tbody></table>';
