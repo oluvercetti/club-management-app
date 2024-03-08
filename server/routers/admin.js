@@ -333,7 +333,7 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
         // Calculate start and end dates for yesterday 10pm to today 6am
         const yesterdayTenPM = new Date(now);
         yesterdayTenPM.setDate(now.getDate() - 1);
-        yesterdayTenPM.setHours(22, 0, 0, 0);
+        yesterdayTenPM.setHours(21, 0, 0, 0);
 
         const todaySixAM = new Date(now);
         todaySixAM.setHours(8, 0, 0, 0);
