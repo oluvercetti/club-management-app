@@ -46,7 +46,16 @@
                         <p>{{ amount.value | format_amount }}</p>
                     </template>
                     <template #cell(mode_of_payment)="mode">
-                        <p class="text-capitalize">{{ mode.value }}</p>
+                        <p>{{ mode.value.toUpperCase() }}</p>
+                    </template>
+                    <template #cell(username)="username">
+                        <p>{{ username.value.toUpperCase() }}</p>
+                    </template>
+                    <template #cell(service_type)="service_type">
+                        <p>{{ service_type.value.toUpperCase() }}</p>
+                    </template>
+                    <template #cell(coordinator)="coordinator">
+                        <p>{{ coordinator.value.toUpperCase() }}</p>
                     </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
@@ -82,6 +91,9 @@
                     </template>
                     <template #cell(service_charge_amount)="service_charge_amount">
                         <p>{{ service_charge_amount.value | format_amount }}</p>
+                    </template>
+                    <template #cell(coordinator)="coordinator">
+                        <p>{{ coordinator.value.toUpperCase() }}</p>
                     </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
