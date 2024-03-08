@@ -478,9 +478,9 @@ export default {
                 }, { total_amount: 0, net_total: 0 });
 
                 tableContent += ` <tr>
-                    <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
-                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.total_amount)}</td>
-                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.net_total)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.total_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.net_total)}</td>
                 </tr>
             `;
             } else {
@@ -508,9 +508,9 @@ export default {
 
                 tableContent += `
                 <tr>
-                    <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
-                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.amount_sold)}</td>
-                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_sold)}</td>
+                    <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
                 </tr>`;
             }
 
