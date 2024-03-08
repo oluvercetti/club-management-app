@@ -486,9 +486,9 @@ export default {
 
                 tableContent += `<tfoot>
                 <tr>
-                    <td>TOTAL</td>
-                    <td>${this.$options.filters.format_amount(totals.total_amount)}</td>
-                    <td>${this.$options.filters.format_amount(totals.net_total)}</td>
+                    <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
+                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.total_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.net_total)}</td>
                 </tr>
             </tfoot>`;
             } else {
