@@ -516,11 +516,9 @@ export default {
 
                 tableContent += `<tfoot>
                 <tr>
-                    <td>TOTAL</td>
-                    <td>${this.$options.filters.format_amount(totals.amount_booked)}</td>
-                    <td>${this.$options.filters.format_amount(totals.amount_sold)}</td>
-                    <td>${this.$options.filters.format_amount(totals.amount_returned)}</td>
-                    <td>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
+                    <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
+                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.amount_sold)}</td>
+                    <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
                 </tr>
             </tfoot>`;
             }
