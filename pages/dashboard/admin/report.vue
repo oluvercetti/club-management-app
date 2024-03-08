@@ -253,16 +253,14 @@ export default {
                     return acc;
                 }, { total_amount: 0, total_commission: 0, sub_total: 0, coordinator_fee: 0, net_total: 0 });
 
-                tableContent += `<tfoot>
-                                <tr>
+                tableContent += `<tr>
                                     <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.total_amount)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.total_commission)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.sub_total)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.coordinator_fee)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.net_total)}</td>
-                                </tr>
-                            </tfoot>`;
+                                </tr>`;
 
             } else {
 
@@ -292,15 +290,13 @@ export default {
                     return acc;
                 }, { amount_booked: 0, amount_sold: 0, amount_returned: 0, service_charge_amount: 0 });
 
-                tableContent += `<tfoot>
-                                <tr>
+                tableContent += `<tr>
                                     <td style="border: 1px solid black; padding: 5px;">TOTAL</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_booked)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_sold)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.amount_returned)}</td>
                                     <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
-                                </tr>
-                            </tfoot>`;
+                                </tr>`;
             }
             tableContent += '</tbody></table>';
             const filename = `${this.viewTable}_${today}.pdf`;
@@ -366,16 +362,14 @@ export default {
                     return acc;
                 }, { total_amount: 0, total_commission: 0, sub_total: 0, coordinator_fee: 0, net_total: 0 });
 
-                tableContent += `<tfoot>
-                                <tr>
+                tableContent += `<tr>
                                     <td>TOTAL</td>
                                     <td>${this.$options.filters.format_amount(totals.total_amount)}</td>
                                     <td>${this.$options.filters.format_amount(totals.total_commission)}</td>
                                     <td>${this.$options.filters.format_amount(totals.sub_total)}</td>
                                     <td>${this.$options.filters.format_amount(totals.coordinator_fee)}</td>
                                     <td>${this.$options.filters.format_amount(totals.net_total)}</td>
-                                </tr>
-                            </tfoot>`;
+                                </tr>`;
 
             } else {
 
@@ -405,15 +399,14 @@ export default {
                     return acc;
                 }, { amount_booked: 0, amount_sold: 0, amount_returned: 0, service_charge_amount: 0 });
 
-                tableContent += `<tfoot>
+                tableContent += `
                 <tr>
                     <td>TOTAL</td>
                     <td>${this.$options.filters.format_amount(totals.amount_booked)}</td>
                     <td>${this.$options.filters.format_amount(totals.amount_sold)}</td>
                     <td>${this.$options.filters.format_amount(totals.amount_returned)}</td>
                     <td>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
-                </tr>
-            </tfoot>`;
+                </tr>`;
             }
             tableContent += '</tbody></table>';
             const filename = `${this.viewTable}_${today}`;
@@ -484,13 +477,12 @@ export default {
                     return acc;
                 }, { total_amount: 0, net_total: 0 });
 
-                tableContent += `<tfoot>
-                <tr>
+                tableContent += ` <tr>
                     <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
                     <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.total_amount)}</td>
                     <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.net_total)}</td>
                 </tr>
-            </tfoot>`;
+            `;
             } else {
                 tableContent += `<table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead><tr>
@@ -514,13 +506,12 @@ export default {
                     return acc;
                 }, { amount_sold: 0, service_charge_amount: 0 });
 
-                tableContent += `<tfoot>
+                tableContent += `
                 <tr>
                     <td style="border: 1px solid black; padding: 5px;>TOTAL</td>
                     <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.amount_sold)}</td>
                     <td style="border: 1px solid black; padding: 5px;>${this.$options.filters.format_amount(totals.service_charge_amount)}</td>
-                </tr>
-            </tfoot>`;
+                </tr>`;
             }
 
             tableContent += '</tbody></table>';
