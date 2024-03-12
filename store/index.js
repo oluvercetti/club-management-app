@@ -144,6 +144,12 @@ export const actions = ({
         });
     },
 
+    cancelSingleLodgement(_, { id }) {
+        return this.$axios.patch(`/api/admin/lodgements/${id}/void`).then((response) => {
+            return response.data;
+        });
+    },
+
     // Purchase Actions
     createNewPurchase(_, payload) {
         return this.$axios.post("/api/admin/purchases", payload).then((response) => {
@@ -165,6 +171,12 @@ export const actions = ({
         
     updateSinglePurchase(_, { id, payload }) {
         return this.$axios.patch(`/api/admin/purchases/${id}`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    cancelSinglePurchase(_, { id }) {
+        return this.$axios.patch(`/api/admin/purchases/${id}/void`).then((response) => {
             return response.data;
         });
     },

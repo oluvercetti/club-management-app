@@ -46,6 +46,11 @@ const purchasesSchema = new mongoose.Schema({
     cashier: {
         type: String,
         ref: "Admin",
+    },
+
+    voided_by: {
+        type: String,
+        ref: "Admin",
     }
 }, {
     timestamps: true,

@@ -70,4 +70,32 @@ router.get("/api/admin/lodgements/:id", auth, async(req, res) => {
     }
 });
 
+router.patch("/api/admin/lodgements/:id/void", auth, async(req, res) => {
+
+    try {
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin);
+        /* const updates = Object.keys(req.body);
+        const allowedUpdates = ["status"];
+        const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ message: "Invalid operation" });
+        } */
+        const transaction = await Lodgements.findOne({ trans_id:  req.params.id});
+        if (!transaction) {
+            return res.status(404).send({ message: "transaction not found" });
+        }
+        transaction.status = "Cancelled";
+        transaction.voided_by = req.admin.username;
+        // Update other fields if provided
+        // Object.assign(transaction, updates);
+        await transaction.save();
+        res.send(transaction);
+    }  catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+});
+
 module.exports = router;
