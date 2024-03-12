@@ -15,9 +15,9 @@
                 <b-nav-item v-if="canSeeSettings" to="/dashboard/admin/settings" active-class="active">
                     <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
-                <b-nav-item v-if="canSeeCashAuditLog" to="/dashboard/admin/audit" active-class="active">
+                <!-- <b-nav-item v-if="canSeeCashAuditLog" to="/dashboard/admin/audit" active-class="active">
                     <b-icon icon="book" aria-hidden="true" class="mr-3"></b-icon> Audit Log
-                </b-nav-item>
+                </b-nav-item> -->
             </b-nav>
 
             <p class="sidebar-container__menu--role"><b-icon icon="person" aria-hidden="true" class="mr-3"></b-icon>{{ getUserRoleInfo }}</p>

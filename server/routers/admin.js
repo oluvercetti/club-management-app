@@ -278,9 +278,8 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
 
     try {
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        let purchasesQuery = null;
-        let lodgementsQuery = null;
         const sort = {};
+        const match = {};
         // Define start and end date parameters
         if(req.query.startDate && req.query.endDate) {
             const startDate = new Date(req.query.startDate); // You should validate and parse this input
@@ -292,8 +291,11 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
             endDate.setHours(23, 59, 59, 999); 
 
         // Construct query for records between startDate and endDate
-        purchasesQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
-        lodgementsQuery = { createdAt: { $gte: new Date(startDate), $lt: new Date(endDate) } };
+        match.createdAt = { $gte: new Date(startDate), $lt: new Date(endDate) };
+        }
+
+        if(req.query.status) {
+            match.status = {$regex: new RegExp(req.query.status, 'i')} ;
         }
 
         if (req.query.sortBy) {
@@ -304,8 +306,8 @@ router.get("/api/admin/transactions", auth, async (req, res) => {
         }
 
         // Fetch records based on the query
-        const purchases = await Purchases.find(purchasesQuery).sort(sort);
-        const lodgements = await Lodgements.find(lodgementsQuery).sort(sort);
+        const purchases = await Purchases.find(match).sort(sort);
+        const lodgements = await Lodgements.find(match).sort(sort);
         if(!purchases.length && !lodgements.length){
             res.status(404).send({ status: "Error", message: "No records found for the selected period"});
         } else {
@@ -351,6 +353,7 @@ router.get("/api/admin/endofdayreport", auth, async (req, res) => {
                 $match: {
                     createdAt: { $gte: yesterdayTenPM, $lt: todaySixAM },
                     username: { $exists: true, $ne: null },
+                    status: "Closed"
                 },
             },
             {

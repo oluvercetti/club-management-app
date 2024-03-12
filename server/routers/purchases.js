@@ -129,4 +129,32 @@ router.patch("/api/admin/purchases/:id", auth, async(req, res) => {
     }
 });
 
+router.patch("/api/admin/purchases/:id/void", auth, async(req, res) => {
+
+    try {
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin);
+        /* const updates = req.body;
+        const allowedUpdates = ["status"];
+        const isValidOperation =  Object.keys(updates).every(update => allowedUpdates.includes(update));
+        if (!isValidOperation) {
+            return res.status(400).send({ message: "Invalid operation" });
+        } */
+        const purchase = await Purchases.findOne({ trans_id:  req.params.id});
+        if (!purchase) {
+            return res.status(404).send({ message: "purchase not found" });
+        }
+        purchase.status = "Cancelled";
+        purchase.voided_by = req.admin.username;
+        // Update other fields if provided
+        // Object.assign(purchase, updates);
+        await purchase.save();
+        res.status(200).send({ status: "Success", data: purchase });
+    }  catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+});
+
 module.exports = router;

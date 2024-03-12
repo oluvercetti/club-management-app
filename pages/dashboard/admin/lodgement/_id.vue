@@ -2,15 +2,20 @@
     <div>
         <iframe id="printFrame" style="display:none;"></iframe>
         <b-container>
-            <b-row>
+            <b-row class="mb-3">
                 <b-col md="3" xs="3">
                     <b-button variant="link" @click="goBack()">
                         Go Back
                     </b-button>
                 </b-col>
-                <b-col md="3" xs="3">
+                <!-- <b-col md="3" xs="3">
                     <b-button variant="link" @click="printTransactionReceipt()">
                         Print
+                    </b-button>
+                </b-col> -->
+                <b-col md="3" xs="3" v-if="[1,2].includes(roleId)">
+                    <b-button variant="danger" @click="handleCancelSingleLodgement()" :disabled="lodgementDetails?.voided_by">
+                        Void Transaction
                     </b-button>
                 </b-col>
             </b-row>
@@ -24,20 +29,20 @@
                                 <b-col md="3">
                                     <strong>Transaction ID:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.trans_id }}</b-col>
+                                <b-col>{{ lodgementDetails?.trans_id?.toUpperCase() }}</b-col>
                             </b-row>
 
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Type:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.mode_of_payment }}</b-col>
+                                <b-col>{{ lodgementDetails?.mode_of_payment?.toUpperCase() }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Dancer:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.username }}</b-col>
+                                <b-col>{{ lodgementDetails?.username?.toUpperCase() }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
@@ -49,25 +54,43 @@
                                 <b-col md="3">
                                     <strong>Service Type:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.service_type }}</b-col>
+                                <b-col>{{ lodgementDetails?.service_type?.toUpperCase() }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Coordinator:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.coordinator }}</b-col>
+                                <b-col>{{ lodgementDetails?.coordinator?.toUpperCase() }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Cashier:</strong>
                                 </b-col>
-                                <b-col>{{ lodgementDetails?.cashier }}</b-col>
+                                <b-col>{{ lodgementDetails?.cashier?.toUpperCase() }}</b-col>
                             </b-row>
                             <b-row>
                                 <b-col md="3">
                                     <strong>Transaction Date:</strong>
                                 </b-col>
                                 <b-col>{{ $moment(lodgementDetails?.createdAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Date Last Updated:</strong>
+                                </b-col>
+                                <b-col>{{ $moment(lodgementDetails?.updatedAt).format("DD-MM-YYYY, HH:mm:ss") }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Status:</strong>
+                                </b-col>
+                                <b-col class="text-capitalize">{{ lodgementDetails?.status?.toUpperCase() }}</b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col md="3">
+                                    <strong>Voided By:</strong>
+                                </b-col>
+                                <b-col class="text-capitalize">{{ lodgementDetails?.voided_by?.toUpperCase() }}</b-col>
                             </b-row>
                         </b-card-text>
                     </b-card>
@@ -124,7 +147,7 @@ export default {
             }).then((value) => {
                 if (value) {
                     this.$store.dispatch("printTransactionReceipt", data.id).then(() => {
-                        this.$bvToast.toast("Location deleted successfully", {
+                        this.$bvToast.toast("Print stat", {
                             title: "Success",
                             variant: "success",
                             delay: 300,
@@ -184,6 +207,42 @@ export default {
 
             printFrame.contentWindow.focus(); // Focus the iframe
             printFrame.contentWindow.print(); // Print the iframe content
+        },
+
+        handleCancelSingleLodgement() {
+            this.$bvModal.msgBoxConfirm("Are you sure you want to cancel this transaction", {
+                title: "Cancel Transaction",
+                size: "md",
+                buttonSize: "md",
+                okVariant: "info",
+                okTitle: "Yes",
+                cancelTitle: "No",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+            }).then((value) => {
+                if (value) {
+                    this.isLoading = true;
+                    const id = this.$route.params.id;
+                    return this.$store.dispatch("cancelSingleLodgement", {id}).then(() => {
+                        this.getLodgementDetails()
+                    })
+                }
+            }).catch((error) => {
+                this.isLoading = false;
+                this.$bvToast.toast(error?.response?.data, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                });
+                this.goBack()
+            });
+        },
+    },
+
+    computed: {
+        roleId() {
+            return this.$store.getters.getUserInfo.role
         }
     },
 }

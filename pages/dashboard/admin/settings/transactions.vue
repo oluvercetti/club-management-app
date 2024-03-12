@@ -1,40 +1,53 @@
 <template>
     <div class="mt-3">
         <b-row class="mb-3">
-            <b-col md="3">
+            <b-col md="4" v-if="viewTable === 'purchase'">
                 <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'lodgement'">
                     View Lodgements
                 </b-button>
             </b-col>
-            <b-col md="3">
+            <b-col md="4" v-if="viewTable === 'lodgement'">
                 <b-button variant="primary" class="mr-1 btn__custom--lg" @click="viewTable = 'purchase'">
                     View Purchases
                 </b-button>
             </b-col>
-            <b-col md="3">
+            <b-col md="4">
                 <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="showDateFilter = true">
                     Filter by Date
                 </b-button>
             </b-col>
-            <b-col md="3">
-                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" to="/dashboard/admin/report">
-                    Generate Report
+            <b-col md="4" v-if="showReset">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="handleGetAllTransactions()">
+                    View All Transactions
+                </b-button>
+            </b-col>
+            <b-col md="4" v-else>
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="handleGetAllTransactions('cancelled')">
+                    View Void Transactions
                 </b-button>
             </b-col>
         </b-row>
         <b-row>
-            <b-col md="3">
+            <b-col md="4">
                 <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToPdf()">
                     Export to PDF
                 </b-button>
             </b-col>
-            <b-col md="3">
+            <b-col md="4">
                 <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToExcel()">
                     Export to Excel
                 </b-button>
             </b-col>
+            <b-col md="4">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" to="/dashboard/admin/report">
+                    Generate Report
+                </b-button>
+            </b-col>
             <b-col md="12" class="mt-3" v-if="startDate && endDate && showDate">
                 <h3>Date Range from {{ $moment(startDate).format("DD-MM-YYYY") }} to {{ $moment(endDate).format("DD-MM-YYYY") }}</h3>
+            </b-col>
+            <b-col md="12" class="mt-3">
+                <h3>{{ viewTable?.toUpperCase() }}S</h3>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
                 <b-table ref="lodgement" id="b-table-export" :items="lodgementList" :fields="lFields" :busy="isLoading"
@@ -51,8 +64,8 @@
                     <template #cell(username)="username">
                         <p>{{ username.value.toUpperCase() }}</p>
                     </template>
-                    <template #cell(service_type)="service_type">
-                        <p>{{ service_type.value.toUpperCase() }}</p>
+                    <template #cell(status)="status">
+                        <p>{{ status.value.toUpperCase() }}</p>
                     </template>
                     <template #cell(coordinator)="coordinator">
                         <p>{{ coordinator.value.toUpperCase() }}</p>
@@ -94,6 +107,9 @@
                     </template>
                     <template #cell(coordinator)="coordinator">
                         <p>{{ coordinator.value.toUpperCase() }}</p>
+                    </template>
+                    <template #cell(status)="status">
+                        <p>{{ status.value.toUpperCase() }}</p>
                     </template>
                     <template #cell(actions)="row">
                         <div class="d-flex justify-content-around">
@@ -146,7 +162,7 @@ export default {
                 { key: "mode_of_payment", label: "Mode", sortable: true },
                 { key: "username", label: "User", sortable: true },
                 { key: "amount", label: "Amount", sortable: true },
-                { key: "service_type", label: "Service", sortable: true },
+                { key: "status", label: "Status", sortable: true },
                 { key: "coordinator", label: "Coordinator", sortable: true },
                 "Actions",
             ],
@@ -157,6 +173,7 @@ export default {
                 { key: "amount_sold", label: "Sold", sortable: true },
                 { key: "amount_returned", label: "Returned", sortable: true },
                 { key: "service_charge_amount", label: "Charge", sortable: true },
+                { key: "status", label: "Status", sortable: true },
                 { key: "coordinator", label: "Coordinator", sortable: true },
                 "Actions",
             ],
@@ -172,7 +189,8 @@ export default {
             purchase: {
                 perPage: 8,
                 currentPage: 1,
-            }
+            },
+            showReset: false,
         };
     },
 
@@ -193,11 +211,12 @@ export default {
     },
 
     methods: {
-        handleGetAllTransactions() {
+        handleGetAllTransactions(status = null) {
             this.isLoading = true;
             const params = {
                 startDate: this.startDate,
-                endDate: this.endDate
+                endDate: this.endDate,
+                status
             }
             return this.$store.dispatch("getAllTransactions", params).then((response) => {
                 this.isLoading = false;
@@ -206,6 +225,11 @@ export default {
                 this.showDateFilter = false;
                 if(this.startDate && this.endDate) {
                     this.showDate = true;
+                }
+                if(status){
+                    this.showReset = true;
+                } else {
+                    this.showReset = false;
                 }
             }).catch((error) => {
                 this.isLoading = false;
