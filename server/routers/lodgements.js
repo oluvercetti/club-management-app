@@ -98,4 +98,30 @@ router.patch("/api/admin/lodgements/:id/void", auth, async(req, res) => {
     }
 });
 
+router.patch("/api/admin/lodgements/updatestatusbyforce", auth, async(req, res) => {
+    try {
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.super_admin);
+        
+        // Find all transactions where status is undefined
+        const transactions = await Lodgements.find({ status: { $exists: false } });
+        
+        // Update status to "Closed" and set voided_by
+        const updates = transactions.map(transaction => {
+            transaction.status = "Closed";
+            return transaction.save();
+        });
+
+        // Wait for all updates to complete
+        await Promise.all(updates);
+
+        res.send(transactions);
+    } catch (error) {
+        res.status(400).send({
+            status: "error occurred",
+            message: error.message,
+        } || "Error occurred");
+    }
+});
+
+
 module.exports = router;
