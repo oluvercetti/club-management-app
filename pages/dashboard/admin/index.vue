@@ -7,8 +7,10 @@ export default {
             redirect("/dashboard/admin/lodgement");
         } else if(store.getters.getUserInfo.role === 5) {
             redirect("/dashboard/admin/purchase");
+        } else if(store.getters.getUserInfo.role === 6) {
+            redirect("/dashboard/admin/settings/transactions");
         } else {
-            redirect("/dashboard");
+            redirect("/login");
         }
     },
 

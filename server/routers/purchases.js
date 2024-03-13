@@ -132,7 +132,7 @@ router.patch("/api/admin/purchases/:id", auth, async(req, res) => {
 router.patch("/api/admin/purchases/:id/void", auth, async(req, res) => {
 
     try {
-        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin);
+        await Admin.checkUserPermission(req.admin.role, utils.permission_levels.admin_auditor);
         /* const updates = req.body;
         const allowedUpdates = ["status"];
         const isValidOperation =  Object.keys(updates).every(update => allowedUpdates.includes(update));

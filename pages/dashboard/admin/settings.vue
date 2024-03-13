@@ -5,10 +5,10 @@
             <b-nav-item to="/dashboard/admin/settings/transactions" exact exact-active-class="active">
                 Transactions
             </b-nav-item>
-            <b-nav-item to="/dashboard/admin/settings/users" exact exact-active-class="active">
+            <b-nav-item v-if="!isAuditor" to="/dashboard/admin/settings/users" exact exact-active-class="active">
                 Users
             </b-nav-item>
-            <b-nav-item to="/dashboard/admin/settings/services" exact exact-active-class="active">
+            <b-nav-item v-if="!isAuditor" to="/dashboard/admin/settings/services" exact exact-active-class="active">
                 Fees and Services
             </b-nav-item>
         </b-nav>
@@ -19,6 +19,11 @@
 <script>
 export default {
     layout: "admin",
+    computed: {
+        isAuditor() {
+            return this.$store.getters.getUserInfo.role === 6;
+        }
+    },
 };
 </script>
 

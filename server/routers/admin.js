@@ -279,7 +279,7 @@ router.get("/api/admin/users/:id", auth, async (req, res) => {
 router.get("/api/admin/transactions", auth, async (req, res) => {
 
     try {
-        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        await Admin.checkUserPermission(req.admin.role, permissions.admin_auditor);
         const sort = {};
         const match = {};
         // Define start and end date parameters

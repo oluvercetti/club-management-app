@@ -8,13 +8,13 @@
                         Go Back
                     </b-button>
                 </b-col>
-                <!-- <b-col md="3" xs="3">
+                <b-col md="3" xs="3">
                     <b-button variant="link" @click="printTransactionReceipt()">
                         Print
                     </b-button>
-                </b-col> -->
+                </b-col>
                 <b-col md="3" xs="3" v-if="[1,2].includes(roleId)">
-                    <b-button variant="danger" @click="handleCancelSingleLodgement()" :disabled="lodgementDetails?.voided_by">
+                    <b-button variant="danger" @click="handleCancelSingleLodgement()" :disabled="lodgementDetails.voided_by !== ''">
                         Void Transaction
                     </b-button>
                 </b-col>
@@ -101,12 +101,14 @@
 </template>
 
 <script>
+import appLogo from "@/plugins/logo"
 export default {
     layout: "admin",
     data() {
         return {
             lodgementDetails: {},
             isLoading: false,
+            printCopy: null,
         }
     },
     created() {
@@ -134,33 +136,25 @@ export default {
         },
 
         printTransactionReceipt(data) {
-            this.$bvModal.msgBoxConfirm("Please make sure a printer is connected", {
-                title: "Print Receipt",
-                size: "md",
-                buttonSize: "md",
-                okVariant: "info",
-                okTitle: "Print",
-                cancelTitle: "Cancel",
-                footerClass: "p-2",
-                hideHeaderClose: false,
-                centered: true,
-            }).then((value) => {
-                if (value) {
-                    this.$store.dispatch("printTransactionReceipt", data.id).then(() => {
-                        this.$bvToast.toast("Print stat", {
-                            title: "Success",
-                            variant: "success",
-                            delay: 300,
-                        });
-                    });
-                }
-            }).catch((err) => {
+            this.$store.dispatch("sendToPrinter", data).then(() => {
+                this.$bvToast.toast("Printing is done", {
+                    title: "Printed",
+                    variant: "info",
+                    delay: 300,
+                });
+            }).catch((error) => {
+                /* this.$bvToast.toast(error?.response?.data?.message, {
+                    title: "Error",
+                    variant: "danger",
+                    delay: 300,
+                }); */
                 this.createPrintOut(this.lodgementDetails)
             });
         },
 
         createPrintOut(data) {
-            let tableContent = `<h2>Cash Lodgement</h2><br>
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>Cash Lodgement</h2><br>
             <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
                 <thead></thead>
                 <tbody>
@@ -196,8 +190,24 @@ export default {
                         <td style="border: 1px solid black; padding: 5px;">Service Type</td>
                         <td style="border: 1px solid black; padding: 5px;">${data.service_type.toUpperCase()}</td>
                     </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Status</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.status.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date Last Updated</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.updatedAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>`;
+            if (data.voided_by) {
+                tableContent += `
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Voided By</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.voided_by.toUpperCase()}</td>
+                    </tr>`;
+            }
+            tableContent += `
                 </tbody>
-            </table>`
+            </table>`;
             this.printCopy = tableContent;
             const printFrame = document.getElementById('printFrame');
             const frameDoc = printFrame.contentWindow.document;

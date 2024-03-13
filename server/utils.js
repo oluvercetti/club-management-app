@@ -4,7 +4,8 @@ const permission_levels = {
     admin: [1,2],
     cashier_only: [3],
     coordinator_only: [5],
-    admin_cashier: [1, 2, 3]
+    admin_cashier: [1, 2, 3],
+    admin_auditor: [1,2,6]
 }
 
 const fee_types = ["flat", "percentage"]

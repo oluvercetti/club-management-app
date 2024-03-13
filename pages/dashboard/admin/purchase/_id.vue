@@ -1,5 +1,6 @@
 <template>
     <div>
+        <iframe id="printFrame" style="display:none;"></iframe>
         <b-container>
             <b-row class="mb-3">
                 <b-col md="3" xs="3">
@@ -7,13 +8,13 @@
                         Go Back
                     </b-button>
                 </b-col>
-                <!-- <b-col md="3" xs="3">
+                <b-col md="3" xs="3">
                     <b-button variant="link" @click="printTransactionReceipt()">
                         Print
                     </b-button>
-                </b-col> -->
-                <b-col md="3" xs="3" v-if="[1,2].includes(roleId)">
-                    <b-button variant="danger" @click="handleCancelSinglePurchase()" :disabled="purchaseDetails?.voided_by">
+                </b-col>
+                <b-col md="3" xs="3" v-if="[1,2,6].includes(roleId)">
+                    <b-button variant="danger" @click="handleCancelSinglePurchase()" :disabled="purchaseDetails.voided_by !== ''">
                         Void Transaction
                     </b-button>
                 </b-col>
@@ -106,6 +107,7 @@
 </template>
 
 <script>
+import appLogo from "@/plugins/logo"
 export default {
     layout: "admin",
     data() {
@@ -139,33 +141,91 @@ export default {
         },
 
         printTransactionReceipt(data) {
-            this.$bvModal.msgBoxConfirm("Please make sure a printer is connected", {
-                title: "Print Receipt",
-                size: "md",
-                buttonSize: "md",
-                okVariant: "info",
-                okTitle: "Print",
-                cancelTitle: "Cancel",
-                footerClass: "p-2",
-                hideHeaderClose: false,
-                centered: true,
-            }).then((value) => {
-                if (value) {
-                    this.$store.dispatch("printTransactionReceipt", data.id).then(() => {
-                        this.$bvToast.toast("Location deleted successfully", {
-                            title: "Success",
-                            variant: "success",
-                            delay: 300,
-                        });
-                    });
-                }
-            }).catch((err) => {
-                this.$bvToast.toast(err?.response?.data?.message, {
+            this.$store.dispatch("sendToPrinter", data).then(() => {
+                this.$bvToast.toast("Printing is done", {
+                    title: "Printed",
+                    variant: "info",
+                    delay: 300,
+                });
+            }).catch((error) => {
+                /* this.$bvToast.toast(error?.response?.data?.message, {
                     title: "Error",
                     variant: "danger",
                     delay: 300,
-                });
+                }); */
+                this.createPrintOut(this.purchaseDetails)
             });
+        },
+
+        createPrintOut(data) {
+            let tableContent = `<div style="width:100%; text-align: center;">${appLogo}</div>
+            <h2>Cash Lodgement</h2><br>
+            <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; color: black; font-size: 16px; font-weight: 600; letter-spacing: 1.2px">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.createdAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Coordinator</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.coordinator.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Transaction ID</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.trans_id.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount Booked</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_booked)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount Sold</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_sold)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Amount Returned</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data.amount_returned)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Service Charge</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$options.filters.format_amount(data?.service_charge_amount)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Denomination</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.denomination.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Cashier</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.cashier ? data.cashier.toUpperCase() : ""}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Status</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.status.toUpperCase()}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Date Last Updated</td>
+                        <td style="border: 1px solid black; padding: 5px;">${this.$moment(data.updatedAt).format("DD-MM-YYYY, HH:mm:ss")}</td>
+                    </tr>`;
+            if (data.voided_by) {
+                tableContent += `
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">Voided By</td>
+                        <td style="border: 1px solid black; padding: 5px;">${data.voided_by.toUpperCase()}</td>
+                    </tr>`;
+            }
+            tableContent += `
+                </tbody>
+            </table>`;
+            this.printCopy = tableContent;
+            const printFrame = document.getElementById('printFrame');
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(tableContent);
+            frameDoc.close();
+
+            printFrame.contentWindow.focus(); // Focus the iframe
+            printFrame.contentWindow.print(); // Print the iframe content
         },
 
         handleCancelSinglePurchase() {
