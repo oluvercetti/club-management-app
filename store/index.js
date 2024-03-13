@@ -40,9 +40,6 @@ export const actions = ({
     // Admin actions
     loginAdminUser({ commit, dispatch }, payload) {
         return this.$axios.post("/api/admin/login", payload).then((response) => {
-            this.$cookies.set("sftoken", JSON.stringify(response.data.token), {
-                path: "/"
-            });
             commit("setAuthToken", response.data.token);
             commit("setUserInfo", response.data.data);
             dispatch("getRoleList")
@@ -229,7 +226,7 @@ export const actions = ({
 
     async nuxtServerInit({ commit, dispatch }) {
 
-        const authTokenCookie = this.$cookies.get("sftoken");
+        const authTokenCookie = this.$cookies.get("myservercookie");
         if (!authTokenCookie) {
             return;
         }
