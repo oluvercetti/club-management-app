@@ -12,7 +12,7 @@
                 <b-nav-item v-if="canSeeCashPurchase" to="/dashboard/admin/purchase" active-class="active">
                     <b-icon icon="cash" aria-hidden="true" class="mr-3"></b-icon> Cash Purchase
                 </b-nav-item>
-                <b-nav-item v-if="canSeeSettings" to="/dashboard/admin/settings" active-class="active">
+                <b-nav-item v-if="canSeeSettings || canSeeCashAuditLog" to="/dashboard/admin/settings" active-class="active">
                     <b-icon icon="gear-fill" aria-hidden="true" class="mr-3"></b-icon> Settings
                 </b-nav-item>
                 <!-- <b-nav-item v-if="canSeeCashAuditLog" to="/dashboard/admin/audit" active-class="active">
@@ -54,7 +54,7 @@ export default {
         },
 
         canSeeCashAuditLog() {
-            return this.$store.getters.getUserInfo.role === 1;
+            return this.$store.getters.getUserInfo.role === 1 || this.$store.getters.getUserInfo.role === 6;
         },
 
         getUserRoleInfo() {

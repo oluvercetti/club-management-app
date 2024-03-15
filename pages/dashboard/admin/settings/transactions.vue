@@ -22,36 +22,41 @@
                 </b-button>
             </b-col>
             <b-col md="4" v-else>
-                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="handleGetAllTransactions('cancelled')">
+                <b-button type="button" variant="info" class="mr-1 btn__custom--lg"
+                    @click="handleGetAllTransactions('cancelled')">
                     View Void Transactions
                 </b-button>
             </b-col>
         </b-row>
         <b-row>
-            <b-col md="4">
-                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToPdf()">
-                    Export to PDF
-                </b-button>
-            </b-col>
-            <b-col md="4">
-                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToExcel()">
-                    Export to Excel
-                </b-button>
-            </b-col>
-            <b-col md="4">
-                <b-button type="button" variant="info" class="mr-1 btn__custom--lg" to="/dashboard/admin/report">
-                    Generate Report
-                </b-button>
-            </b-col>
+            <template v-if="!isAuditor">
+                <b-col md="4">
+                    <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToPdf()">
+                        Export to PDF
+                    </b-button>
+                </b-col>
+                <b-col md="4">
+                    <b-button type="button" variant="info" class="mr-1 btn__custom--lg" @click="exportToExcel()">
+                        Export to Excel
+                    </b-button>
+                </b-col>
+                <b-col md="4">
+                    <b-button type="button" variant="info" class="mr-1 btn__custom--lg" to="/dashboard/admin/report">
+                        Generate Report
+                    </b-button>
+                </b-col>
+            </template>
             <b-col md="12" class="mt-3" v-if="startDate && endDate && showDate">
-                <h3>Date Range from {{ $moment(startDate).format("DD-MM-YYYY") }} to {{ $moment(endDate).format("DD-MM-YYYY") }}</h3>
+                <h3>Date Range from {{ $moment(startDate).format("DD-MM-YYYY") }} to {{
+                    $moment(endDate).format("DD-MM-YYYY") }}</h3>
             </b-col>
             <b-col md="12" class="mt-3">
                 <h3>{{ viewTable?.toUpperCase() }}S</h3>
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'lodgement'">
                 <b-table ref="lodgement" id="b-table-export" :items="lodgementList" :fields="lFields" :busy="isLoading"
-                    class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage"  striped hover outlined sort-icon-left>
+                    class="mt-4 small-font" :per-page="lodgement.perPage" :current-page="lodgement.currentPage" striped
+                    hover outlined sort-icon-left>
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
@@ -84,12 +89,14 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage" :total-rows="lTotalRows" :per-page="lodgement.perPage"
-                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
+                <b-pagination v-if="lTotalRows > lodgement.perPage" v-model="lodgement.currentPage"
+                    :total-rows="lTotalRows" :per-page="lodgement.perPage" first-text="First" prev-text="Prev"
+                    next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
             <b-col md="12" sm="12" v-if="viewTable === 'purchase'">
                 <b-table ref="purchase" id="b-table-export" :items="purchaseList" :fields="pFields" :busy="isLoading"
-                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage"   striped hover outlined sort-icon-left>
+                    class="mt-4 small-font" :per-page="purchase.perPage" :current-page="purchase.currentPage" striped
+                    hover outlined sort-icon-left>
                     <template #cell(createdAt)="createdAt">
                         <p>{{ $moment(createdAt.value).format("DD-MM-YYYY, HH:mm:ss") }}</p>
                     </template>
@@ -125,8 +132,9 @@
                         </div>
                     </template>
                 </b-table>
-                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage" :total-rows="pTotalRows" :per-page="purchase.perPage"
-                    first-text="First" prev-text="Prev" next-text="Next" last-text="Last" size="lg" align="center" />
+                <b-pagination v-if="pTotalRows > purchase.perPage" v-model="purchase.currentPage"
+                    :total-rows="pTotalRows" :per-page="purchase.perPage" first-text="First" prev-text="Prev"
+                    next-text="Next" last-text="Last" size="lg" align="center" />
             </b-col>
         </b-row>
         <b-modal v-model="showDateFilter" centered hide-footer title="FIlter by date">
@@ -207,6 +215,10 @@ export default {
 
         lTotalRows() {
             return this.lodgementList?.length;
+        },
+
+        isAuditor() {
+            return this.$store.getters.getUserInfo.role === 6;
         },
     },
 
