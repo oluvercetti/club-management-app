@@ -272,22 +272,24 @@ export default {
     computed: {
 
         dancersList() {
-            return this.usersList?.filter((data) => data.role === 4)?.map((data) => ({ value: data?.username, text: data?.name }));
+            return this.usersList?.filter((data) => data.role === 4 && data.status)?.map((data) => ({ value: data?.username, text: data?.name }));
         },
 
         coordinatorsList() {
-            return this.usersList?.filter((data) => data.role === 5)?.map((data) => ({ value: data.username, text: data.name }));
+            return this.usersList?.filter((data) => data.role === 5 && data.status)?.map((data) => ({ value: data.username, text: data.name }));
         },
 
         computedServiceTypeList() {
             return this.serviceTypeList?.map((data) => {
-                return { value: data?.service_name, text: data?.service_name.toUpperCase() };
-            }
+                    if(data.status) {
+                        return { value: data?.service_name, text: data?.service_name.toUpperCase() };
+                    }
+                }
             )
         },
 
         serviceCharge() {
-            const fee = this.feesList?.find(fee => fee.fee_name === 'purchase_service_charge');
+            const fee = this.feesList?.find(fee => fee.fee_name === 'purchase_service_charge' && fee.status);
             return fee?.fee_value;
         },
 
@@ -301,7 +303,7 @@ export default {
         },
 
         houseFeeCharge() {
-            const fee = this.feesList?.find(fee => fee.fee_name === 'house fee for dancers');
+            const fee = this.feesList?.find(fee => fee.fee_name === 'house fee for dancers' && fee.status);
             return fee?.fee_value;
         },
     },
