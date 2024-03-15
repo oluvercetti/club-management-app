@@ -64,7 +64,7 @@ router.get("/api/admin/purchases", auth, async (req, res) => {
     try {
         const purchases = await Purchases.find(match).sort(sort);
         if(!purchases.length){
-            res.status(404).send({ status: "Error", message: "No records found" });
+            return res.status(404).send({ status: "Error", message: "No records found" });
         }
         res.status(200).send({ status: "Success", data: purchases });
     } catch (error) {

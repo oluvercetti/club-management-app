@@ -120,7 +120,7 @@ export default {
             return quantity * this.form?.denomination;
         },
         serviceCharge() {
-            const fee = this.feesList.find(fee => fee.fee_name === 'purchase_service_charge');
+            const fee = this.feesList.find(fee => fee.fee_name === 'purchase_service_charge' && fee.status);
             return fee?.fee_value;
         },
     },
