@@ -226,7 +226,7 @@ export const actions = ({
 
     async nuxtServerInit({ commit, dispatch }) {
 
-        const authTokenCookie = this.$cookies.get("myservercookie");
+        const authTokenCookie = this.$cookies.get("sftoken");
         if (!authTokenCookie) {
             return;
         }

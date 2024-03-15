@@ -69,7 +69,7 @@ router.post("/admin/logout", auth, async (req, res) => {
         req.admin.tokens = req.admin.tokens.filter((token) => {
             return token.token !== req.token;
         });
-        res.clearCookie('myservercookie');
+        res.clearCookie('sftoken');
         await req.admin.save();
 
         res.status(200).send({ message: "Logout Successful" });
@@ -85,7 +85,7 @@ router.post("/api/admin/logoutAll", auth, async (req, res) => {
     try {
         req.admin.tokens = [];
         await req.admin.save();
-        res.clearCookie('myservercookie');
+        res.clearCookie('sftoken');
 
         res.status(200).send({ message: "Logout Successful" });
     } catch (e) {
