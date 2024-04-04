@@ -18,8 +18,10 @@ router.post("/api/admin", auth, async (req, res) => {
     const admin = new Admin(req.body);
     try {
 
-        await Admin.checkUserPermission(req.admin.role, permissions.super_admin);
-
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        if(parseInt(req.admin.role) > parseInt(req.body.role)){
+            return res.status(400).send({ status: "error", message: "Action is not permitted select a lower role" });
+        }
         const role = await Roles.findOne({ role_id: req.body.role });
         if (!role) {
             return res.status(400).send({ status: "error", message: "Role does not exist" });
