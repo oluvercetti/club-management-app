@@ -2,7 +2,7 @@
     <div class="mt-3">
         <b-container>
             <b-row class="mb-3">
-                <b-col md="3" sm="3" v-if="roleId == 1">
+                <b-col md="3" sm="3" v-if="[1,2].includes(roleId)">
                     <b-button variant="primary" class="mr-1 btn__custom--lg" @click="showNewUserModal = !showNewUserModal">
                         Create New User
                     </b-button>
