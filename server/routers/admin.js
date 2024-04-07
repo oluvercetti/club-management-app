@@ -19,8 +19,8 @@ router.post("/api/admin", auth, async (req, res) => {
     try {
 
         await Admin.checkUserPermission(req.admin.role, permissions.admin);
-        if(parseInt(req.admin.role) > parseInt(req.body.role)){
-            return res.status(400).send({ status: "error", message: "Action is not permitted select a lower role" });
+        if(parseInt(req.admin.role) === 2 && parseInt(req.body.role) !== 4){
+            return res.status(400).send({ status: "error", message: "Admin can only create dancers" });
         }
         const role = await Roles.findOne({ role_id: req.body.role });
         if (!role) {

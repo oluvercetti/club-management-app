@@ -7,8 +7,11 @@ const Admin = require("../models/admin");
 router.patch("/api/updateuser/:id", auth, async(req, res) => {
 
     try {
-        if(req.admin.role !== 1){
-            return res.status(400).send({ message: "You do not have permission" });
+        await Admin.checkUserPermission(req.admin.role, permissions.admin);
+        if(req.body.role){
+            if(parseInt(req.admin.role) === 2 && parseInt(req.body.role) === 1){
+                return res.status(400).send({ status: "error", message: "Admin can only update user to super admin" });
+            }
         }
         const updates = Object.keys(req.body);
         const allowedUpdates = ["name", "username", "role", "status"];
