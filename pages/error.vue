@@ -1,12 +1,14 @@
 <template>
-    <b-alert variant="danger" show dismissible @dismissed="goHome">
-        An error occurred
-        <template #dismiss-title>
-            <b-button size="sm" variant="outline-secondary">
-                Go Home
-            </b-button>
-        </template>
-    </b-alert>
+    <div>
+        <b-alert variant="danger" show dismissible @dismissed="goHome">
+            An error occurred
+            <template #dismiss-title>
+            </template>
+        </b-alert>
+        <b-button size="sm" variant="outline-secondary" to="/dashboard/admin">
+            Go Home
+        </b-button>
+    </div>
 </template>
 
 <script>
@@ -19,13 +21,11 @@ export default {
 
     head() {
         return {
-            title: "Error -  NMBBS",
+            title: "Error -  Dashbaord",
         };
     },
 
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

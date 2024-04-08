@@ -2,10 +2,8 @@
 export const state = () => ({
     userInfo: {},
     authToken: null,
-    locationList: null,
-    loginInfo: {},
-    adminProfile: {},
     isAuthenticated: false,
+    roleList: null
 });
 
 export const getters = ({
@@ -13,11 +11,9 @@ export const getters = ({
 
     getAuthToken: state => state.authToken,
 
-    getLocationList: state => state.locationList,
-
-    getLoginInfo: state => state.loginInfo,
-
     getIsAuthenticated: state => state.isAuthenticated,
+
+    getRoleList: state => state.roleList,
 
 });
 
@@ -30,29 +26,24 @@ export const mutations = ({
         state.authToken = value;
     },
 
-    setLocationList(state, value) {
-        state.locationList = value;
-    },
-
-    setAdminProfile(state, value) {
-        state.adminProfile = value;
-    },
-
     setIsAuthenticated(state, value) {
         state.isAuthenticated = value;
     },
 
-    setAuthCookies(state, value) {
-        this.$cookies.set("nmbbs", value, { secure: true, sameSite: "none" });
+    setRoleList(state, value) {
+        state.roleList = value;
     },
+
 });
 
 export const actions = ({
     // Admin actions
-    loginAdminUser({ commit }, payload) {
-        return this.$axios.post("/api/admin/login", payload).then(async(response) => {
-            await commit("setAuthToken", response.data.token);
-            commit("setAuthCookies", JSON.stringify(response.data.token));
+    loginAdminUser({ commit, dispatch }, payload) {
+        return this.$axios.post("/api/admin/login", payload).then((response) => {
+            commit("setAuthToken", response.data.token);
+            commit("setUserInfo", response.data.data);
+            dispatch("getRoleList")
+            return response.data.data;
         });
     },
 
@@ -67,112 +58,187 @@ export const actions = ({
 
     getAdminUserProfile({ commit }) {
         return this.$axios.get("/api/admin/me").then((response) => {
+            commit("setUserInfo", response.data.data);
             commit("setIsAuthenticated", true);
             return response.data;
         });
     },
 
-    // Location actions
-    createNewLocation(_, payload) {
-        return this.$axios.post("/api/admin/locations", payload).then((response) => {
+    // User actions
+    createNewUser(_, payload) {
+        return this.$axios.post("/api/admin", payload).then((response) => {
             return response.data;
         });
     },
 
-    updateLocation(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/locations/${id}`, payload).then((response) => {
+
+    getAllUsers(_, params) {
+        return this.$axios.get("/api/admin/users", { params }).then((response) => {
             return response.data;
         });
     },
 
-    getLocationList({ commit }) {
-        return this.$axios.get("/api/admin/locations").then((response) => {
-            commit("setLocationList", response.data.data);
+    updateSingleUser(_, { id, payload }) {
+        return this.$axios.patch(`/api/updateuser/${id}`, payload).then((response) => {
             return response.data;
         });
     },
 
-    deleteLocation(_, id) {
-        return this.$axios.delete(`/api/admin/locations/${id}`).then((response) => {
+
+    changePassword(_, { payload }) {
+        return this.$axios.patch(`/api/admin/changepassword`, payload).then((response) => {
             return response.data;
         });
     },
 
-    // Trip Actions
-    createRoute(_, payload) {
-        return this.$axios.post("/api/admin/trips/create", payload).then((response) => {
+    resetPassword(_, { payload }) {
+        return this.$axios.patch(`/api/admin/resetpassword`, payload).then((response) => {
             return response.data;
         });
     },
 
-    updateRoute(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/trips/${id}`, payload).then((response) => {
+    getAllTransactions(_, params) {
+        return this.$axios.get("/api/admin/transactions", { params }).then((response) => {
             return response.data;
         });
     },
 
-    fetchSingleRoute(_, payload) {
-        return this.$axios.post("/api/admin/trips/getTrip", payload).then((response) => {
+    //Fees actions
+    createNewFee(_, payload) {
+        return this.$axios.post("/api/fees", payload).then((response) => {
             return response.data;
         });
     },
 
-    fetchRouteList() {
-        return this.$axios.get("/api/admin/trips/getAllTrips").then((response) => {
+    getFees() {
+        return this.$axios.get("/api/fees").then((response) => {
             return response.data;
         });
     },
 
-    // Ticket actions
-
-    createTicket(_, payload) {
-        return this.$axios.post("/api/admin/tickets/create", payload).then((response) => {
+    updateFee(_, { id, payload }) {
+        return this.$axios.patch(`/api/fees/${id}`, payload).then((response) => {
             return response.data;
         });
     },
 
-    updateTicket(_, { id, payload }) {
-        return this.$axios.patch(`/api/admin/tickets/${id}`, payload).then((response) => {
+    // Lodgement Actions
+    createNewLodgement(_, payload) {
+        return this.$axios.post("/api/admin/lodgements", payload).then((response) => {
             return response.data;
         });
     },
 
-    fetchTicketList() {
-        return this.$axios.get("/api/admin/tickets/getAlltickets").then((response) => {
+    fetchLodgementList() {
+        return this.$axios.get("/api/admin/lodgements").then((response) => {
             return response.data;
         });
     },
 
-    nuxtServerInit({ commit, dispatch }, { req, redirect, route }) {
-        const path = route.path;
+    fetchSingleLodgement(_, id) {
+        return this.$axios.get(`/api/admin/lodgements/${id}`).then((response) => {
+            return response.data;
+        });
+    },
 
-        // Path init functions
-        const adminServerInit = async() => {
-            const authTokenCookie = this.$cookies.get("nmbbs");
-            if (!authTokenCookie) {
-                return;
-            }
+    cancelSingleLodgement(_, { id }) {
+        return this.$axios.patch(`/api/admin/lodgements/${id}/void`).then((response) => {
+            return response.data;
+        });
+    },
 
-            await commit("setAuthToken", authTokenCookie);
-            await dispatch("getAdminUserProfile").catch(() => {
-                redirect("/login");
-            });
-        };
+    // Purchase Actions
+    createNewPurchase(_, payload) {
+        return this.$axios.post("/api/admin/purchases", payload).then((response) => {
+            return response.data;
+        });
+    },
 
-        // Map the server init function to the appropriate path.
-        const initMap = {
-            "/admin": adminServerInit,
-        };
+    fetchPurchaseList(_, params) {
+        return this.$axios.get("/api/admin/purchases", { params }).then((response) => {
+            return response.data;
+        });
+    },
 
-        // Match the current path we're on to the path specified in the path map.
-        // If a match is found, run it.
-        // If no match is found, just check if there are auth cookies and set it.
-        const paths = Object.keys(initMap);
-        const matchedPath = paths.find(p => path.startsWith(p));
-        const serverInit = initMap[matchedPath];
-        if (serverInit) {
-            return serverInit();
+    fetchSinglePurchase(_, id) {
+        return this.$axios.get(`/api/admin/purchases/${id}`).then((response) => {
+            return response.data;
+        });
+    },
+        
+    updateSinglePurchase(_, { id, payload }) {
+        return this.$axios.patch(`/api/admin/purchases/${id}`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    cancelSinglePurchase(_, { id }) {
+        return this.$axios.patch(`/api/admin/purchases/${id}/void`).then((response) => {
+            return response.data;
+        });
+    },
+
+    //Roles actions
+    createNewRole(_, payload) {
+        return this.$axios.post("/api/roles", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getRoleList({ commit }) {
+        return this.$axios.get("/api/roles").then((response) => {
+            commit("setRoleList", response.data.data);
+            return response.data;
+        });
+    },
+
+    // Services actions
+
+    createNewService(_, payload) {
+        return this.$axios.post("/api/services", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    updateService(_, { id, payload }) {
+        return this.$axios.patch(`/api/services/${id}`, payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getServiceList() {
+        return this.$axios.get("/api/services").then((response) => {
+            return response.data;
+        });
+    },
+
+    sendToPrinter(_, payload){
+        return this.$axios.post("/api/admin/print", payload).then((response) => {
+            return response.data;
+        });
+    },
+
+    getReport(_, params) {
+        return this.$axios.get("/api/admin/endofdayreport", { params }).then((response) => {
+            return response.data;
+        });
+    },
+
+    async nuxtServerInit({ commit, dispatch }) {
+
+        const authTokenCookie = this.$cookies.get("sftoken");
+        if (!authTokenCookie) {
+            return;
         }
+
+        commit("setAuthToken", authTokenCookie);
+        await dispatch("getAdminUserProfile").then(() => {
+            return dispatch("getRoleList")
+        }).catch((err) => {
+            this.$router.push("/login");
+        });
+
+
     },
 
 });

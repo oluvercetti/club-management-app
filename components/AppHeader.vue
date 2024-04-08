@@ -1,38 +1,18 @@
 <template>
-    <b-navbar toggleable="lg" :type="navLinkColor">
-        <b-navbar-brand to="/">
-            NMBBS
+    <div>
+        <b-navbar-brand to="https://www.instagram.com/silverfox_nigeria" target="_blank">
+            <AppLogo width="150" height="150" />
         </b-navbar-brand>
-        <b-navbar-toggle target="nav-collapse" />
-        <b-collapse id="nav-collapse" is-nav>
-            <b-navbar-nav class="ml-auto">
-                <b-nav-item to="/" exact exact-active-class="active">
-                    Home
-                </b-nav-item>
-                <b-nav-item to="/admin" active-class="active">
-                    Admin
-                </b-nav-item>
-                <b-nav-item to="/contact" active-class="active">
-                    Contact Us
-                </b-nav-item>
-            </b-navbar-nav>
-        </b-collapse>
-        <b-button v-if="isAuthenticated" @click="handleAdminLogout()">
-            Logout
-        </b-button>
-    </b-navbar>
+    </div>
 </template>
 
 <script>
-export default {
+import AppLogo from './AppLogo.vue';
 
+export default {
     computed: {
         isAuthenticated() {
             return this.$store.getters.getIsAuthenticated;
-        },
-
-        navLinkColor() {
-            return this.$route.path.startsWith("/admin") || this.$route.path.startsWith("/contact") ? "light" : "dark";
         },
     },
     methods: {
@@ -44,6 +24,7 @@ export default {
             });
         },
     },
+    components: { AppLogo }
 };
 </script>
 

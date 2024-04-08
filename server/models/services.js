@@ -6,13 +6,12 @@ const servicesSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowercase: true,
         minlength: 4
     },
 
     status: {
         type: Boolean,
-        default: false,
+        default: true,
     }
 }, {
     timestamps: true,

@@ -5,7 +5,7 @@ export default function({ $axios, redirect, store }) {
         const token = store.getters.getAuthToken;
         $axios.setHeader("Cache-Control", "no-cache");
         if (token) {
-            $axios.setHeader("bta-auth", token);
+            $axios.setHeader("sf-auth", token);
         }
     });
 

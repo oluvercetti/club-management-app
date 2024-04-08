@@ -18,27 +18,31 @@ export default {
         },
         meta: [
             { charset: "utf-8" },
-            { name: "viewport", content: "width=device-width, initial-scale=1" },
+            { name: "viewport", content: "width=device-width, initial-scale=1, shrink-to-fit=no" },
             { hid: "description", name: "description", content: "" },
             { name: "format-detection", content: "telephone=no" },
         ],
         link: [
             { rel: "icon", type: "image/x-icon", href: "/img/favicon.ico" },
-            { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
-            { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
-            { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+            { rel: "apple-touch-icon", sizes: "180x180", href: "/img/apple-touch-icon.png" },
+            { rel: "icon", type: "image/png", sizes: "32x32", href: "/img/favicon-32x32.jpeg" },
+            { rel: "icon", type: "image/png", sizes: "16x16", href: "/img/favicon-16x16.jpeg" },
 
         ],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
     css: [
+        "static/scss/main.scss",
     ],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [
         "~/plugins/axios",
         "~plugins/filters",
+        "~plugins/functions/math",
+        { src: '~/plugins/html2pdf.js', mode: 'client' },
+        { src: '~/plugins/html2xlsx.js', mode: 'client' }
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
@@ -68,9 +72,9 @@ export default {
     },
 
     /** Define server host and port */
-    server: {
+    /* server: {
         host: "0.0.0.0",
-    },
+    }, */
 
     /** Express server */
     serverMiddleware: ["~/server/express.js"],

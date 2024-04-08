@@ -1,0 +1,39 @@
+/**
+ * Remove Margins for h1 - h6 - p tags
+ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style: none;
+}
+
+*:focus {
+    outline: solid 1px $outline-color;
+    border-radius: $border-radius;
+}
+
+/* suppress focus ring on form controls for mouse users */
+[data-whatintent='mouse'] button:focus, 
+[data-whatintent='mouse'] button:active,
+[data-whatintent='mouse'] a:focus, 
+[data-whatintent='mouse'] a:active {
+    outline: none !important;
+}
+
+body {
+    position: relative;
+}

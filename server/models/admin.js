@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Ticket = require("./trip");
 
 const adminSchema = new mongoose.Schema({
     name: {
@@ -22,7 +21,7 @@ const adminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 7,
+        minlength: 4,
         trim: true,
         validate(value) {
             if (value.toLowerCase().includes("password")) {
@@ -40,11 +39,12 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+
+    status: {
+        type: Boolean,
+        default: true,
+    }
     
-/*
-    avatar: {
-        type: Buffer
-    } */
 }, {
     timestamps: true,
 });
@@ -66,7 +66,7 @@ adminSchema.methods.generateAuthToken = async function() {
     const admin = this;
     const token = jwt.sign({ _id: admin._id.toString() }, process.env.TOKEN_SECRET_KEY, { expiresIn });
 
-    admin.tokens = admin.tokens.concat({ token });
+    admin.token = token;
     await admin.save();
     return token;
 };
@@ -76,14 +76,13 @@ adminSchema.methods.toJSON = function() {
     const adminObject = admin.toObject();
 
     delete adminObject.password;
-    delete adminObject.tokens;
+    delete adminObject.token;
     delete adminObject.__v;
-    delete adminObject.avatar;
     return adminObject;
 };
 
-adminSchema.statics.findByCredentials = async(email, password) => {
-    const admin = await Admin.findOne({ email });
+adminSchema.statics.findByCredentials = async(username, password) => {
+    const admin = await Admin.findOne({ username });
 
     if (!admin) {
         throw new Error("Incorrect username or password");
@@ -95,7 +94,21 @@ adminSchema.statics.findByCredentials = async(email, password) => {
         throw new Error("Incorrect username or password");
     }
 
+    if (!admin.status) {
+        throw new Error("This user is inactive, Kindly contact admin");
+    }
+
     return admin;
+};
+
+adminSchema.statics.checkUserPermission = async(role_id, allowed_roles) => {
+    
+    const isAllowed = allowed_roles.includes(role_id);
+    if (!isAllowed) {
+        throw new Error("User can not perform this action");
+    }
+
+    return true;
 };
 
 adminSchema.pre("save", async function(next) {
@@ -108,11 +121,6 @@ adminSchema.pre("save", async function(next) {
     next();
 });
 
-adminSchema.pre("remove", async function(next) {
-    const admin = this;
-    await Ticket.deleteMany({ owner: admin._id });
-    next();
-});
 const Admin = mongoose.model("Admin", adminSchema);
 
 module.exports = Admin;

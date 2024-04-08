@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="error-container">
         <slot />
     </div>
 </template>
@@ -11,3 +11,10 @@ export default {
     },
 };
 </script>
+<style lang="scss" scoped>
+.error-container {
+    display: flex;
+    flex-flow: column;
+    min-height: 100vh;
+}
+</style>

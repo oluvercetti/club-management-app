@@ -12,9 +12,10 @@ const auth = async(req, res, next) => {
         }
         req.token = token;
         req.admin = admin;
+        res.cookie('sftoken', JSON.stringify(token), { path: "/", secure: true, httpOnly: true });
         next();
     } catch (e) {
-        res.status(401).send({ error: "Invalid token" });
+        res.status(401).send({ message: "Invalid token" });
     }
 };
 

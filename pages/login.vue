@@ -2,14 +2,17 @@
     <b-container fluid>
         <b-row class="justify-content-md-center text-center my-4">
             <b-col md="12">
-                <h2><b-icon icon="key" aria-hidden="true" /> Admin Login</h2>
+                <AppLogo width="150" height="150"/>
+            </b-col>
+            <b-col md="12">
+                <h2><b-icon icon="key" aria-hidden="true" /> User Login</h2>
             </b-col>
         </b-row>
         <b-row class="justify-content-md-center">
-            <b-col md="3">
+            <b-col md="4">
                 <b-form @submit.prevent="login">
-                    <b-form-group label="Email address:" label-for="email">
-                        <b-form-input id="email" v-model="form.email" type="email" required placeholder="Enter email" />
+                    <b-form-group label="Username:" label-for="username">
+                        <b-form-input id="username" v-model="form.username" type="text" required placeholder="Enter username" />
                     </b-form-group>
 
                     <b-form-group label="Password:" label-for="password">
@@ -61,7 +64,7 @@ export default {
     data() {
         return {
             form: {
-                email: "",
+                username: "",
                 password: "",
             },
             isLoading: false,
@@ -70,27 +73,31 @@ export default {
 
     head() {
         return {
-            title: "Login -  NMBBS",
+            title: "Login -  Management Portal",
         };
     },
 
     computed: {
         loginDisabled() {
-            return this.form.email === "" || this.form.password === "";
+            return this.form.username === "" || this.form.password === "";
         },
     },
     methods: {
         login() {
             const f = this.form;
             const payload = {
-                email: f.email,
+                username: f.username,
                 password: f.password,
             };
             this.isLoading = true;
 
-            return this.$store.dispatch("loginAdminUser", payload).then(() => {
+            return this.$store.dispatch("loginAdminUser", payload).then((response) => {
                 this.$store.commit("setIsAuthenticated", true);
-                this.$router.push("/admin");
+                if(response.role !== 4) {
+                    this.$router.push("/dashboard/admin");
+                }else {
+                    this.$router.push("/dashboard/user");
+                }
             }).catch((err) => {
                 this.$bvToast.toast(err.response.data.message, {
                     title: "Error",

@@ -1,6 +1,6 @@
 <template>
     <footer class="footer">
-        Copyright &copy;
+        Copyright &copy; {{ new Date().getFullYear() }}
     </footer>
 </template>
 
@@ -14,9 +14,10 @@ export default {
 .footer {
     width: 100%;
     text-align: center;
-    color: #FFF;
-    font-size: 1.5rem;
+    color: #444;
+    font-size: 1.2rem;
     font-weight: 200;
-    padding: 3rem 0;
+    padding: 1rem 0;
+    margin-top: auto;
 }
 </style>
